@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# ChromaDB local storage
+chroma_db/
+chromadb_data/
+
+# Playwright
+playwright-report/
+
+# Logs
+*.log
+agent_log*.jsonl

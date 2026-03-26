@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Agent 개발 실습 - 2일 과정</title>
+<style>
+/* ===== RESET & CUSTOM PROPERTIES ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8fafc;--bg2:rgba(255,255,255,.92);--bg3:#e2e8f0;
+  --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --blue:#2563eb;--blue2:#3b82f6;--blue3:#1d4ed8;
+  --green:#059669;--green2:#10b981;--yellow:#d97706;--red:#dc2626;
+  --purple:#7c3aed;--purple2:#8b5cf6;--cyan:#0891b2;--orange:#ea580c;
+  --code-bg:rgba(30,41,59,.95);--code-border:rgba(148,163,184,.3);
+  --font:'Segoe UI','Malgun Gothic',sans-serif;
+  --mono:'Cascadia Code','Fira Code','Consolas','D2Coding',monospace;
+  --glass:rgba(255,255,255,.7);--glass-border:rgba(148,163,184,.25);
+  --glow-blue:0 0 30px rgba(37,99,235,.1);
+  --glow-purple:0 0 30px rgba(124,58,237,.1);
+  --anim-slide:.55s cubic-bezier(.22,1,.36,1);
+  --anim-fade:.4s ease;
+  --d1-accent:var(--blue2);--d1-accent2:var(--cyan);
+  --d2-accent:var(--purple2);--d2-accent2:var(--green2);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ===== ANIMATED BACKGROUND ===== */
+#bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#bg-mesh::before,#bg-mesh::after{content:'';position:absolute;border-radius:50%;filter:blur(150px);opacity:.12;will-change:transform}
+#bg-mesh::before{width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.25),transparent 70%);top:-10%;left:-5%;animation:meshFloat1 25s ease-in-out infinite}
+#bg-mesh::after{width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.2),transparent 70%);bottom:-10%;right:-5%;animation:meshFloat2 30s ease-in-out infinite}
+.mesh-dot{position:absolute;width:400px;height:400px;border-radius:50%;filter:blur(120px);opacity:.08;background:radial-gradient(circle,rgba(8,145,178,.2),transparent 70%);top:40%;left:50%;animation:meshFloat3 20s ease-in-out infinite}
+@keyframes meshFloat1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(80px,60px) scale(1.1)}50%{transform:translate(30px,120px) scale(.95)}75%{transform:translate(-40px,50px) scale(1.05)}}
+@keyframes meshFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-70px,-80px) scale(1.08)}66%{transform:translate(40px,-40px) scale(.92)}}
+@keyframes meshFloat3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-30%,-60%) scale(1.15)}}
+
+/* Dot grid */
+#dot-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(148,163,184,.18) 1px,transparent 1px);background-size:32px 32px}
+
+/* ===== PROGRESS BAR ===== */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--cyan));transition:width .5s cubic-bezier(.22,1,.36,1);z-index:1000;border-radius:0 2px 2px 0;box-shadow:0 0 12px rgba(59,130,246,.4)}
+
+/* ===== SLIDE COUNTER ===== */
+#counter{position:fixed;bottom:24px;right:32px;font-size:13px;color:var(--text3);z-index:999;font-family:var(--mono);letter-spacing:.5px;opacity:.8}
+
+/* ===== DAY INDICATOR ===== */
+#day-indicator{position:fixed;top:16px;right:32px;font-size:12px;z-index:999;font-family:var(--mono);opacity:.85;padding:4px 14px;border-radius:20px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--glass-border);letter-spacing:1px;font-weight:600;transition:all .4s ease}
+#day-indicator.day1{background:rgba(37,99,235,.08);color:var(--blue3);border-color:rgba(37,99,235,.2)}
+#day-indicator.day2{background:rgba(124,58,237,.08);color:var(--purple);border-color:rgba(124,58,237,.2)}
+
+/* ===== SLIDES CONTAINER ===== */
+#deck{width:100%;height:100%;position:relative;z-index:1}
+.slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:60px 80px;
+  opacity:0;transform:translateX(80px) scale(.98);
+  transition:opacity var(--anim-slide),transform var(--anim-slide);
+  pointer-events:none;text-align:center;will-change:transform,opacity;
+}
+.slide.active{opacity:1;transform:translateX(0) scale(1);pointer-events:auto}
+.slide.prev{opacity:0;transform:translateX(-80px) scale(.98)}
+
+/* ===== STAGGERED ENTRY ANIMATIONS ===== */
+.slide.active .anim{animation:fadeUp .6s ease both}
+.slide.active .anim-d1{animation-delay:.1s}
+.slide.active .anim-d2{animation-delay:.2s}
+.slide.active .anim-d3{animation-delay:.3s}
+.slide.active .anim-d4{animation-delay:.4s}
+.slide.active .anim-d5{animation-delay:.5s}
+.slide.active .anim-d6{animation-delay:.6s}
+.slide.active .anim-d7{animation-delay:.7s}
+.slide.active .anim-d8{animation-delay:.8s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+
+/* ===== SVG DIAGRAM ANIMATIONS ===== */
+@keyframes drawLine{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes drawLineShort{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+@keyframes pulseGlow{0%,100%{filter:drop-shadow(0 0 3px rgba(96,165,250,.3))}50%{filter:drop-shadow(0 0 12px rgba(96,165,250,.6))}}
+@keyframes flowDot{0%{offset-distance:0%}100%{offset-distance:100%}}
+@keyframes nodeAppear{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes arrowPulse{0%,100%{opacity:.6}50%{opacity:1}}
+.slide.active .svg-anim .node{animation:nodeAppear .5s ease both}
+.slide.active .svg-anim .line{stroke-dasharray:1000;animation:drawLine 1.2s ease both}
+.slide.active .svg-anim .line-short{stroke-dasharray:200;animation:drawLineShort .8s ease both}
+.slide.active .svg-anim .nd1{animation-delay:.2s}.slide.active .svg-anim .nd2{animation-delay:.35s}.slide.active .svg-anim .nd3{animation-delay:.5s}.slide.active .svg-anim .nd4{animation-delay:.65s}.slide.active .svg-anim .nd5{animation-delay:.8s}.slide.active .svg-anim .nd6{animation-delay:.95s}.slide.active .svg-anim .nd7{animation-delay:1.1s}.slide.active .svg-anim .nd8{animation-delay:1.25s}
+.slide.active .svg-anim .ln1{animation-delay:.4s}.slide.active .svg-anim .ln2{animation-delay:.55s}.slide.active .svg-anim .ln3{animation-delay:.7s}.slide.active .svg-anim .ln4{animation-delay:.85s}.slide.active .svg-anim .ln5{animation-delay:1s}.slide.active .svg-anim .ln6{animation-delay:1.15s}.slide.active .svg-anim .ln7{animation-delay:1.3s}
+.slide:not(.active) .svg-anim .node,.slide:not(.active) .svg-anim .line,.slide:not(.active) .svg-anim .line-short{animation:none;opacity:0}
+
+/* ===== SLIDE CONTENT ===== */
+.slide-inner{max-width:1050px;width:100%}
+.slide h1{font-size:2.8em;font-weight:800;margin-bottom:.3em;background:linear-gradient(135deg,var(--blue3),var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;letter-spacing:-.02em}
+.slide h2{font-size:2em;font-weight:700;margin-bottom:.4em;background:linear-gradient(135deg,var(--blue3),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.3}
+.slide.day2-slide h2{background:linear-gradient(135deg,var(--purple),var(--green));-webkit-background-clip:text;background-clip:text}
+.slide h3{font-size:1.4em;font-weight:500;margin-bottom:.3em;color:var(--cyan)}
+.slide p{font-size:1.05em;color:var(--text2);margin-bottom:.6em;line-height:1.7}
+.slide .subtitle{font-size:1.15em;color:var(--text3);margin-top:.2em}
+.slide .big{font-size:1.5em;color:var(--text)}
+.slide .accent{color:var(--blue2)}
+.slide .green{color:var(--green2)}
+.slide .yellow{color:var(--yellow)}
+.slide .red{color:var(--red)}
+.slide .purple{color:var(--purple2)}
+.slide .orange{color:var(--orange)}
+.slide .dim{color:var(--text3)}
+
+/* ===== LISTS ===== */
+.slide ul,.slide ol{text-align:left;display:inline-block;margin:.5em auto;font-size:1.02em;color:var(--text2)}
+.slide ul li,.slide ol li{margin-bottom:.5em;padding-left:.3em;line-height:1.5}
+.slide ul li::marker{color:var(--blue)}
+.slide ol li::marker{color:var(--blue);font-weight:600}
+
+/* ===== CODE BLOCKS ===== */
+pre{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;padding:20px 24px;text-align:left;overflow-x:auto;margin:1em auto;max-width:920px;font-size:.8em;line-height:1.65;position:relative;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,.12)}
+pre code{font-family:var(--mono);color:#e2e8f0}
+.ln{color:var(--text3);opacity:.4;user-select:none;display:inline-block;width:2.5em;text-align:right;margin-right:1em;font-size:.9em}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}.nb{color:#79c0ff}.op{color:#ff7b72}.nu{color:#f2cc60}.ty{color:#7ee787}.dc{color:#ffa657}
+pre .lang-tag{position:absolute;top:10px;right:16px;font-size:.7em;color:var(--text3);font-family:var(--mono);opacity:.5;padding:2px 8px;background:rgba(255,255,255,.04);border-radius:4px}
+pre::before{content:'';position:absolute;top:10px;left:16px;width:8px;height:8px;border-radius:50%;background:#ff5f57;box-shadow:16px 0 0 #ffbd2e,32px 0 0 #28ca41}
+
+/* ===== GLASS CARDS ===== */
+.glass{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;transition:transform .3s ease,box-shadow .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.glass:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,99,235,.1)}
+.glass.glow-blue{box-shadow:0 4px 20px rgba(37,99,235,.08);border-color:rgba(37,99,235,.2)}
+.glass.glow-purple{box-shadow:0 4px 20px rgba(124,58,237,.08);border-color:rgba(124,58,237,.2)}
+.glass.glow-green{box-shadow:0 4px 20px rgba(5,150,105,.08);border-color:rgba(5,150,105,.2)}
+
+/* ===== BOXES ===== */
+.box{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:22px 26px;margin:.6em auto;max-width:880px;text-align:left;transition:transform .25s ease}
+.box:hover{transform:translateY(-1px)}
+.box.blue{border-left:3px solid var(--blue);box-shadow:inset 3px 0 12px rgba(59,130,246,.05)}
+.box.green{border-left:3px solid var(--green);box-shadow:inset 3px 0 12px rgba(16,185,129,.05)}
+.box.yellow{border-left:3px solid var(--yellow)}
+.box.red{border-left:3px solid var(--red)}
+.box.purple{border-left:3px solid var(--purple)}
+.box-title{font-weight:600;color:var(--blue3);margin-bottom:.4em;font-size:1.05em}
+
+/* ===== GRID ===== */
+.grid{display:grid;gap:16px;margin:.6em auto;max-width:950px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:20px 22px;text-align:center;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.08);border-color:rgba(37,99,235,.2)}
+.card h4{color:var(--blue3);margin-bottom:.3em;font-size:1em;font-weight:600}
+.card{box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card p{font-size:.88em;color:var(--text2);margin:0}
+
+/* ===== TABLE ===== */
+table{width:100%;max-width:920px;margin:.8em auto;border-collapse:collapse;font-size:.9em;text-align:left;border-radius:12px;overflow:hidden}
+th{background:rgba(30,41,59,.8);color:var(--blue2);padding:12px 16px;border-bottom:2px solid rgba(59,130,246,.3);font-weight:600;font-size:.92em}
+td{padding:11px 16px;border-bottom:1px solid var(--glass-border);color:var(--text2)}
+tr{transition:background .2s ease}
+tr:hover td{background:rgba(59,130,246,.04)}
+
+/* ===== BADGE ===== */
+.badge{display:inline-block;font-size:.72em;padding:4px 14px;border-radius:20px;font-weight:600;margin-bottom:.6em;letter-spacing:.5px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.badge.day1{background:rgba(59,130,246,.12);color:var(--blue2);border:1px solid rgba(59,130,246,.2)}
+.badge.day2{background:rgba(139,92,246,.12);color:var(--purple2);border:1px solid rgba(139,92,246,.2)}
+
+/* ===== DIVIDER ===== */
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));margin:.8em auto;border-radius:2px}
+
+/* ===== TITLE SLIDE ===== */
+.title-slide h1{font-size:3.6em;letter-spacing:-.03em}
+.title-slide .subtitle-line{font-size:1.2em;color:var(--text2);margin-top:.3em;letter-spacing:.02em}
+
+/* ===== DAY HEADER ===== */
+.day-header{font-size:3.5em;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+
+/* ===== QUOTE ===== */
+.quote{border-left:3px solid var(--blue);padding:18px 28px;margin:.6em auto;max-width:780px;text-align:left;font-style:italic;color:var(--text2);background:rgba(59,130,246,.04);border-radius:0 12px 12px 0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:1.05em;line-height:1.7}
+.quote .author{font-style:normal;color:var(--text3);font-size:.82em;margin-top:.5em}
+
+/* ===== SVG COMMON ===== */
+.diagram-svg{max-width:100%;height:auto;margin:.8em auto;display:block}
+.diagram-svg text{font-family:var(--font);fill:var(--text)}
+.diagram-svg .label{font-size:13px;fill:var(--text2)}
+.diagram-svg .label-sm{font-size:11px;fill:var(--text3)}
+.diagram-svg .box-fill{fill:rgba(15,23,42,.7);stroke:rgba(148,163,184,.2);stroke-width:1.5;rx:10}
+.diagram-svg .box-accent{fill:rgba(59,130,246,.12);stroke:rgba(59,130,246,.4);stroke-width:1.5;rx:10}
+.diagram-svg .box-green{fill:rgba(16,185,129,.1);stroke:rgba(16,185,129,.4);stroke-width:1.5;rx:10}
+.diagram-svg .box-purple{fill:rgba(139,92,246,.1);stroke:rgba(139,92,246,.4);stroke-width:1.5;rx:10}
+.diagram-svg .box-yellow{fill:rgba(245,158,11,.1);stroke:rgba(245,158,11,.4);stroke-width:1.5;rx:10}
+.diagram-svg .box-red{fill:rgba(239,68,68,.1);stroke:rgba(239,68,68,.4);stroke-width:1.5;rx:10}
+.diagram-svg .arrow-line{stroke:var(--blue2);stroke-width:2;fill:none;marker-end:url(#arrowBlue)}
+.diagram-svg .arrow-line-purple{stroke:var(--purple2);stroke-width:2;fill:none;marker-end:url(#arrowPurple)}
+.diagram-svg .arrow-line-green{stroke:var(--green2);stroke-width:2;fill:none;marker-end:url(#arrowGreen)}
+.diagram-svg .arrow-line-dim{stroke:var(--text3);stroke-width:1.5;fill:none;stroke-dasharray:6 4}
+
+/* ===== OVERVIEW MODE ===== */
+#overview{position:fixed;inset:0;z-index:2000;background:rgba(6,8,15,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;overflow-y:auto;padding:40px}
+#overview.show{display:block}
+#overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;max-width:1400px;margin:0 auto}
+.overview-thumb{background:var(--glass);border:2px solid var(--glass-border);border-radius:12px;padding:16px;cursor:pointer;transition:all .25s ease;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:.7em;text-align:center;color:var(--text2);overflow:hidden;position:relative}
+.overview-thumb:hover{border-color:var(--blue2);box-shadow:0 0 20px rgba(59,130,246,.2);transform:scale(1.03)}
+.overview-thumb.current{border-color:var(--blue);box-shadow:0 0 24px rgba(59,130,246,.3)}
+.overview-thumb .thumb-num{position:absolute;top:8px;left:10px;font-size:11px;color:var(--text3);font-family:var(--mono)}
+
+/* ===== PRESENTER NOTES ===== */
+#notes-panel{position:fixed;bottom:0;left:0;right:0;z-index:1500;background:rgba(6,8,15,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--glass-border);padding:16px 32px;font-size:.85em;color:var(--text2);max-height:150px;overflow-y:auto;transform:translateY(100%);transition:transform .35s ease;font-family:var(--font)}
+#notes-panel.show{transform:translateY(0)}
+
+/* ===== KEYBOARD HINT ===== */
+#kbd-hint{position:fixed;bottom:24px;left:32px;font-size:11px;color:var(--text3);z-index:999;opacity:.5;font-family:var(--mono)}
+kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:1px 6px;font-size:10px;font-family:var(--mono)}
+
+/* ===== PRINT ===== */
+@media print{
+  .slide{position:relative!important;opacity:1!important;transform:none!important;pointer-events:auto!important;page-break-after:always;height:100vh;padding:40px}
+  #progress,#counter,#day-indicator,#bg-mesh,#dot-grid,#kbd-hint,#notes-panel{display:none}
+  body{background:#fff;color:#111}
+  .slide h1,.slide h2{-webkit-text-fill-color:#1d4ed8;color:#1d4ed8}
+  .slide p,.slide li,.slide td{color:#333}
+  pre{border:1px solid #ccc;background:#f8f8f8;box-shadow:none}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .slide{padding:30px 24px}
+  .slide h1{font-size:2em}.slide h2{font-size:1.4em}
+  pre{font-size:.72em;padding:14px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .diagram-svg{max-width:100%}
+  .title-slide h1{font-size:2.4em}
+}
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div id="bg-mesh"><div class="mesh-dot"></div></div>
+<div id="dot-grid"></div>
+
+<!-- UI elements -->
+<div id="progress"></div>
+<div id="counter"></div>
+<div id="day-indicator"></div>
+<div id="kbd-hint"><kbd>O</kbd> Overview <kbd>N</kbd> Notes <kbd>F</kbd> Fullscreen</div>
+
+<!-- Overview mode -->
+<div id="overview"><div id="overview-grid"></div></div>
+
+<!-- Presenter notes -->
+<div id="notes-panel"></div>
+
+<!-- SVG Defs for arrow markers -->
+<svg style="position:absolute;width:0;height:0">
+<defs>
+  <marker id="arrowBlue" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#60a5fa"/></marker>
+  <marker id="arrowPurple" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/></marker>
+  <marker id="arrowGreen" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/></marker>
+  <marker id="arrowWhite" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/></marker>
+  <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+  <linearGradient id="gradPurple" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+  <linearGradient id="gradGreen" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+</svg>
+
+<div id="deck">
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide title-slide" data-day="0">
+<div class="slide-inner">
+  <p class="dim anim anim-d1" style="font-size:.9em;margin-bottom:.4em;letter-spacing:2px;text-transform:uppercase">2-Day Intensive Workshop</p>
+  <h1 class="anim anim-d2">LLM Agent 개발 실습</h1>
+  <div class="divider anim anim-d3"></div>
+  <p class="anim anim-d4" style="font-size:1.2em;color:var(--text2);margin-top:.5em">2일 과정 &nbsp;&bull;&nbsp; 실습 중심 &nbsp;&bull;&nbsp; 원리 이해</p>
+  <div class="anim anim-d5" style="margin-top:2.5em;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <span style="padding:6px 18px;border-radius:20px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);font-size:.85em;color:var(--blue2)">Tool Calling</span>
+    <span style="padding:6px 18px;border-radius:20px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);font-size:.85em;color:var(--purple2)">MCP</span>
+    <span style="padding:6px 18px;border-radius:20px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);font-size:.85em;color:var(--green2)">Agentic Loop</span>
+    <span style="padding:6px 18px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);font-size:.85em;color:var(--yellow)">Harness</span>
+  </div>
+  <p class="anim anim-d6" style="margin-top:2em;color:var(--text3);font-size:.82em">화살표 키 (&#8592;&#8594;) / Space 이동 &nbsp;|&nbsp; <kbd style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font-size:.9em">O</kbd> 전체 보기</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 2: AGENDA ==================== -->
+<div class="slide" data-day="0">
+<div class="slide-inner">
+  <h2 class="anim anim-d1">전체 과정 구성</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="grid grid-2 anim anim-d3" style="margin-top:1.2em">
+    <div class="glass glow-blue" style="border-top:3px solid var(--blue);text-align:left;padding:28px 30px">
+      <h4 style="color:var(--blue2);font-size:1.1em;margin-bottom:.6em">Day 1 &mdash; 기초와 도구</h4>
+      <ul style="font-size:.9em;color:var(--text2);list-style:none;padding:0">
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">01</span> SSO / API 기초</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">02</span> 프롬프트 & 컨텍스트 엔지니어링</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">03</span> OpenAI Compatible 표준</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">04</span> Structured Output & Tool Calling</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">05</span> MCP (Model Context Protocol)</li>
+        <li style="padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--blue2)">06</span> 브라우저 자동화 기초</li>
+      </ul>
+    </div>
+    <div class="glass glow-purple" style="border-top:3px solid var(--purple);text-align:left;padding:28px 30px">
+      <h4 style="color:var(--purple2);font-size:1.1em;margin-bottom:.6em">Day 2 &mdash; Agent 구현</h4>
+      <ul style="font-size:.9em;color:var(--text2);list-style:none;padding:0">
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">07</span> Agent Framework 비교</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">08</span> Agentic Loop 직접 구현</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">09</span> bash/powershell Agent</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">10</span> Vector DB vs Index Explore</li>
+        <li style="margin-bottom:.4em;padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">11</span> 하네스 엔지니어링</li>
+        <li style="padding-left:1.2em;position:relative"><span style="position:absolute;left:0;color:var(--purple2)">12</span> 종합 실습</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 3: DAY 1 HEADER ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">DAY 1</span>
+  <div class="day-header anim anim-d2">기초 이해</div>
+  <div class="anim anim-d3" style="font-size:2.6em;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-top:.1em">LLM 제어 + Tool 개념</div>
+  <div class="divider anim anim-d4" style="margin-top:1.2em"></div>
+  <p class="anim anim-d5" style="margin-top:1em;font-size:1.1em">LLM을 단순 챗봇이 아닌, <strong class="accent">제어 가능한 엔진</strong>으로 다루는 법</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 4: SSO 1 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO</span>
+  <h2 class="anim anim-d1">SSO란?</h2>
+  <p class="anim anim-d2">Single Sign-On &mdash; 한 번의 로그인으로 여러 서비스에 접근</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:1em">
+    <svg class="diagram-svg" viewBox="0 0 760 260" width="760" height="260">
+      <!-- User box -->
+      <rect class="box-accent node nd1" x="20" y="90" width="140" height="60" rx="12"/>
+      <text x="90" y="125" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">사용자 로그인 (1회)</text>
+      <!-- SSO server -->
+      <rect class="box-fill node nd2" x="260" y="90" width="160" height="60" rx="12"/>
+      <text x="340" y="118" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="14" class="node nd2">SSO 서버</text>
+      <text x="340" y="136" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">토큰 발급</text>
+      <!-- Arrow user->SSO -->
+      <line class="arrow-line line ln1" x1="160" y1="120" x2="258" y2="120"/>
+      <!-- Service A -->
+      <rect class="box-fill node nd3" x="530" y="20" width="140" height="50" rx="10"/>
+      <text x="600" y="50" text-anchor="middle" fill="var(--text)" font-size="13" class="node nd3">서비스 A</text>
+      <!-- Service B -->
+      <rect class="box-fill node nd4" x="530" y="100" width="140" height="50" rx="10"/>
+      <text x="600" y="130" text-anchor="middle" fill="var(--text)" font-size="13" class="node nd4">서비스 B</text>
+      <!-- Service C -->
+      <rect class="box-fill node nd5" x="530" y="180" width="140" height="50" rx="10"/>
+      <text x="600" y="210" text-anchor="middle" fill="var(--text)" font-size="13" class="node nd5">서비스 C</text>
+      <!-- Arrows SSO->services -->
+      <path class="arrow-line line ln2" d="M420,110 Q475,50 528,45"/>
+      <path class="arrow-line line ln3" d="M420,120 L528,125"/>
+      <path class="arrow-line line ln4" d="M420,130 Q475,190 528,205"/>
+      <!-- Same token label -->
+      <text x="470" y="85" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd6" font-style="italic">같은 토큰</text>
+      <!-- Token glow -->
+      <circle cx="340" cy="175" r="18" fill="rgba(59,130,246,.1)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd5"/>
+      <text x="340" y="180" text-anchor="middle" fill="var(--blue2)" font-size="18" class="node nd5">&#x1f511;</text>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 5: SSO 2 - 사내 구조 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO</span>
+  <h2 class="anim anim-d1">사내 SSO 구조</h2>
+  <p class="anim anim-d2">1회 요청으로 전체 인물정보 반환</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:1em">
+    <svg class="diagram-svg" viewBox="0 0 780 220" width="780" height="220">
+      <!-- Client -->
+      <rect class="box-accent node nd1" x="20" y="70" width="150" height="70" rx="12"/>
+      <text x="95" y="100" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">클라이언트</text>
+      <text x="95" y="120" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">(Agent)</text>
+      <!-- SSO API -->
+      <rect class="box-fill node nd2" x="270" y="70" width="170" height="70" rx="12"/>
+      <text x="355" y="100" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="14" class="node nd2">SSO API</text>
+      <text x="355" y="120" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">/auth/login</text>
+      <!-- HR DB -->
+      <rect class="box-green node nd3" x="540" y="70" width="150" height="70" rx="12"/>
+      <text x="615" y="100" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd3">인사 DB</text>
+      <text x="615" y="120" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd3">인물정보</text>
+      <!-- Arrows -->
+      <line class="arrow-line line ln1" x1="170" y1="105" x2="268" y2="105"/>
+      <line class="arrow-line-green line ln2" x1="440" y1="105" x2="538" y2="105"/>
+      <!-- Return arrow -->
+      <path class="arrow-line line ln3" d="M355,142 L355,185 L95,185 L95,142" marker-end="url(#arrowBlue)" style="stroke-dasharray:6 4"/>
+      <!-- JSON result -->
+      <rect class="box-fill node nd5" x="160" y="168" width="220" height="36" rx="8"/>
+      <text x="270" y="191" text-anchor="middle" fill="var(--yellow)" font-family="var(--mono)" font-size="12" class="node nd5">{name, dept, email, ...}</text>
+      <!-- Token label -->
+      <text x="270" y="162" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">토큰 + 인물정보 JSON</text>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 6: SSO 3 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO</span>
+  <h2 class="anim anim-d1">SSO 연동 신청 & 팁</h2>
+  <div class="grid grid-2 anim anim-d2" style="margin-top:.8em">
+    <div class="box blue">
+      <div class="box-title">연동 신청 절차</div>
+      <ul style="font-size:.9em">
+        <li>사내 포털에서 API 사용 신청</li>
+        <li>서비스 등록 및 Callback URL 설정</li>
+        <li>Client ID / Secret 발급</li>
+        <li>토큰 갱신 로직 구현</li>
+      </ul>
+    </div>
+    <div class="box green">
+      <div class="box-title" style="color:var(--green2)">실전 팁</div>
+      <ul style="font-size:.9em">
+        <li>토큰 캐싱으로 불필요한 재인증 방지</li>
+        <li>만료 시간 여유 두고 갱신</li>
+        <li>에러 시 자동 재시도 로직 필수</li>
+        <li>환경변수로 Credential 관리</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 7: AI 기초 1 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">AI 기초</span>
+  <h2 class="anim anim-d1">"학습"이라는 단어의 모호성</h2>
+  <div class="divider anim anim-d2"></div>
+  <table class="anim anim-d3" style="margin-top:1em">
+    <tr><th>구분</th><th>의미</th><th>우리가 하는 것?</th></tr>
+    <tr><td><strong class="accent">모델 학습 (Pre-training)</strong></td><td>수조 토큰으로 처음부터 훈련<br>수억 달러 + 수천 GPU</td><td class="red">X</td></tr>
+    <tr><td><strong class="accent">파인튜닝 (Fine-tuning)</strong></td><td>기존 모델에 추가 데이터로 조정<br>전문성 부여</td><td class="yellow">드물게</td></tr>
+    <tr><td><strong class="accent">RAG + 프롬프트</strong></td><td>외부 지식 주입 + 지시문 설계<br>코드로 구현</td><td style="color:var(--green2);font-weight:700;font-size:1.1em">&#10004; 이것!</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ==================== SLIDE 8: AI 기초 2 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">AI 기초</span>
+  <h2 class="anim anim-d1">사내에서의 AI 활용</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="quote anim anim-d3" style="margin-top:.8em">
+    "우리는 모델을 만드는 것이 아니라,<br>
+    모델을 <strong class="accent">잘 사용하는 방법</strong>을 만드는 것이다."
+  </div>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:1.2em">
+    <div class="card" style="border-top:2px solid var(--green)">
+      <h4 style="color:var(--green2)">RAG</h4>
+      <p>사내 문서/DB에서<br>관련 정보를 검색해<br>LLM에 주입</p>
+    </div>
+    <div class="card" style="border-top:2px solid var(--blue)">
+      <h4>프롬프트 엔지니어링</h4>
+      <p>정확한 지시문으로<br>원하는 출력 형태<br>유도</p>
+    </div>
+    <div class="card" style="border-top:2px solid var(--purple)">
+      <h4 style="color:var(--purple2)">Tool 연동</h4>
+      <p>API/DB/파일 등<br>외부 도구와<br>LLM 연결</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 9: 프롬프트 1 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트</span>
+  <h2 class="anim anim-d1">결국 프롬프트가 핵심</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em;margin-top:.6em">같은 모델이라도 프롬프트에 따라 <strong class="accent">성능이 극적으로</strong> 달라진다</p>
+  <div class="grid grid-2 anim anim-d4" style="margin-top:1em">
+    <div class="box red">
+      <div class="box-title" style="color:var(--red)">나쁜 프롬프트</div>
+      <p style="font-size:.9em;color:var(--text2)">"이 코드 고쳐줘"</p>
+      <p style="font-size:.8em;color:var(--text3);margin-top:.3em">&#8594; 모호함, 맥락 부족, 기대 출력 불명확</p>
+    </div>
+    <div class="box green">
+      <div class="box-title" style="color:var(--green2)">좋은 프롬프트</div>
+      <p style="font-size:.9em;color:var(--text2)">"아래 Python 함수에서 TypeError가 발생합니다.<br>입력 타입 검증을 추가하고, 수정된 코드만 반환하세요."</p>
+      <p style="font-size:.8em;color:var(--text3);margin-top:.3em">&#8594; 구체적, 맥락 포함, 출력 형태 명시</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 10: 프롬프트 2 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트</span>
+  <h2 class="anim anim-d1">system / user / assistant 역할</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="cm"># OpenAI 호환 메시지 구조</span>
+<span class="ln"> 2</span>messages = [
+<span class="ln"> 3</span>    {<span class="st">"role"</span>: <span class="st">"system"</span>,    <span class="cm"># 시스템 지시문 (성격, 규칙, 형식)</span>
+<span class="ln"> 4</span>     <span class="st">"content"</span>: <span class="st">"당신은 사내 업무 도우미입니다. 한국어로 답변하세요."</span>},
+<span class="ln"> 5</span>
+<span class="ln"> 6</span>    {<span class="st">"role"</span>: <span class="st">"user"</span>,      <span class="cm"># 사용자 입력</span>
+<span class="ln"> 7</span>     <span class="st">"content"</span>: <span class="st">"오늘 회의실 예약 현황 알려줘"</span>},
+<span class="ln"> 8</span>
+<span class="ln"> 9</span>    {<span class="st">"role"</span>: <span class="st">"assistant"</span>, <span class="cm"># AI 응답 (또는 few-shot 예시)</span>
+<span class="ln">10</span>     <span class="st">"content"</span>: <span class="st">"3층 A회의실: 10:00-11:00 예약됨..."</span>}
+<span class="ln">11</span>]<span class="lang-tag">python</span></code></pre>
+  <div class="box blue anim anim-d3" style="font-size:.92em">
+    <strong>핵심:</strong> system 메시지에 역할, 제약조건, 출력 형식을 명확히 정의하면 일관된 결과를 얻을 수 있다.
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 11: 컨텍스트 엔지니어링 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트</span>
+  <h2 class="anim anim-d1">컨텍스트 엔지니어링</h2>
+  <p class="anim anim-d2">2026 트렌드 &mdash; "프롬프트"를 넘어 "컨텍스트"를 설계하라</p>
+  <div class="quote anim anim-d3" style="margin:.8em auto">
+    "The art of filling the context window with the right information<br>for the next step."
+    <div class="author">&mdash; Andrej Karpathy</div>
+  </div>
+  <div class="grid grid-4 anim anim-d4" style="margin-top:.8em">
+    <div class="card"><h4>System<br>Prompt</h4><p style="font-size:.82em">역할과 규칙</p></div>
+    <div class="card"><h4 style="color:var(--green2)">RAG<br>결과</h4><p style="font-size:.82em">검색된 문서</p></div>
+    <div class="card"><h4 style="color:var(--yellow)">Tool<br>결과</h4><p style="font-size:.82em">API 응답 데이터</p></div>
+    <div class="card"><h4 style="color:var(--purple2)">대화<br>히스토리</h4><p style="font-size:.82em">이전 맥락 유지</p></div>
+  </div>
+  <p class="anim anim-d5" style="margin-top:.8em;font-size:.95em">무엇을 넣고, 무엇을 <strong class="red">빼는지</strong>가 성능을 결정한다</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 12: API 기초 - 애니메이션 다이어그램 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">API</span>
+  <h2 class="anim anim-d1">REST API란?</h2>
+  <p class="anim anim-d2">HTTP 요청을 보내면, 서버가 응답하는 구조</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
+    <svg class="diagram-svg" viewBox="0 0 700 200" width="700" height="200">
+      <!-- Client -->
+      <rect class="box-accent node nd1" x="30" y="30" width="140" height="55" rx="10"/>
+      <text x="100" y="55" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">Client</text>
+      <text x="100" y="72" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">(Python)</text>
+      <!-- Server -->
+      <rect class="box-green node nd2" x="500" y="30" width="140" height="55" rx="10"/>
+      <text x="570" y="55" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd2">Server</text>
+      <text x="570" y="72" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">(API)</text>
+      <!-- Request arrow -->
+      <line class="arrow-line line ln1" x1="172" y1="48" x2="498" y2="48"/>
+      <rect class="box-fill node nd3" x="260" y="28" width="150" height="40" rx="8"/>
+      <text x="335" y="48" text-anchor="middle" fill="var(--yellow)" font-size="12" font-weight="600" class="node nd3">HTTP POST</text>
+      <text x="335" y="62" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON body</text>
+      <!-- Response arrow -->
+      <line x1="498" y1="70" x2="172" y2="70" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln2"/>
+      <!-- Client bottom -->
+      <rect class="box-accent node nd4" x="30" y="120" width="140" height="55" rx="10"/>
+      <text x="100" y="148" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd4">Client</text>
+      <!-- Server bottom -->
+      <rect class="box-green node nd5" x="500" y="120" width="140" height="55" rx="10"/>
+      <text x="570" y="148" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd5">Server</text>
+      <!-- Response label -->
+      <rect class="box-fill node nd6" x="245" y="128" width="180" height="40" rx="8"/>
+      <text x="335" y="148" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd6">HTTP 200 OK</text>
+      <text x="335" y="162" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">JSON response</text>
+      <line x1="498" y1="150" x2="172" y2="150" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln3"/>
+    </svg>
+  </div>
+  <pre class="anim anim-d4" style="font-size:.78em"><code><span class="ln">1</span><span class="kw">import</span> requests
+<span class="ln">2</span>
+<span class="ln">3</span>response = requests.<span class="fn">post</span>(
+<span class="ln">4</span>    <span class="st">"https://api.example.com/v1/chat"</span>,
+<span class="ln">5</span>    <span class="nb">headers</span>={<span class="st">"Authorization"</span>: <span class="st">f"Bearer </span>{api_key}<span class="st">"</span>},
+<span class="ln">6</span>    <span class="nb">json</span>={<span class="st">"messages"</span>: messages}
+<span class="ln">7</span>)
+<span class="ln">8</span>result = response.<span class="fn">json</span>()<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 13: API 기초 2 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">API</span>
+  <h2 class="anim anim-d1">API를 Tool로 래핑하는 법</h2>
+  <p class="anim anim-d2">함수 + JSON Schema = LLM이 호출할 수 있는 Tool</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="cm"># 1. 일반 Python 함수 작성</span>
+<span class="ln"> 2</span><span class="kw">def</span> <span class="fn">get_weather</span>(city: <span class="nb">str</span>) -> <span class="nb">dict</span>:
+<span class="ln"> 3</span>    <span class="st">"""도시의 현재 날씨를 조회합니다."""</span>
+<span class="ln"> 4</span>    resp = requests.<span class="fn">get</span>(<span class="st">f"https://weather.api/</span>{city}<span class="st">"</span>)
+<span class="ln"> 5</span>    <span class="kw">return</span> resp.<span class="fn">json</span>()
+<span class="ln"> 6</span>
+<span class="ln"> 7</span><span class="cm"># 2. JSON Schema로 설명 (LLM이 이해하는 형태)</span>
+<span class="ln"> 8</span>tool_schema = {
+<span class="ln"> 9</span>    <span class="st">"type"</span>: <span class="st">"function"</span>,
+<span class="ln">10</span>    <span class="st">"function"</span>: {
+<span class="ln">11</span>        <span class="st">"name"</span>: <span class="st">"get_weather"</span>,
+<span class="ln">12</span>        <span class="st">"description"</span>: <span class="st">"도시의 현재 날씨를 조회합니다"</span>,
+<span class="ln">13</span>        <span class="st">"parameters"</span>: {
+<span class="ln">14</span>            <span class="st">"type"</span>: <span class="st">"object"</span>,
+<span class="ln">15</span>            <span class="st">"properties"</span>: {
+<span class="ln">16</span>                <span class="st">"city"</span>: {<span class="st">"type"</span>: <span class="st">"string"</span>, <span class="st">"description"</span>: <span class="st">"도시명"</span>}
+<span class="ln">17</span>            },
+<span class="ln">18</span>            <span class="st">"required"</span>: [<span class="st">"city"</span>]
+<span class="ln">19</span>        }
+<span class="ln">20</span>    }
+<span class="ln">21</span>}<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 14: OpenAI Compatible - Gateway 다이어그램 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
+  <h2 class="anim anim-d1">OpenAI Compatible 표준이란?</h2>
+  <p class="anim anim-d2">OpenAI가 정의한 API 인터페이스를 <strong class="accent">다른 모델/서비스</strong>도 동일하게 지원</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
+    <svg class="diagram-svg" viewBox="0 0 760 220" width="760" height="220">
+      <!-- Your Code -->
+      <rect class="box-accent node nd1" x="20" y="70" width="160" height="70" rx="12"/>
+      <text x="100" y="100" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="14" class="node nd1">동일한 코드</text>
+      <text x="100" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">base_url 만 변경</text>
+      <!-- Gateway -->
+      <rect class="box-purple node nd2" x="270" y="55" width="170" height="100" rx="12"/>
+      <text x="355" y="90" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="14" class="node nd2">Gateway</text>
+      <text x="355" y="110" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">OpenAI Compatible</text>
+      <text x="355" y="126" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">인터페이스</text>
+      <!-- Arrow code->gateway -->
+      <line class="arrow-line line ln1" x1="182" y1="105" x2="268" y2="105"/>
+      <!-- LLMs -->
+      <rect class="box-fill node nd3" x="540" y="10" width="160" height="42" rx="8"/>
+      <text x="620" y="36" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd3">OpenAI GPT-4o</text>
+      <rect class="box-fill node nd4" x="540" y="65" width="160" height="42" rx="8"/>
+      <text x="620" y="91" text-anchor="middle" fill="var(--orange)" font-weight="600" font-size="13" class="node nd4">Claude Sonnet</text>
+      <rect class="box-fill node nd5" x="540" y="120" width="160" height="42" rx="8"/>
+      <text x="620" y="146" text-anchor="middle" fill="var(--cyan)" font-weight="600" font-size="13" class="node nd5">Gemini</text>
+      <rect class="box-fill node nd6" x="540" y="175" width="160" height="42" rx="8"/>
+      <text x="620" y="201" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="13" class="node nd6">Llama / Local</text>
+      <!-- Arrows -->
+      <path class="arrow-line-purple line ln2" d="M442,85 Q490,35 538,31"/>
+      <path class="arrow-line-purple line ln3" d="M442,95 L538,86"/>
+      <path class="arrow-line-purple line ln4" d="M442,110 L538,141"/>
+      <path class="arrow-line-purple line ln5" d="M442,120 Q490,175 538,196"/>
+    </svg>
+  </div>
+  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.92em">
+    <strong>핵심 가치:</strong> 모델을 바꿔도 코드 변경이 최소화된다. <code>base_url</code>만 변경하면 된다.
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 15: OpenAI Compatible 2 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
+  <h2 class="anim anim-d1">base_url / api_key 구조</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="cm"># OpenAI 직접 사용</span>
+<span class="ln"> 4</span>client_openai = <span class="fn">OpenAI</span>(
+<span class="ln"> 5</span>    <span class="nb">api_key</span>=<span class="st">"sk-..."</span>,
+<span class="ln"> 6</span>    <span class="cm"># base_url 기본값: https://api.openai.com/v1</span>
+<span class="ln"> 7</span>)
+<span class="ln"> 8</span>
+<span class="ln"> 9</span><span class="cm"># 사내 Gateway 사용 (같은 코드!)</span>
+<span class="ln">10</span>client_gateway = <span class="fn">OpenAI</span>(
+<span class="ln">11</span>    <span class="nb">base_url</span>=<span class="st">"https://gateway.company.com/v1"</span>,
+<span class="ln">12</span>    <span class="nb">api_key</span>=<span class="st">"company-key-..."</span>,
+<span class="ln">13</span>)
+<span class="ln">14</span>
+<span class="ln">15</span><span class="cm"># vLLM / Ollama 로컬 사용 (역시 같은 코드!)</span>
+<span class="ln">16</span>client_local = <span class="fn">OpenAI</span>(
+<span class="ln">17</span>    <span class="nb">base_url</span>=<span class="st">"http://localhost:8000/v1"</span>,
+<span class="ln">18</span>    <span class="nb">api_key</span>=<span class="st">"not-needed"</span>,
+<span class="ln">19</span>)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 16: OpenAI Compatible 3 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
+  <h2 class="anim anim-d1">사내 Gateway 연결 코드 예시</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="ln"> 2</span>
+<span class="ln"> 3</span>client = <span class="fn">OpenAI</span>(
+<span class="ln"> 4</span>    <span class="nb">base_url</span>=<span class="st">"https://gateway.company.com/v1"</span>,
+<span class="ln"> 5</span>    <span class="nb">api_key</span>=os.environ[<span class="st">"GATEWAY_API_KEY"</span>],
+<span class="ln"> 6</span>)
+<span class="ln"> 7</span>
+<span class="ln"> 8</span>response = client.chat.completions.<span class="fn">create</span>(
+<span class="ln"> 9</span>    <span class="nb">model</span>=<span class="st">"claude-sonnet-4-20250514"</span>,  <span class="cm"># Gateway가 라우팅</span>
+<span class="ln">10</span>    <span class="nb">messages</span>=[
+<span class="ln">11</span>        {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"사내 업무 도우미입니다."</span>},
+<span class="ln">12</span>        {<span class="st">"role"</span>: <span class="st">"user"</span>,   <span class="st">"content"</span>: <span class="st">"오늘 일정 알려줘"</span>},
+<span class="ln">13</span>    ],
+<span class="ln">14</span>    <span class="nb">temperature</span>=<span class="nu">0.7</span>,
+<span class="ln">15</span>    <span class="nb">max_tokens</span>=<span class="nu">1024</span>,
+<span class="ln">16</span>)
+<span class="ln">17</span>
+<span class="ln">18</span><span class="nb">print</span>(response.choices[<span class="nu">0</span>].message.content)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 17: Structured Output 1 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output</span>
+  <h2 class="anim anim-d1">JSON mode vs Structured Output</h2>
+  <div class="divider anim anim-d2"></div>
+  <table class="anim anim-d3" style="margin-top:.8em">
+    <tr><th></th><th>JSON Mode</th><th>Structured Output</th></tr>
+    <tr><td><strong>보장 수준</strong></td><td>JSON 형태만 보장<br>스키마 준수 X</td><td>JSON Schema 완전 준수<br>100% 보장</td></tr>
+    <tr><td><strong>설정 방법</strong></td><td style="font-family:var(--mono);font-size:.85em">response_format=<br>{"type":"json_object"}</td><td style="font-family:var(--mono);font-size:.85em">response_format=<br>{"type":"json_schema",...}</td></tr>
+    <tr><td><strong>활용</strong></td><td>간단한 JSON 응답</td><td>복잡한 구조화 데이터 추출</td></tr>
+    <tr><td><strong>신뢰도</strong></td><td class="yellow">중간</td><td class="green">높음</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ==================== SLIDE 18: Structured Output 2 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output</span>
+  <h2 class="anim anim-d1">JSON Schema로 응답 구조 강제하기</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span>response = client.chat.completions.<span class="fn">create</span>(
+<span class="ln"> 2</span>    <span class="nb">model</span>=<span class="st">"gpt-4o"</span>,
+<span class="ln"> 3</span>    <span class="nb">messages</span>=[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"서울 날씨 분석해줘"</span>}],
+<span class="ln"> 4</span>    <span class="nb">response_format</span>={
+<span class="ln"> 5</span>        <span class="st">"type"</span>: <span class="st">"json_schema"</span>,
+<span class="ln"> 6</span>        <span class="st">"json_schema"</span>: {
+<span class="ln"> 7</span>            <span class="st">"name"</span>: <span class="st">"weather_analysis"</span>,
+<span class="ln"> 8</span>            <span class="st">"schema"</span>: {
+<span class="ln"> 9</span>                <span class="st">"type"</span>: <span class="st">"object"</span>,
+<span class="ln">10</span>                <span class="st">"properties"</span>: {
+<span class="ln">11</span>                    <span class="st">"city"</span>:    {<span class="st">"type"</span>: <span class="st">"string"</span>},
+<span class="ln">12</span>                    <span class="st">"temp_c"</span>:  {<span class="st">"type"</span>: <span class="st">"number"</span>},
+<span class="ln">13</span>                    <span class="st">"summary"</span>: {<span class="st">"type"</span>: <span class="st">"string"</span>},
+<span class="ln">14</span>                },
+<span class="ln">15</span>                <span class="st">"required"</span>: [<span class="st">"city"</span>, <span class="st">"temp_c"</span>, <span class="st">"summary"</span>]
+<span class="ln">16</span>            }
+<span class="ln">17</span>        }
+<span class="ln">18</span>    }
+<span class="ln">19</span>)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 19: Tool Calling 흐름 다이어그램 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output</span>
+  <h2 class="anim anim-d1">Tool Calling 흐름</h2>
+  <p class="anim anim-d2">LLM이 직접 함수를 "호출"하는 것이 아니라, <strong class="accent">호출 의도를 JSON으로 표현</strong></p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
+    <svg class="diagram-svg" viewBox="0 0 820 160" width="820" height="160">
+      <!-- Step 1: Define -->
+      <rect class="box-accent node nd1" x="10" y="40" width="120" height="70" rx="10"/>
+      <text x="70" y="68" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd1">1. Define</text>
+      <text x="70" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">Tool Schema</text>
+      <text x="70" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">함수 설명서</text>
+      <!-- Step 2: Send -->
+      <rect class="box-fill node nd2" x="170" y="40" width="120" height="70" rx="10"/>
+      <text x="230" y="68" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="13" class="node nd2">2. Send</text>
+      <text x="230" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">LLM에 전송</text>
+      <text x="230" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">+ messages</text>
+      <!-- Step 3: Parse -->
+      <rect class="box-purple node nd3" x="330" y="40" width="120" height="70" rx="10"/>
+      <text x="390" y="68" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="13" class="node nd3">3. LLM 판단</text>
+      <text x="390" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">tool_calls</text>
+      <text x="390" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON 생성</text>
+      <!-- Step 4: Execute -->
+      <rect class="box-green node nd4" x="490" y="40" width="120" height="70" rx="10"/>
+      <text x="550" y="68" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd4">4. Execute</text>
+      <text x="550" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">우리 코드가</text>
+      <text x="550" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">실제 실행</text>
+      <!-- Step 5: Return -->
+      <rect class="box-yellow node nd5" x="650" y="40" width="120" height="70" rx="10"/>
+      <text x="710" y="68" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="13" class="node nd5">5. Return</text>
+      <text x="710" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">결과를 LLM에</text>
+      <text x="710" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">다시 전달</text>
+      <!-- Arrows -->
+      <line class="arrow-line line ln1" x1="132" y1="75" x2="168" y2="75"/>
+      <line class="arrow-line line ln2" x1="292" y1="75" x2="328" y2="75"/>
+      <line class="arrow-line-purple line ln3" x1="452" y1="75" x2="488" y2="75"/>
+      <line class="arrow-line-green line ln4" x1="612" y1="75" x2="648" y2="75"/>
+    </svg>
+  </div>
+  <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:.9em">
+    <strong>중요:</strong> LLM은 함수를 실행하지 않는다. "이 함수를 이 인자로 호출해달라"는 <strong>요청</strong>을 생성할 뿐이다. 실행은 우리 코드의 몫!
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 20: tool_choice ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output</span>
+  <h2 class="anim anim-d1">tool_choice 옵션</h2>
+  <div class="divider anim anim-d2"></div>
+  <table class="anim anim-d3" style="margin-top:.8em">
+    <tr><th>옵션</th><th>동작</th><th>사용 시기</th></tr>
+    <tr>
+      <td><code class="accent">"auto"</code></td>
+      <td>LLM이 알아서 판단<br>Tool 호출 or 텍스트 응답</td>
+      <td>일반적인 대화형 Agent</td>
+    </tr>
+    <tr>
+      <td><code class="green">"required"</code></td>
+      <td>반드시 하나 이상의 Tool 호출<br>텍스트만 응답 불가</td>
+      <td>무조건 액션이 필요한 경우</td>
+    </tr>
+    <tr>
+      <td><code class="red">"none"</code></td>
+      <td>Tool 호출 금지<br>텍스트 응답만 가능</td>
+      <td>최종 답변 생성 단계</td>
+    </tr>
+    <tr>
+      <td><code class="purple" style="font-size:.85em">{"type":"function",<br>"function":{"name":"X"}}</code></td>
+      <td>특정 Tool만 호출 강제</td>
+      <td>확정된 워크플로우</td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ==================== SLIDE 21: MCP 1 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP</span>
+  <h2 class="anim anim-d1">MCP란?</h2>
+  <p class="anim anim-d2">Model Context Protocol &mdash; 2026 업계 표준</p>
+  <div class="quote anim anim-d3" style="margin:.8em auto">
+    "USB-C for AI" &mdash; AI 도구 연결의 표준 인터페이스
+  </div>
+  <div class="grid grid-2 anim anim-d4" style="margin-top:.8em">
+    <div class="box red">
+      <div class="box-title" style="color:var(--red)">Before MCP</div>
+      <p style="font-size:.88em">각 AI 앱마다 별도 Tool 구현<br>N개 앱 x M개 도구 = <strong>N*M</strong> 통합 필요</p>
+    </div>
+    <div class="box green">
+      <div class="box-title" style="color:var(--green2)">After MCP</div>
+      <p style="font-size:.88em">MCP 서버 1개 만들면 모든 AI 앱에서 사용<br><strong>N + M</strong> 통합으로 충분</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 22: MCP 아키텍처 다이어그램 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP</span>
+  <h2 class="anim anim-d1">MCP 아키텍처</h2>
+  <p class="anim anim-d2">Client &#8596; Server 구조, 3가지 기본 요소</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
+    <svg class="diagram-svg" viewBox="0 0 780 280" width="780" height="280">
+      <!-- MCP Client -->
+      <rect class="box-accent node nd1" x="30" y="80" width="200" height="100" rx="14"/>
+      <text x="130" y="115" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="16" class="node nd1">MCP Client</text>
+      <text x="130" y="140" text-anchor="middle" fill="var(--text3)" font-size="12" class="node nd1">Claude, Cursor,</text>
+      <text x="130" y="156" text-anchor="middle" fill="var(--text3)" font-size="12" class="node nd1">VS Code, etc.</text>
+      <!-- Bidirectional arrow -->
+      <line class="arrow-line line ln1" x1="232" y1="120" x2="338" y2="120"/>
+      <line x1="338" y1="140" x2="232" y2="140" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln1" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.45s"/>
+      <text x="285" y="115" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON-RPC</text>
+      <!-- MCP Server outline -->
+      <rect class="box-fill node nd2" x="340" y="20" width="410" height="240" rx="14" style="stroke:rgba(16,185,129,.3)"/>
+      <text x="545" y="48" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd2">MCP Server</text>
+      <!-- Tool box -->
+      <rect class="box-accent node nd4" x="370" y="70" width="160" height="70" rx="10"/>
+      <text x="450" y="98" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd4">Tool</text>
+      <text x="450" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd4">LLM이 호출 가능한 함수</text>
+      <text x="450" y="132" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">예: search_docs()</text>
+      <!-- Resource box -->
+      <rect class="box-green node nd5" x="560" y="70" width="160" height="70" rx="10"/>
+      <text x="640" y="98" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd5">Resource</text>
+      <text x="640" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd5">LLM에 제공할 데이터</text>
+      <text x="640" y="132" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">예: file://config.yaml</text>
+      <!-- Prompt box -->
+      <rect class="box-purple node nd6" x="465" y="160" width="160" height="70" rx="10"/>
+      <text x="545" y="188" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="14" class="node nd6">Prompt</text>
+      <text x="545" y="208" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd6">미리 정의된 템플릿</text>
+      <text x="545" y="222" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">예: summarize_code</text>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 23: MCP 3 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP</span>
+  <h2 class="anim anim-d1">FastMCP 서버 코드 예시</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="kw">from</span> fastmcp <span class="kw">import</span> FastMCP
+<span class="ln"> 2</span>
+<span class="ln"> 3</span>mcp = <span class="fn">FastMCP</span>(<span class="st">"사내 도구 서버"</span>)
+<span class="ln"> 4</span>
+<span class="ln"> 5</span><span class="dc">@mcp.tool()</span>
+<span class="ln"> 6</span><span class="kw">def</span> <span class="fn">search_employee</span>(name: <span class="nb">str</span>) -> <span class="nb">dict</span>:
+<span class="ln"> 7</span>    <span class="st">"""직원 이름으로 인사정보를 검색합니다."""</span>
+<span class="ln"> 8</span>    <span class="cm"># SSO API 호출</span>
+<span class="ln"> 9</span>    result = sso_api.<span class="fn">search</span>(name)
+<span class="ln">10</span>    <span class="kw">return</span> {<span class="st">"name"</span>: result.name, <span class="st">"dept"</span>: result.dept}
+<span class="ln">11</span>
+<span class="ln">12</span><span class="dc">@mcp.tool()</span>
+<span class="ln">13</span><span class="kw">def</span> <span class="fn">book_meeting_room</span>(room: <span class="nb">str</span>, time: <span class="nb">str</span>) -> <span class="nb">str</span>:
+<span class="ln">14</span>    <span class="st">"""회의실을 예약합니다."""</span>
+<span class="ln">15</span>    <span class="kw">return</span> booking_api.<span class="fn">reserve</span>(room, time)
+<span class="ln">16</span>
+<span class="ln">17</span><span class="cm"># 서버 실행</span>
+<span class="ln">18</span>mcp.<span class="fn">run</span>()  <span class="cm"># stdio 또는 SSE 모드로 실행</span><span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 24: MCP + LLM 연동 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP</span>
+  <h2 class="anim anim-d1">MCP + LLM 연동 흐름도</h2>
+  <div class="anim anim-d2 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 780 320" width="780" height="320">
+      <!-- User question -->
+      <rect class="box-fill node nd1" x="250" y="10" width="280" height="36" rx="8"/>
+      <text x="390" y="33" text-anchor="middle" fill="var(--text)" font-size="12" class="node nd1">사용자: "김철수 부서 알려줘"</text>
+      <!-- LLM judgment -->
+      <rect class="box-accent node nd2" x="270" y="68" width="240" height="45" rx="10"/>
+      <text x="390" y="88" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd2">LLM 판단</text>
+      <text x="390" y="104" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">tools 목록에 search_employee 있음</text>
+      <line class="arrow-line line ln1" x1="390" y1="46" x2="390" y2="66"/>
+      <!-- tool_call -->
+      <rect class="box-yellow node nd3" x="220" y="135" width="340" height="36" rx="8"/>
+      <text x="390" y="158" text-anchor="middle" fill="var(--yellow)" font-family="var(--mono)" font-size="11" class="node nd3">tool_call: search_employee(name="김철수")</text>
+      <line class="arrow-line line ln2" x1="390" y1="113" x2="390" y2="133"/>
+      <!-- MCP Client/Server -->
+      <rect class="box-fill node nd4" x="100" y="195" width="160" height="45" rx="10"/>
+      <text x="180" y="222" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="13" class="node nd4">MCP Client</text>
+      <rect class="box-green node nd5" x="500" y="195" width="160" height="45" rx="10"/>
+      <text x="580" y="218" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd5">MCP Server</text>
+      <text x="580" y="232" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">(실제 실행)</text>
+      <line class="arrow-line line ln3" x1="390" y1="171" x2="180" y2="193"/>
+      <line class="arrow-line-green line ln4" x1="262" y1="217" x2="498" y2="217"/>
+      <text x="380" y="210" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">JSON-RPC</text>
+      <!-- Return -->
+      <line x1="498" y1="230" x2="262" y2="230" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln5" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:1.05s"/>
+      <!-- LLM response -->
+      <rect class="box-accent node nd7" x="210" y="268" width="360" height="40" rx="10"/>
+      <text x="390" y="285" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd7">LLM 응답</text>
+      <text x="390" y="300" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd7">"김철수님은 개발1팀 소속입니다."</text>
+      <line class="arrow-line line ln6" x1="180" y1="242" x2="390" y2="266"/>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 25: 브라우저 자동화 비교 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 자동화</span>
+  <h2 class="anim anim-d1">브라우저 자동화 기술 비교</h2>
+  <table class="anim anim-d2" style="margin-top:.6em;font-size:.86em">
+    <tr><th>기술</th><th>방식</th><th>장점</th><th>단점</th></tr>
+    <tr>
+      <td><strong class="accent">CDP</strong></td>
+      <td>Chrome DevTools Protocol<br>WebSocket 직접 통신</td>
+      <td>저수준 제어<br>네트워크 감시 가능</td>
+      <td>Chrome 전용<br>복잡한 API</td>
+    </tr>
+    <tr>
+      <td><strong class="green">Playwright</strong></td>
+      <td>브라우저 엔진 직접 제어<br>고수준 API</td>
+      <td>멀티브라우저<br>자동 대기, 안정적</td>
+      <td>별도 브라우저 설치</td>
+    </tr>
+    <tr>
+      <td><strong class="purple">COM</strong></td>
+      <td>Windows COM 자동화</td>
+      <td>레거시 시스템 대응</td>
+      <td>Windows 전용, 구식</td>
+    </tr>
+    <tr>
+      <td><strong class="orange">iframe</strong></td>
+      <td>웹 내 임베디드 프레임</td>
+      <td>기존 웹 앱 재사용</td>
+      <td>CORS/보안 제약</td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ==================== SLIDE 26: CDP 구조 다이어그램 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 자동화</span>
+  <h2 class="anim anim-d1">CDP (Chrome DevTools Protocol)</h2>
+  <p class="anim anim-d2">Chrome과 WebSocket으로 직접 대화하는 저수준 프로토콜</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 780 200" width="780" height="200">
+      <!-- Browser -->
+      <rect class="box-accent node nd1" x="20" y="40" width="180" height="120" rx="14"/>
+      <text x="110" y="72" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="15" class="node nd1">Chrome</text>
+      <text x="110" y="92" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">Browser</text>
+      <!-- Domain boxes inside browser -->
+      <rect x="35" y="105" width="65" height="28" rx="5" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd4"/>
+      <text x="67" y="123" text-anchor="middle" fill="var(--blue2)" font-size="9" class="node nd4">Page</text>
+      <rect x="107" y="105" width="65" height="28" rx="5" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd5"/>
+      <text x="139" y="123" text-anchor="middle" fill="var(--blue2)" font-size="9" class="node nd5">DOM</text>
+      <rect x="40" y="138" width="55" height="20" rx="4" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd6"/>
+      <text x="67" y="152" text-anchor="middle" fill="var(--text3)" font-size="8" class="node nd6">Network</text>
+      <rect x="102" y="138" width="55" height="20" rx="4" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd7"/>
+      <text x="129" y="152" text-anchor="middle" fill="var(--text3)" font-size="8" class="node nd7">Runtime</text>
+      <!-- WebSocket -->
+      <rect class="box-yellow node nd2" x="290" y="60" width="180" height="80" rx="12"/>
+      <text x="380" y="92" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="14" class="node nd2">WebSocket</text>
+      <text x="380" y="112" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">DevTools Protocol</text>
+      <text x="380" y="128" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">ws://localhost:9222</text>
+      <!-- Your Code -->
+      <rect class="box-green node nd3" x="560" y="40" width="180" height="120" rx="14"/>
+      <text x="650" y="80" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="15" class="node nd3">Your Code</text>
+      <text x="650" y="100" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd3">Python / Node.js</text>
+      <text x="650" y="130" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Page.navigate()</text>
+      <text x="650" y="145" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Runtime.evaluate()</text>
+      <!-- Arrows -->
+      <line class="arrow-line line ln1" x1="202" y1="90" x2="288" y2="90"/>
+      <line x1="288" y1="110" x2="202" y2="110" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln2"/>
+      <line class="arrow-line-green line ln3" x1="472" y1="90" x2="558" y2="90"/>
+      <line x1="558" y1="110" x2="472" y2="110" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4"/>
+    </svg>
+  </div>
+  <pre class="anim anim-d4" style="font-size:.76em;max-width:700px"><code><span class="ln">1</span><span class="kw">await</span> ws.<span class="fn">send</span>(json.<span class="fn">dumps</span>({<span class="st">"id"</span>:<span class="nu">1</span>, <span class="st">"method"</span>:<span class="st">"Page.navigate"</span>, <span class="st">"params"</span>:{<span class="st">"url"</span>:url}}))<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 27: Playwright ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 자동화</span>
+  <h2 class="anim anim-d1">Playwright 사용법 핵심</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="kw">from</span> playwright.sync_api <span class="kw">import</span> sync_playwright
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="kw">with</span> <span class="fn">sync_playwright</span>() <span class="kw">as</span> p:
+<span class="ln"> 4</span>    browser = p.chromium.<span class="fn">launch</span>(<span class="nb">headless</span>=<span class="kw">True</span>)
+<span class="ln"> 5</span>    page = browser.<span class="fn">new_page</span>()
+<span class="ln"> 6</span>
+<span class="ln"> 7</span>    <span class="cm"># 네비게이션</span>
+<span class="ln"> 8</span>    page.<span class="fn">goto</span>(<span class="st">"https://search.example.com"</span>)
+<span class="ln"> 9</span>
+<span class="ln">10</span>    <span class="cm"># 요소 조작</span>
+<span class="ln">11</span>    page.<span class="fn">fill</span>(<span class="st">"input[name='query']"</span>, <span class="st">"LLM Agent"</span>)
+<span class="ln">12</span>    page.<span class="fn">click</span>(<span class="st">"button[type='submit']"</span>)
+<span class="ln">13</span>
+<span class="ln">14</span>    <span class="cm"># 대기 (자동 재시도)</span>
+<span class="ln">15</span>    page.<span class="fn">wait_for_selector</span>(<span class="st">".results"</span>)
+<span class="ln">16</span>
+<span class="ln">17</span>    <span class="cm"># 데이터 추출</span>
+<span class="ln">18</span>    titles = page.<span class="fn">query_selector_all</span>(<span class="st">".result-title"</span>)
+<span class="ln">19</span>    <span class="kw">for</span> t <span class="kw">in</span> titles:
+<span class="ln">20</span>        <span class="nb">print</span>(t.<span class="fn">text_content</span>())
+<span class="ln">21</span>
+<span class="ln">22</span>    browser.<span class="fn">close</span>()<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 28: iframe/COM ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 자동화</span>
+  <h2 class="anim anim-d1">iframe / COM 제어 개요</h2>
+  <div class="grid grid-2 anim anim-d2" style="margin-top:.6em">
+    <div class="box purple">
+      <div class="box-title" style="color:var(--purple2)">iframe 제어</div>
+      <pre style="font-size:.78em;border:none;background:transparent;padding:.3em 0;margin:0;box-shadow:none"><code><span class="cm"># Playwright로 iframe 접근</span>
+frame = page.<span class="fn">frame_locator</span>(
+    <span class="st">"iframe#app-frame"</span>
+)
+frame.<span class="fn">locator</span>(<span class="st">"button"</span>).<span class="fn">click</span>()</code></pre>
+    </div>
+    <div class="box yellow">
+      <div class="box-title" style="color:var(--yellow)">COM 자동화 (Windows)</div>
+      <pre style="font-size:.78em;border:none;background:transparent;padding:.3em 0;margin:0;box-shadow:none"><code><span class="kw">import</span> win32com.client
+
+<span class="cm"># Excel COM 자동화</span>
+excel = win32com.client.<span class="fn">Dispatch</span>(
+    <span class="st">"Excel.Application"</span>
+)
+wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 29: Day 1 실습 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">DAY 1 실습</span>
+  <h2 class="anim anim-d1">Day 1 실습 과제</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="glass glow-blue anim anim-d3" style="margin-top:1em;text-align:left;max-width:800px;margin-left:auto;margin-right:auto;padding:28px 32px">
+    <div style="color:var(--blue2);font-weight:700;font-size:1.1em;margin-bottom:.7em">실습 목표</div>
+    <div style="display:flex;flex-direction:column;gap:.6em">
+      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">01</span><span style="color:var(--text2);font-size:.95em">OpenAI Compatible API로 사내 Gateway 연결 확인</span></div>
+      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">02</span><span style="color:var(--text2);font-size:.95em">Tool Schema 작성 &#8594; LLM이 tool_calls 생성하도록 유도</span></div>
+      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">03</span><span style="color:var(--text2);font-size:.95em">Structured Output으로 정형 데이터 추출</span></div>
+      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">04</span><span style="color:var(--text2);font-size:.95em">FastMCP 서버 만들기 (간단한 Tool 1~2개)</span></div>
+      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">05</span><span style="color:var(--text2);font-size:.95em">Playwright로 웹 페이지 데이터 추출</span></div>
+    </div>
+  </div>
+  <p class="anim anim-d4" style="margin-top:1em;color:var(--text3);font-size:.88em">각 실습은 Jupyter Notebook으로 제공됩니다</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 30: DAY 2 HEADER ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">DAY 2</span>
+  <div class="anim anim-d2" style="font-size:3.5em;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--green2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">Agent 아키텍처</div>
+  <div class="anim anim-d3" style="font-size:2.8em;font-weight:800;background:linear-gradient(135deg,var(--green2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-top:.1em">실전 구현</div>
+  <div class="divider anim anim-d4" style="margin-top:1.2em;background:linear-gradient(90deg,var(--purple),var(--green2))"></div>
+  <p class="anim anim-d5" style="margin-top:1em;font-size:1.1em">프레임워크를 넘어, Agent의 원리를 이해하고 직접 만든다</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 31: ADK ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agent Framework</span>
+  <h2 class="anim anim-d1">Google ADK 핵심</h2>
+  <p class="anim anim-d2">Agent Development Kit &mdash; 간결한 Agent 구성</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="kw">from</span> google.adk <span class="kw">import</span> Agent, Tool, Runner
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="cm"># Tool 정의</span>
+<span class="ln"> 4</span><span class="kw">def</span> <span class="fn">search_web</span>(query: <span class="nb">str</span>) -> <span class="nb">str</span>:
+<span class="ln"> 5</span>    <span class="st">"""웹에서 정보를 검색합니다."""</span>
+<span class="ln"> 6</span>    <span class="kw">return</span> web_api.<span class="fn">search</span>(query)
+<span class="ln"> 7</span>
+<span class="ln"> 8</span><span class="cm"># Agent 생성</span>
+<span class="ln"> 9</span>agent = <span class="fn">Agent</span>(
+<span class="ln">10</span>    <span class="nb">name</span>=<span class="st">"research_agent"</span>,
+<span class="ln">11</span>    <span class="nb">model</span>=<span class="st">"gemini-2.0-flash"</span>,
+<span class="ln">12</span>    <span class="nb">instruction</span>=<span class="st">"사용자의 질문에 웹 검색으로 답변하세요."</span>,
+<span class="ln">13</span>    <span class="nb">tools</span>=[search_web],
+<span class="ln">14</span>)
+<span class="ln">15</span>
+<span class="ln">16</span><span class="cm"># 실행</span>
+<span class="ln">17</span>runner = <span class="fn">Runner</span>(agent)
+<span class="ln">18</span>result = runner.<span class="fn">run</span>(<span class="st">"최신 AI 트렌드는?"</span>)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 32: LangGraph ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agent Framework</span>
+  <h2 class="anim anim-d1">LangGraph 핵심</h2>
+  <p class="anim anim-d2">StateGraph &mdash; Node &mdash; Edge &mdash; 그래프 기반 워크플로우</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="cm"># 상태 정의</span>
+<span class="ln"> 4</span><span class="kw">class</span> <span class="ty">AgentState</span>(TypedDict):
+<span class="ln"> 5</span>    messages: <span class="nb">list</span>
+<span class="ln"> 6</span>    next_action: <span class="nb">str</span>
+<span class="ln"> 7</span>
+<span class="ln"> 8</span><span class="cm"># 노드 함수</span>
+<span class="ln"> 9</span><span class="kw">def</span> <span class="fn">call_llm</span>(state): ...
+<span class="ln">10</span><span class="kw">def</span> <span class="fn">execute_tool</span>(state): ...
+<span class="ln">11</span>
+<span class="ln">12</span><span class="cm"># 그래프 구성</span>
+<span class="ln">13</span>graph = <span class="fn">StateGraph</span>(AgentState)
+<span class="ln">14</span>graph.<span class="fn">add_node</span>(<span class="st">"llm"</span>, call_llm)
+<span class="ln">15</span>graph.<span class="fn">add_node</span>(<span class="st">"tool"</span>, execute_tool)
+<span class="ln">16</span>graph.<span class="fn">add_edge</span>(<span class="st">"llm"</span>, <span class="st">"tool"</span>)      <span class="cm"># llm -> tool</span>
+<span class="ln">17</span>graph.<span class="fn">add_edge</span>(<span class="st">"tool"</span>, <span class="st">"llm"</span>)      <span class="cm"># tool -> llm (루프)</span>
+<span class="ln">18</span>graph.<span class="fn">add_conditional_edges</span>(<span class="st">"llm"</span>, should_continue)
+<span class="ln">19</span>
+<span class="ln">20</span>app = graph.<span class="fn">compile</span>()<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 33: 프레임워크 비교 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agent Framework</span>
+  <h2 class="anim anim-d1">프레임워크 비교 + 생태계</h2>
+  <table class="anim anim-d2" style="font-size:.85em;margin-top:.6em">
+    <tr><th>프레임워크</th><th>핵심 특징</th><th>적합한 상황</th></tr>
+    <tr><td><strong class="accent">Google ADK</strong></td><td>간결한 API, Gemini 최적화</td><td>빠른 프로토타이핑</td></tr>
+    <tr><td><strong class="green">LangGraph</strong></td><td>그래프 기반, 상태 관리</td><td>복잡한 워크플로우</td></tr>
+    <tr><td><strong class="purple">OpenAI Agents SDK</strong></td><td>Handoff, Guardrail 내장</td><td>OpenAI 생태계</td></tr>
+    <tr><td><strong class="orange">CrewAI</strong></td><td>역할 기반 멀티에이전트</td><td>팀 시뮬레이션</td></tr>
+    <tr><td><strong class="yellow">Agno</strong></td><td>경량, 모듈형</td><td>커스텀 빌드</td></tr>
+  </table>
+  <div class="box yellow anim anim-d3" style="margin-top:.8em;font-size:.9em">
+    <strong>핵심:</strong> 프레임워크는 도구일 뿐. <strong class="accent">Agentic Loop의 원리</strong>를 이해하면 어떤 프레임워크든 사용할 수 있다.
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 34: Agent Loop 다이어그램 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop</span>
+  <h2 class="anim anim-d1">Agent Loop 패턴</h2>
+  <p class="anim anim-d2">모든 Agent의 핵심: <strong class="accent">반복적 LLM &#8596; Tool 상호작용</strong></p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 700 300" width="700" height="300">
+      <!-- User Input -->
+      <rect class="box-accent node nd1" x="260" y="10" width="160" height="45" rx="10"/>
+      <text x="340" y="38" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">User 입력</text>
+      <!-- LLM -->
+      <rect class="box-purple node nd2" x="260" y="80" width="160" height="50" rx="12"/>
+      <text x="340" y="110" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="16" class="node nd2">LLM</text>
+      <!-- Decision -->
+      <polygon points="340,155 400,185 340,215 280,185" fill="rgba(245,158,11,.1)" stroke="rgba(245,158,11,.4)" stroke-width="1.5" class="node nd3"/>
+      <text x="340" y="189" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd3">tool_call?</text>
+      <!-- Arrow user->LLM -->
+      <line class="arrow-line line ln1" x1="340" y1="55" x2="340" y2="78"/>
+      <!-- Arrow LLM->decision -->
+      <line class="arrow-line-purple line ln2" x1="340" y1="130" x2="340" y2="155"/>
+      <!-- Yes path: Execute Tool -->
+      <rect class="box-green node nd4" x="480" y="163" width="140" height="45" rx="10"/>
+      <text x="550" y="190" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd4">Tool 실행</text>
+      <line class="arrow-line-green line ln3" x1="400" y1="185" x2="478" y2="185"/>
+      <text x="435" y="178" text-anchor="middle" fill="var(--green2)" font-size="10" class="node nd5">Yes</text>
+      <!-- Loop back arrow -->
+      <path d="M550,163 L550,105 L422,105" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.9s"/>
+      <text x="500" y="85" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">결과를 messages에 추가</text>
+      <!-- No path: Final Response -->
+      <rect class="box-accent node nd7" x="260" y="240" width="160" height="45" rx="10"/>
+      <text x="340" y="267" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd7">최종 응답 반환</text>
+      <line class="arrow-line line ln5" x1="340" y1="215" x2="340" y2="238"/>
+      <text x="310" y="230" text-anchor="middle" fill="var(--red)" font-size="10" class="node nd8">No</text>
+      <!-- Loop indicator -->
+      <rect x="60" y="80" width="80" height="30" rx="6" fill="rgba(139,92,246,.08)" stroke="rgba(139,92,246,.2)" stroke-width="1" class="node nd6"/>
+      <text x="100" y="99" text-anchor="middle" fill="var(--purple2)" font-size="10" font-weight="600" class="node nd6">Loop</text>
+      <path d="M140,95 L258,95" stroke="var(--purple2)" stroke-width="1" stroke-dasharray="4 3" fill="none" class="line ln6"/>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 35: requests 구현 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop</span>
+  <h2 class="anim anim-d1">requests로 직접 구현</h2>
+  <pre class="anim anim-d2" style="font-size:.76em"><code><span class="ln"> 1</span><span class="kw">import</span> requests, json
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="kw">def</span> <span class="fn">agent_loop</span>(user_msg, tools, max_iter=<span class="nu">10</span>):
+<span class="ln"> 4</span>    messages = [
+<span class="ln"> 5</span>        {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"당신은 도구를 사용하는 AI 어시스턴트입니다."</span>},
+<span class="ln"> 6</span>        {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: user_msg},
+<span class="ln"> 7</span>    ]
+<span class="ln"> 8</span>
+<span class="ln"> 9</span>    <span class="kw">for</span> _ <span class="kw">in</span> <span class="nb">range</span>(max_iter):
+<span class="ln">10</span>        resp = requests.<span class="fn">post</span>(
+<span class="ln">11</span>            <span class="st">"https://gateway.company.com/v1/chat/completions"</span>,
+<span class="ln">12</span>            <span class="nb">headers</span>={<span class="st">"Authorization"</span>: <span class="st">f"Bearer </span>{API_KEY}<span class="st">"</span>},
+<span class="ln">13</span>            <span class="nb">json</span>={<span class="st">"model"</span>: <span class="st">"claude-sonnet-4-20250514"</span>,
+<span class="ln">14</span>                  <span class="st">"messages"</span>: messages, <span class="st">"tools"</span>: tools}
+<span class="ln">15</span>        ).<span class="fn">json</span>()
+<span class="ln">16</span>
+<span class="ln">17</span>        choice = resp[<span class="st">"choices"</span>][<span class="nu">0</span>]
+<span class="ln">18</span>        msg = choice[<span class="st">"message"</span>]
+<span class="ln">19</span>        messages.<span class="fn">append</span>(msg)
+<span class="ln">20</span>
+<span class="ln">21</span>        <span class="kw">if</span> choice[<span class="st">"finish_reason"</span>] == <span class="st">"stop"</span>:
+<span class="ln">22</span>            <span class="kw">return</span> msg[<span class="st">"content"</span>]  <span class="cm"># 최종 응답!</span>
+<span class="ln">23</span>
+<span class="ln">24</span>        <span class="kw">if</span> msg.get(<span class="st">"tool_calls"</span>):
+<span class="ln">25</span>            <span class="kw">for</span> tc <span class="kw">in</span> msg[<span class="st">"tool_calls"</span>]:
+<span class="ln">26</span>                result = <span class="fn">execute_tool</span>(tc)
+<span class="ln">27</span>                messages.<span class="fn">append</span>({<span class="st">"role"</span>: <span class="st">"tool"</span>,
+<span class="ln">28</span>                    <span class="st">"tool_call_id"</span>: tc[<span class="st">"id"</span>], <span class="st">"content"</span>: json.<span class="fn">dumps</span>(result)})<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 36: tool_calls 파싱 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop</span>
+  <h2 class="anim anim-d1">tool_calls 파싱 & 실행</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="cm"># Tool 레지스트리</span>
+<span class="ln"> 2</span>TOOL_REGISTRY = {
+<span class="ln"> 3</span>    <span class="st">"get_weather"</span>: get_weather,
+<span class="ln"> 4</span>    <span class="st">"search_employee"</span>: search_employee,
+<span class="ln"> 5</span>    <span class="st">"run_query"</span>: run_query,
+<span class="ln"> 6</span>}
+<span class="ln"> 7</span>
+<span class="ln"> 8</span><span class="kw">def</span> <span class="fn">execute_tool</span>(tool_call):
+<span class="ln"> 9</span>    <span class="st">"""tool_call 객체를 파싱하여 실제 함수를 실행"""</span>
+<span class="ln">10</span>    name = tool_call[<span class="st">"function"</span>][<span class="st">"name"</span>]
+<span class="ln">11</span>    args = json.<span class="fn">loads</span>(tool_call[<span class="st">"function"</span>][<span class="st">"arguments"</span>])
+<span class="ln">12</span>
+<span class="ln">13</span>    func = TOOL_REGISTRY.<span class="fn">get</span>(name)
+<span class="ln">14</span>    <span class="kw">if</span> <span class="kw">not</span> func:
+<span class="ln">15</span>        <span class="kw">return</span> {<span class="st">"error"</span>: <span class="st">f"Unknown tool: </span>{name}<span class="st">"</span>}
+<span class="ln">16</span>
+<span class="ln">17</span>    <span class="kw">try</span>:
+<span class="ln">18</span>        result = <span class="fn">func</span>(**args)
+<span class="ln">19</span>        <span class="kw">return</span> {<span class="st">"success"</span>: <span class="kw">True</span>, <span class="st">"data"</span>: result}
+<span class="ln">20</span>    <span class="kw">except</span> <span class="ty">Exception</span> <span class="kw">as</span> e:
+<span class="ln">21</span>        <span class="kw">return</span> {<span class="st">"success"</span>: <span class="kw">False</span>, <span class="st">"error"</span>: <span class="nb">str</span>(e)}<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 37: Multi-iteration 다이어그램 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop</span>
+  <h2 class="anim anim-d1">Multi-iteration 아키텍처</h2>
+  <p class="anim anim-d2">Claude Code 방식 &mdash; 여러 Tool을 연쇄 호출하여 복잡한 작업 수행</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 780 240" width="780" height="240">
+      <!-- User question -->
+      <rect class="box-fill node nd1" x="10" y="10" width="320" height="30" rx="6"/>
+      <text x="170" y="30" text-anchor="middle" fill="var(--text)" font-size="11" class="node nd1">"프로젝트에서 TODO 찾아서 이슈 생성해줘"</text>
+      <!-- Iteration boxes -->
+      <rect class="box-accent node nd2" x="10" y="55" width="170" height="42" rx="8"/>
+      <text x="95" y="73" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="11" class="node nd2">반복 1: glob("**/*.py")</text>
+      <text x="95" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd2">&#8594; 파일 목록 반환</text>
+      <rect class="box-accent node nd3" x="200" y="55" width="190" height="42" rx="8"/>
+      <text x="295" y="73" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="11" class="node nd3">반복 2: grep("TODO", files)</text>
+      <text x="295" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">&#8594; TODO 항목들 반환</text>
+      <rect class="box-purple node nd4" x="410" y="55" width="170" height="42" rx="8"/>
+      <text x="495" y="73" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="11" class="node nd4">반복 3: read_file(...)</text>
+      <text x="495" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd4">&#8594; 컨텍스트 확인</text>
+      <rect class="box-green node nd5" x="600" y="55" width="170" height="42" rx="8"/>
+      <text x="685" y="73" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="11" class="node nd5">반복 4: create_issue(...)</text>
+      <text x="685" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd5">&#8594; 이슈 생성 완료</text>
+      <!-- Arrows between iterations -->
+      <line class="arrow-line line ln1" x1="182" y1="76" x2="198" y2="76"/>
+      <line class="arrow-line-purple line ln2" x1="392" y1="76" x2="408" y2="76"/>
+      <line class="arrow-line-green line ln3" x1="582" y1="76" x2="598" y2="76"/>
+      <!-- Final response -->
+      <rect class="box-fill node nd6" x="200" y="115" width="380" height="35" rx="8"/>
+      <text x="390" y="137" text-anchor="middle" fill="var(--green2)" font-size="12" class="node nd6">반복 5: "3개의 TODO를 찾아 이슈를 생성했습니다." (종료)</text>
+      <!-- Spiral/progress visualization -->
+      <text x="40" y="175" fill="var(--text3)" font-size="11" class="node nd7">messages 배열이 매 반복마다 성장:</text>
+      <!-- Growing message bars -->
+      <rect x="40" y="185" width="80" height="10" rx="3" fill="rgba(59,130,246,.3)" class="node nd7"/>
+      <rect x="40" y="200" width="200" height="10" rx="3" fill="rgba(59,130,246,.4)" class="node nd7"/>
+      <rect x="40" y="215" width="350" height="10" rx="3" fill="rgba(59,130,246,.5)" class="node nd7"/>
+      <rect x="40" y="230" width="520" height="10" rx="3" fill="rgba(59,130,246,.6)" class="node nd8"/>
+      <text x="580" y="240" fill="var(--text3)" font-size="9" class="node nd8">context grows &#8594;</text>
+    </svg>
+  </div>
+  <p class="anim anim-d4" style="font-size:.88em;color:var(--text3)">핵심: max_iterations로 무한 루프 방지, 각 단계의 결과가 다음 판단의 입력</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 38: Streaming ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop</span>
+  <h2 class="anim anim-d1">Streaming (SSE) 처리</h2>
+  <p class="anim anim-d2">Server-Sent Events &mdash; 응답을 실시간으로 받아 UX 개선</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="cm"># Streaming 요청</span>
+<span class="ln"> 2</span>resp = requests.<span class="fn">post</span>(
+<span class="ln"> 3</span>    <span class="st">"https://gateway.company.com/v1/chat/completions"</span>,
+<span class="ln"> 4</span>    <span class="nb">headers</span>={<span class="st">"Authorization"</span>: <span class="st">f"Bearer </span>{key}<span class="st">"</span>},
+<span class="ln"> 5</span>    <span class="nb">json</span>={<span class="st">"model"</span>: <span class="st">"claude-sonnet-4-20250514"</span>, <span class="st">"messages"</span>: msgs,
+<span class="ln"> 6</span>          <span class="st">"stream"</span>: <span class="kw">True</span>},  <span class="cm"># &#8592; 스트리밍 활성화</span>
+<span class="ln"> 7</span>    <span class="nb">stream</span>=<span class="kw">True</span>,
+<span class="ln"> 8</span>)
+<span class="ln"> 9</span>
+<span class="ln">10</span><span class="cm"># SSE 파싱</span>
+<span class="ln">11</span><span class="kw">for</span> line <span class="kw">in</span> resp.<span class="fn">iter_lines</span>():
+<span class="ln">12</span>    <span class="kw">if</span> line.startswith(<span class="st">b"data: "</span>):
+<span class="ln">13</span>        data = json.<span class="fn">loads</span>(line[<span class="nu">6</span>:])
+<span class="ln">14</span>        <span class="kw">if</span> data == <span class="st">"[DONE]"</span>:
+<span class="ln">15</span>            <span class="kw">break</span>
+<span class="ln">16</span>        delta = data[<span class="st">"choices"</span>][<span class="nu">0</span>][<span class="st">"delta"</span>]
+<span class="ln">17</span>        <span class="kw">if</span> <span class="st">"content"</span> <span class="kw">in</span> delta:
+<span class="ln">18</span>            <span class="nb">print</span>(delta[<span class="st">"content"</span>], <span class="nb">end</span>=<span class="st">""</span>, <span class="nb">flush</span>=<span class="kw">True</span>)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 39: bash Agent 1 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">bash Agent</span>
+  <h2 class="anim anim-d1">subprocess로 Tool 만들기</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="kw">import</span> subprocess
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="kw">def</span> <span class="fn">run_command</span>(command: <span class="nb">str</span>, timeout: <span class="nb">int</span> = <span class="nu">30</span>) -> <span class="nb">dict</span>:
+<span class="ln"> 4</span>    <span class="st">"""쉘 명령어를 실행하고 결과를 반환합니다."""</span>
+<span class="ln"> 5</span>    <span class="kw">try</span>:
+<span class="ln"> 6</span>        result = subprocess.<span class="fn">run</span>(
+<span class="ln"> 7</span>            command,
+<span class="ln"> 8</span>            <span class="nb">shell</span>=<span class="kw">True</span>,
+<span class="ln"> 9</span>            <span class="nb">capture_output</span>=<span class="kw">True</span>,
+<span class="ln">10</span>            <span class="nb">text</span>=<span class="kw">True</span>,
+<span class="ln">11</span>            <span class="nb">timeout</span>=timeout,
+<span class="ln">12</span>            <span class="nb">cwd</span>=ALLOWED_DIR,  <span class="cm"># 작업 디렉토리 제한</span>
+<span class="ln">13</span>        )
+<span class="ln">14</span>        <span class="kw">return</span> {
+<span class="ln">15</span>            <span class="st">"stdout"</span>: result.stdout[:<span class="nu">5000</span>],
+<span class="ln">16</span>            <span class="st">"stderr"</span>: result.stderr[:<span class="nu">2000</span>],
+<span class="ln">17</span>            <span class="st">"returncode"</span>: result.returncode,
+<span class="ln">18</span>        }
+<span class="ln">19</span>    <span class="kw">except</span> subprocess.<span class="ty">TimeoutExpired</span>:
+<span class="ln">20</span>        <span class="kw">return</span> {<span class="st">"error"</span>: <span class="st">"명령어 실행 시간 초과"</span>}<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 40: bash Agent 2 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">bash Agent</span>
+  <h2 class="anim anim-d1">안전장치: 허용 명령어 & 경로 제한</h2>
+  <pre class="anim anim-d2"><code><span class="ln"> 1</span><span class="cm"># 화이트리스트 기반 명령어 필터</span>
+<span class="ln"> 2</span>ALLOWED_COMMANDS = {<span class="st">"ls"</span>, <span class="st">"cat"</span>, <span class="st">"grep"</span>, <span class="st">"find"</span>, <span class="st">"head"</span>,
+<span class="ln"> 3</span>                    <span class="st">"wc"</span>, <span class="st">"python"</span>, <span class="st">"pip"</span>, <span class="st">"git"</span>}
+<span class="ln"> 4</span>BLOCKED_PATTERNS = [<span class="st">"rm -rf"</span>, <span class="st">"sudo"</span>, <span class="st">":(){:|:&amp;}"</span>, <span class="st">"dd if="</span>]
+<span class="ln"> 5</span>ALLOWED_DIR = <span class="st">"/home/user/workspace"</span>
+<span class="ln"> 6</span>
+<span class="ln"> 7</span><span class="kw">def</span> <span class="fn">validate_command</span>(cmd: <span class="nb">str</span>) -> <span class="nb">bool</span>:
+<span class="ln"> 8</span>    <span class="cm"># 1. 위험 패턴 차단</span>
+<span class="ln"> 9</span>    <span class="kw">for</span> pattern <span class="kw">in</span> BLOCKED_PATTERNS:
+<span class="ln">10</span>        <span class="kw">if</span> pattern <span class="kw">in</span> cmd:
+<span class="ln">11</span>            <span class="kw">return</span> <span class="kw">False</span>
+<span class="ln">12</span>
+<span class="ln">13</span>    <span class="cm"># 2. 첫 번째 명령어가 허용 목록에 있는지</span>
+<span class="ln">14</span>    base_cmd = cmd.<span class="fn">split</span>()[<span class="nu">0</span>].<span class="fn">split</span>(<span class="st">"/"</span>)[-<span class="nu">1</span>]
+<span class="ln">15</span>    <span class="kw">if</span> base_cmd <span class="kw">not in</span> ALLOWED_COMMANDS:
+<span class="ln">16</span>        <span class="kw">return</span> <span class="kw">False</span>
+<span class="ln">17</span>
+<span class="ln">18</span>    <span class="cm"># 3. 경로 이탈 방지</span>
+<span class="ln">19</span>    <span class="kw">if</span> <span class="st">".."</span> <span class="kw">in</span> cmd <span class="kw">or</span> cmd.<span class="fn">startswith</span>(<span class="st">"/"</span>):
+<span class="ln">20</span>        <span class="kw">return</span> <span class="kw">False</span>
+<span class="ln">21</span>    <span class="kw">return</span> <span class="kw">True</span><span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 41: Semantic Search ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">검색 전략</span>
+  <h2 class="anim anim-d1">Semantic Search: 임베딩 기반</h2>
+  <p class="anim anim-d2">텍스트를 벡터로 변환 &#8594; 유사도로 검색</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="kw">import</span> chromadb
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="cm"># 1. ChromaDB 컬렉션 생성</span>
+<span class="ln"> 4</span>client = chromadb.<span class="fn">Client</span>()
+<span class="ln"> 5</span>collection = client.<span class="fn">create_collection</span>(<span class="st">"company_docs"</span>)
+<span class="ln"> 6</span>
+<span class="ln"> 7</span><span class="cm"># 2. 문서 임베딩 & 저장</span>
+<span class="ln"> 8</span>collection.<span class="fn">add</span>(
+<span class="ln"> 9</span>    <span class="nb">documents</span>=[<span class="st">"휴가 신청은 3일 전에..."</span>, <span class="st">"출장비 정산은..."</span>],
+<span class="ln">10</span>    <span class="nb">ids</span>=[<span class="st">"doc1"</span>, <span class="st">"doc2"</span>],
+<span class="ln">11</span>)
+<span class="ln">12</span>
+<span class="ln">13</span><span class="cm"># 3. 의미 기반 검색 (키워드 일치 불필요!)</span>
+<span class="ln">14</span>results = collection.<span class="fn">query</span>(
+<span class="ln">15</span>    <span class="nb">query_texts</span>=[<span class="st">"연차 사용 방법"</span>],  <span class="cm"># "휴가"와 유사!</span>
+<span class="ln">16</span>    <span class="nb">n_results</span>=<span class="nu">3</span>,
+<span class="ln">17</span>)
+<span class="ln">18</span><span class="nb">print</span>(results[<span class="st">"documents"</span>])<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 42: Index Explore ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">검색 전략</span>
+  <h2 class="anim anim-d1">Index Explore: 코드 탐색 방식</h2>
+  <p class="anim anim-d2">Claude Code 방식 &mdash; grep / glob / AST 기반 정확한 탐색</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="cm"># 파일 구조 탐색</span>
+<span class="ln"> 2</span><span class="kw">def</span> <span class="fn">glob_search</span>(pattern: <span class="nb">str</span>) -> <span class="nb">list</span>:
+<span class="ln"> 3</span>    <span class="st">"""패턴에 맞는 파일 목록 반환"""</span>
+<span class="ln"> 4</span>    <span class="kw">return</span> glob.<span class="fn">glob</span>(pattern, <span class="nb">recursive</span>=<span class="kw">True</span>)
+<span class="ln"> 5</span>
+<span class="ln"> 6</span><span class="cm"># 내용 검색</span>
+<span class="ln"> 7</span><span class="kw">def</span> <span class="fn">grep_search</span>(pattern: <span class="nb">str</span>, path: <span class="nb">str</span>) -> <span class="nb">list</span>:
+<span class="ln"> 8</span>    <span class="st">"""정규식으로 파일 내용 검색"""</span>
+<span class="ln"> 9</span>    result = subprocess.<span class="fn">run</span>(
+<span class="ln">10</span>        [<span class="st">"grep"</span>, <span class="st">"-rn"</span>, pattern, path],
+<span class="ln">11</span>        <span class="nb">capture_output</span>=<span class="kw">True</span>, <span class="nb">text</span>=<span class="kw">True</span>
+<span class="ln">12</span>    )
+<span class="ln">13</span>    <span class="kw">return</span> result.stdout.<span class="fn">splitlines</span>()
+<span class="ln">14</span>
+<span class="ln">15</span><span class="cm"># 파일 읽기</span>
+<span class="ln">16</span><span class="kw">def</span> <span class="fn">read_file</span>(path: <span class="nb">str</span>, start: <span class="nb">int</span>, end: <span class="nb">int</span>) -> <span class="nb">str</span>:
+<span class="ln">17</span>    <span class="st">"""파일의 특정 범위만 읽기"""</span>
+<span class="ln">18</span>    lines = <span class="nb">open</span>(path).<span class="fn">readlines</span>()[start:end]
+<span class="ln">19</span>    <span class="kw">return</span> <span class="st">""</span>.<span class="fn">join</span>(lines)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 43: Vector DB vs Index - 비주얼 비교 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">검색 전략</span>
+  <h2 class="anim anim-d1">비교: 언제 무엇을 쓸 것인가</h2>
+  <div class="anim anim-d2 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 780 260" width="780" height="260">
+      <!-- Left: Vector DB -->
+      <rect class="box-accent node nd1" x="20" y="10" width="350" height="240" rx="14"/>
+      <text x="195" y="40" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="16" class="node nd1">Vector DB (Semantic)</text>
+      <!-- Visual metaphor: scattered dots clustering -->
+      <circle cx="80" cy="90" r="6" fill="rgba(59,130,246,.4)" class="node nd2"/>
+      <circle cx="120" cy="80" r="6" fill="rgba(59,130,246,.5)" class="node nd2"/>
+      <circle cx="100" cy="110" r="6" fill="rgba(59,130,246,.6)" class="node nd2"/>
+      <circle cx="95" cy="95" r="18" fill="none" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="node nd3"/>
+      <text x="95" y="145" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">유사도 클러스터</text>
+      <!-- Pros -->
+      <text x="195" y="80" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd4">장점</text>
+      <text x="195" y="100" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4">동의어/유사 표현 인식</text>
+      <text x="195" y="118" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4">자연어 질문 가능</text>
+      <!-- Cons -->
+      <text x="195" y="148" text-anchor="middle" fill="var(--red)" font-size="12" font-weight="600" class="node nd5">단점</text>
+      <text x="195" y="168" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5">임베딩 비용</text>
+      <text x="195" y="186" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5">정확도 불확실</text>
+      <!-- Use case -->
+      <rect x="50" y="210" width="270" height="28" rx="6" fill="rgba(59,130,246,.12)" stroke="rgba(59,130,246,.2)" stroke-width="1" class="node nd6"/>
+      <text x="185" y="228" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="600" class="node nd6">문서 검색, FAQ, 지식베이스</text>
+
+      <!-- Right: Index Explore -->
+      <rect class="box-green node nd1" x="410" y="10" width="350" height="240" rx="14" style="animation-delay:.3s"/>
+      <text x="585" y="40" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd1" style="animation-delay:.3s">Index Explore (Exact)</text>
+      <!-- Visual metaphor: tree structure -->
+      <line x1="500" y1="75" x2="480" y2="100" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
+      <line x1="500" y1="75" x2="520" y2="100" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
+      <circle cx="500" cy="72" r="5" fill="var(--green2)" class="node nd2"/>
+      <circle cx="480" cy="103" r="4" fill="rgba(16,185,129,.5)" class="node nd3"/>
+      <circle cx="520" cy="103" r="4" fill="rgba(16,185,129,.5)" class="node nd3"/>
+      <text x="500" y="130" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">구조적 탐색</text>
+      <!-- Pros -->
+      <text x="585" y="80" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd4" style="animation-delay:.35s">장점</text>
+      <text x="585" y="100" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4" style="animation-delay:.35s">정확한 결과</text>
+      <text x="585" y="118" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4" style="animation-delay:.35s">구조적 탐색, 빠름</text>
+      <!-- Cons -->
+      <text x="585" y="148" text-anchor="middle" fill="var(--red)" font-size="12" font-weight="600" class="node nd5" style="animation-delay:.4s">단점</text>
+      <text x="585" y="168" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5" style="animation-delay:.4s">의미적 연결 불가</text>
+      <text x="585" y="186" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5" style="animation-delay:.4s">패턴을 알아야 함</text>
+      <!-- Use case -->
+      <rect x="440" y="210" width="270" height="28" rx="6" fill="rgba(16,185,129,.12)" stroke="rgba(16,185,129,.2)" stroke-width="1" class="node nd6"/>
+      <text x="575" y="228" text-anchor="middle" fill="var(--green2)" font-size="11" font-weight="600" class="node nd6">코드 탐색, 설정 파일, 로그</text>
+
+      <!-- VS divider -->
+      <text x="390" y="135" text-anchor="middle" fill="var(--text3)" font-size="18" font-weight="800" class="node nd7">VS</text>
+    </svg>
+  </div>
+  <div class="box blue anim anim-d3" style="margin-top:.4em;font-size:.88em">
+    <strong>실전 팁:</strong> 두 방식을 <strong>혼합</strong>하면 최고 성능. 먼저 Vector로 후보를 찾고, grep으로 정확히 확인.
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 44: 하네스란 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
+  <h2 class="anim anim-d1">하네스란?</h2>
+  <div class="quote anim anim-d2" style="margin-top:.8em;border-left-color:var(--purple)">
+    "모델은 엔진이고, 하네스는 자동차다."
+    <div class="author">모델의 성능을 실제 가치로 변환하는 모든 시스템</div>
+  </div>
+  <div class="anim anim-d3 svg-anim" style="margin-top:1em">
+    <svg class="diagram-svg" viewBox="0 0 700 110" width="700" height="110">
+      <!-- LLM core -->
+      <rect class="box-fill node nd1" x="50" y="25" width="130" height="55" rx="12"/>
+      <text x="115" y="50" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="15" class="node nd1">LLM</text>
+      <text x="115" y="68" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">엔진</text>
+      <!-- + -->
+      <text x="215" y="58" text-anchor="middle" fill="var(--text3)" font-size="24" font-weight="300" class="node nd2">+</text>
+      <!-- Harness -->
+      <rect class="box-purple node nd3" x="250" y="15" width="220" height="75" rx="12"/>
+      <text x="360" y="42" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="15" class="node nd3">하네스</text>
+      <text x="360" y="62" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd3">Tool + Loop + Guard + Log</text>
+      <text x="360" y="78" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Context Engineering</text>
+      <!-- = -->
+      <text x="505" y="58" text-anchor="middle" fill="var(--text3)" font-size="24" font-weight="300" class="node nd4">=</text>
+      <!-- Agent -->
+      <rect class="box-green node nd5" x="540" y="20" width="130" height="65" rx="12"/>
+      <text x="605" y="48" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd5">Agent</text>
+      <text x="605" y="68" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd5">실용적 시스템</text>
+    </svg>
+  </div>
+  <p class="anim anim-d4" style="margin-top:.8em;font-size:1em">동일한 LLM이라도 하네스 설계에 따라 <strong class="accent">성능이 완전히 달라진다</strong></p>
+</div>
+</div>
+
+<!-- ==================== SLIDE 45: 하네스 5대 요소 - Pentagon 다이어그램 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
+  <h2 class="anim anim-d1">하네스 5대 요소</h2>
+  <div class="anim anim-d2 svg-anim" style="margin-top:.4em">
+    <svg class="diagram-svg" viewBox="0 0 700 360" width="700" height="360">
+      <!-- Pentagon shape (connecting lines) -->
+      <!-- Points: top(350,30) topRight(590,140) bottomRight(500,310) bottomLeft(200,310) topLeft(110,140) -->
+      <polygon points="350,40 580,145 510,305 190,305 120,145" fill="rgba(139,92,246,.04)" stroke="rgba(139,92,246,.15)" stroke-width="1.5" class="node nd1"/>
+      <!-- Center -->
+      <circle cx="350" cy="190" r="35" fill="rgba(139,92,246,.12)" stroke="rgba(139,92,246,.3)" stroke-width="1.5" class="node nd2"/>
+      <text x="350" y="186" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="12" class="node nd2">하네스</text>
+      <text x="350" y="200" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd2">5대 요소</text>
+      <!-- Lines from center to vertices -->
+      <line x1="350" y1="155" x2="350" y2="65" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln1"/>
+      <line x1="380" y1="175" x2="555" y2="145" stroke="rgba(239,68,68,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln2"/>
+      <line x1="370" y1="215" x2="490" y2="290" stroke="rgba(16,185,129,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln3"/>
+      <line x1="330" y1="215" x2="210" y2="290" stroke="rgba(245,158,11,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln4"/>
+      <line x1="320" y1="175" x2="145" y2="145" stroke="rgba(139,92,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln5"/>
+
+      <!-- 1. Tool Orchestration (top) -->
+      <rect class="box-accent node nd3" x="270" y="10" width="160" height="50" rx="10"/>
+      <text x="350" y="33" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd3">1. Tool Orchestration</text>
+      <text x="350" y="49" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Tool 선택/실행/결과 처리</text>
+
+      <!-- 2. Guardrails (top right) -->
+      <rect class="box-red node nd4" x="510" y="115" width="150" height="50" rx="10"/>
+      <text x="585" y="138" text-anchor="middle" fill="var(--red)" font-weight="600" font-size="12" class="node nd4">2. Guardrails</text>
+      <text x="585" y="154" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">입/출력 검증, 차단</text>
+
+      <!-- 3. Error Recovery (bottom right) -->
+      <rect class="box-green node nd5" x="440" y="275" width="150" height="50" rx="10"/>
+      <text x="515" y="298" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd5">3. Error Recovery</text>
+      <text x="515" y="314" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">재시도, 대안 경로</text>
+
+      <!-- 4. Observability (bottom left) -->
+      <rect class="box-yellow node nd6" x="110" y="275" width="150" height="50" rx="10"/>
+      <text x="185" y="298" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd6">4. Observability</text>
+      <text x="185" y="314" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">로깅, 트레이싱, 비용</text>
+
+      <!-- 5. HITL (top left) -->
+      <rect class="box-purple node nd7" x="40" y="115" width="160" height="50" rx="10"/>
+      <text x="120" y="138" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd7">5. Human-in-the-Loop</text>
+      <text x="120" y="154" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd7">위험 작업 승인 요청</text>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 46: 컨텍스트 엔지니어링 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
+  <h2 class="anim anim-d1">컨텍스트 엔지니어링</h2>
+  <p class="anim anim-d2">Anthropic 연구: 컨텍스트 최적화만으로 <strong class="accent">54% 성능 향상</strong></p>
+  <div class="divider anim anim-d3"></div>
+  <div class="grid grid-2 anim anim-d4" style="margin-top:.8em">
+    <div class="box blue">
+      <div class="box-title">넣어야 할 것</div>
+      <ul style="font-size:.88em">
+        <li>명확한 역할 정의</li>
+        <li>관련 문서/코드 (RAG 결과)</li>
+        <li>이전 Tool 실행 결과</li>
+        <li>출력 형식 예시 (few-shot)</li>
+        <li>제약 조건과 경계</li>
+      </ul>
+    </div>
+    <div class="box red">
+      <div class="box-title" style="color:var(--red)">빼야 할 것</div>
+      <ul style="font-size:.88em">
+        <li>무관한 문서 (노이즈)</li>
+        <li>오래된/부정확한 정보</li>
+        <li>과도한 히스토리 (요약 필요)</li>
+        <li>중복 내용</li>
+        <li>민감 정보 (개인정보 등)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 47: 보안 5계층 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
+  <h2 class="anim anim-d1">보안 / 가드레일 5계층 방어</h2>
+  <div style="max-width:720px;margin:.8em auto;text-align:left">
+    <div class="glass anim anim-d2" style="border-left:3px solid var(--blue);margin-bottom:.5em;padding:12px 22px">
+      <strong class="accent">Layer 1:</strong> 입력 검증 &mdash; Prompt Injection 탐지, 입력 길이 제한
+    </div>
+    <div class="glass anim anim-d3" style="border-left:3px solid var(--green);margin-bottom:.5em;padding:12px 22px">
+      <strong class="green">Layer 2:</strong> Tool 제한 &mdash; 허용 Tool 화이트리스트, 인자 검증
+    </div>
+    <div class="glass anim anim-d4" style="border-left:3px solid var(--yellow);margin-bottom:.5em;padding:12px 22px">
+      <strong class="yellow">Layer 3:</strong> 실행 격리 &mdash; 샌드박스, 리소스 제한, 타임아웃
+    </div>
+    <div class="glass anim anim-d5" style="border-left:3px solid var(--orange);margin-bottom:.5em;padding:12px 22px">
+      <strong class="orange">Layer 4:</strong> 출력 필터 &mdash; PII 마스킹, 유해 콘텐츠 차단
+    </div>
+    <div class="glass anim anim-d6" style="border-left:3px solid var(--red);padding:12px 22px">
+      <strong class="red">Layer 5:</strong> 감사 로그 &mdash; 모든 LLM 호출/Tool 실행 기록
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 48: CLAUDE.md ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
+  <h2 class="anim anim-d1">CLAUDE.md / AGENTS.md / .cursor/rules</h2>
+  <p class="anim anim-d2">프로젝트별 AI 행동 규칙 정의 &mdash; 하네스의 핵심 설정</p>
+  <pre class="anim anim-d3"><code><span class="ln"> 1</span><span class="cm"># CLAUDE.md (프로젝트 루트에 위치)</span>
+<span class="ln"> 2</span>
+<span class="ln"> 3</span><span class="cm">## 프로젝트 개요</span>
+<span class="ln"> 4</span>이 프로젝트는 사내 업무 자동화 Agent입니다.
+<span class="ln"> 5</span>
+<span class="ln"> 6</span><span class="cm">## 코드 스타일</span>
+<span class="ln"> 7</span>- Python 3.11+, type hint 필수
+<span class="ln"> 8</span>- 함수명은 snake_case
+<span class="ln"> 9</span>- 모든 함수에 docstring 필수
+<span class="ln">10</span>
+<span class="ln">11</span><span class="cm">## 금지 사항</span>
+<span class="ln">12</span>- <span class="kw">rm -rf</span> 명령 절대 금지
+<span class="ln">13</span>- 프로덕션 DB 직접 접근 금지
+<span class="ln">14</span>- .env 파일 수정 금지
+<span class="ln">15</span>
+<span class="ln">16</span><span class="cm">## Tool 사용 규칙</span>
+<span class="ln">17</span>- 파일 수정 전 반드시 백업
+<span class="ln">18</span>- API 호출 시 rate limit 준수 (초당 10회)
+<span class="ln">19</span>- 에러 발생 시 3회까지 재시도<span class="lang-tag">markdown</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE 49: RAG 파이프라인 다이어그램 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">검색 전략</span>
+  <h2 class="anim anim-d1">RAG 파이프라인</h2>
+  <p class="anim anim-d2">Retrieval-Augmented Generation &mdash; 문서 기반 답변 생성의 전체 흐름</p>
+  <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
+    <svg class="diagram-svg" viewBox="0 0 820 180" width="820" height="180">
+      <!-- Step 1: Documents -->
+      <rect class="box-fill node nd1" x="10" y="50" width="100" height="65" rx="10"/>
+      <text x="60" y="76" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="12" class="node nd1">문서</text>
+      <text x="60" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">PDF, DB,</text>
+      <text x="60" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">Confluence</text>
+      <!-- Step 2: Chunking -->
+      <rect class="box-accent node nd2" x="145" y="50" width="100" height="65" rx="10"/>
+      <text x="195" y="76" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd2">청킹</text>
+      <text x="195" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">Chunk</text>
+      <text x="195" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">512 tokens</text>
+      <!-- Step 3: Embedding -->
+      <rect class="box-purple node nd3" x="280" y="50" width="100" height="65" rx="10"/>
+      <text x="330" y="76" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd3">임베딩</text>
+      <text x="330" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">text &#8594; vector</text>
+      <text x="330" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">[0.12, ...]</text>
+      <!-- Step 4: Vector DB -->
+      <rect class="box-green node nd4" x="415" y="50" width="100" height="65" rx="10"/>
+      <text x="465" y="76" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd4">Vector DB</text>
+      <text x="465" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">저장 &</text>
+      <text x="465" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">인덱싱</text>
+      <!-- Step 5: Search -->
+      <rect class="box-yellow node nd5" x="550" y="50" width="100" height="65" rx="10"/>
+      <text x="600" y="76" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd5">검색</text>
+      <text x="600" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">질의 &#8594;</text>
+      <text x="600" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">Top-K 결과</text>
+      <!-- Step 6: Generate -->
+      <rect class="box-accent node nd6" x="685" y="40" width="115" height="85" rx="12" style="stroke:rgba(59,130,246,.5)"/>
+      <text x="742" y="68" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="14" class="node nd6">LLM 생성</text>
+      <text x="742" y="88" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">질문 + 검색결과</text>
+      <text x="742" y="103" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">&#8594; 최종 답변</text>
+      <!-- Arrows -->
+      <line class="arrow-line line ln1" x1="112" y1="82" x2="143" y2="82"/>
+      <line class="arrow-line line ln2" x1="247" y1="82" x2="278" y2="82"/>
+      <line class="arrow-line-purple line ln3" x1="382" y1="82" x2="413" y2="82"/>
+      <line class="arrow-line-green line ln4" x1="517" y1="82" x2="548" y2="82"/>
+      <line class="arrow-line line ln5" x1="652" y1="82" x2="683" y2="82"/>
+      <!-- Labels above -->
+      <text x="60" y="40" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd7">Indexing Phase</text>
+      <line x1="10" y1="44" x2="515" y2="44" stroke="rgba(148,163,184,.1)" stroke-width="1" stroke-dasharray="4 3" class="line ln6"/>
+      <text x="600" y="40" text-anchor="middle" fill="var(--yellow)" font-size="9" class="node nd8">Query Phase</text>
+      <!-- User query input -->
+      <rect class="box-fill node nd8" x="530" y="140" width="140" height="28" rx="6"/>
+      <text x="600" y="158" text-anchor="middle" fill="var(--text)" font-size="10" class="node nd8">사용자 질문</text>
+      <line x1="600" y1="140" x2="600" y2="117" stroke="var(--yellow)" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)" class="line ln7" style="stroke:var(--yellow)"/>
+    </svg>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 50: 종합 실습 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">종합 실습</span>
+  <h2 class="anim anim-d1">종합 실습 과제</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="glass glow-purple anim anim-d3" style="margin-top:.8em;padding:16px 24px;max-width:800px;margin-left:auto;margin-right:auto">
+    <div style="color:var(--purple2);font-weight:700;font-size:1.1em;text-align:center">브라우저 검색 &#8594; 추출 &#8594; Excel 저장 Agent</div>
+  </div>
+  <div class="anim anim-d4 svg-anim" style="margin-top:.6em">
+    <svg class="diagram-svg" viewBox="0 0 780 80" width="780" height="80">
+      <rect class="box-accent node nd1" x="10" y="15" width="110" height="45" rx="8"/>
+      <text x="65" y="42" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd1">사용자 질문</text>
+      <rect class="box-fill node nd2" x="155" y="15" width="100" height="45" rx="8"/>
+      <text x="205" y="42" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="12" class="node nd2">LLM 판단</text>
+      <rect class="box-green node nd3" x="290" y="15" width="120" height="45" rx="8"/>
+      <text x="350" y="36" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd3">Playwright</text>
+      <text x="350" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">웹 검색</text>
+      <rect class="box-yellow node nd4" x="445" y="15" width="120" height="45" rx="8"/>
+      <text x="505" y="36" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd4">데이터 추출</text>
+      <text x="505" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd4">정제</text>
+      <rect class="box-purple node nd5" x="600" y="15" width="120" height="45" rx="8"/>
+      <text x="660" y="36" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd5">Excel 저장</text>
+      <text x="660" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd5">openpyxl</text>
+      <line class="arrow-line line ln1" x1="122" y1="37" x2="153" y2="37"/>
+      <line class="arrow-line line ln2" x1="257" y1="37" x2="288" y2="37"/>
+      <line class="arrow-line-green line ln3" x1="412" y1="37" x2="443" y2="37"/>
+      <line class="arrow-line-purple line ln4" x1="567" y1="37" x2="598" y2="37"/>
+    </svg>
+  </div>
+  <div class="grid grid-2 anim anim-d5" style="margin-top:.6em">
+    <div class="box blue">
+      <div class="box-title">구현할 Tool들</div>
+      <ul style="font-size:.88em">
+        <li><code>web_search(query)</code> - Playwright 검색</li>
+        <li><code>extract_data(url)</code> - 페이지 데이터 추출</li>
+        <li><code>save_excel(data, path)</code> - openpyxl 저장</li>
+      </ul>
+    </div>
+    <div class="box green">
+      <div class="box-title" style="color:var(--green2)">목표</div>
+      <ul style="font-size:.88em">
+        <li>Agentic Loop 직접 구현</li>
+        <li>Tool 3개 이상 연쇄 호출</li>
+        <li>에러 핸들링 포함</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 51: 마무리 1 ==================== -->
+<div class="slide" data-day="0">
+<div class="slide-inner">
+  <h2 class="anim anim-d1">2일간 학습 정리</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="grid grid-2 anim anim-d3" style="margin-top:.8em">
+    <div class="glass glow-blue" style="border-top:3px solid var(--blue);text-align:left;padding:24px 26px">
+      <h4 style="color:var(--blue2);margin-bottom:.5em">Day 1 핵심</h4>
+      <ul style="font-size:.85em;color:var(--text2)">
+        <li>프롬프트 & 컨텍스트 엔지니어링</li>
+        <li>OpenAI Compatible 표준</li>
+        <li>Structured Output & Tool Calling</li>
+        <li>MCP (Model Context Protocol)</li>
+        <li>브라우저 자동화 기초</li>
+      </ul>
+    </div>
+    <div class="glass glow-purple" style="border-top:3px solid var(--purple);text-align:left;padding:24px 26px">
+      <h4 style="color:var(--purple2);margin-bottom:.5em">Day 2 핵심</h4>
+      <ul style="font-size:.85em;color:var(--text2)">
+        <li>Agent Framework 비교 이해</li>
+        <li>Agentic Loop 직접 구현</li>
+        <li>검색 전략 (Vector vs Index)</li>
+        <li>하네스 엔지니어링 5대 요소</li>
+        <li>보안과 가드레일 설계</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 52: 핵심 메시지 ==================== -->
+<div class="slide" data-day="0">
+<div class="slide-inner">
+  <h1 class="anim anim-d1" style="font-size:2.2em">핵심 메시지</h1>
+  <div class="divider anim anim-d2" style="margin:.6em auto"></div>
+  <div class="quote anim anim-d3" style="font-size:1.25em;margin-top:1em;border-left-color:var(--purple)">
+    "프레임워크를 넘어,<br>
+    <strong class="accent">원리를 이해</strong>하고<br>
+    <strong class="purple">직접 구현</strong>하라."
+  </div>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:1.5em">
+    <div class="card">
+      <h4>이해</h4>
+      <p style="font-size:.85em">Agentic Loop의<br>본질을 알면<br>무엇이든 만든다</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--green2)">구현</h4>
+      <p style="font-size:.85em">requests 하나로<br>Agent를 만들 수<br>있다는 자신감</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--purple2)">설계</h4>
+      <p style="font-size:.85em">하네스 엔지니어링이<br>실제 가치를<br>결정한다</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 53: THANK YOU ==================== -->
+<div class="slide" data-day="0">
+<div class="slide-inner">
+  <div class="anim anim-d1" style="font-size:4em;font-weight:800;background:linear-gradient(135deg,var(--blue2),var(--purple2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2">감사합니다</div>
+  <div class="divider anim anim-d2" style="margin:1em auto;background:linear-gradient(90deg,var(--blue),var(--purple),var(--cyan));width:80px"></div>
+  <p class="anim anim-d3" style="font-size:1.2em;color:var(--text2);margin-top:.8em">
+    질문은 언제든 환영합니다
+  </p>
+  <p class="anim anim-d4" style="margin-top:2.5em;color:var(--text3);font-size:.88em">LLM Agent 개발 실습 &mdash; 2일 과정</p>
+</div>
+</div>
+
+</div><!-- /deck -->
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let overviewOpen = false;
+  let notesOpen = false;
+
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  const dayIndicator = document.getElementById('day-indicator');
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overview-grid');
+  const notesPanel = document.getElementById('notes-panel');
+
+  // Generate overview thumbnails
+  slides.forEach((s, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'overview-thumb';
+    const h = s.querySelector('h1, h2, .day-header');
+    const badge = s.querySelector('.badge');
+    let label = '';
+    if (badge) label = badge.textContent + ': ';
+    if (h) label += h.textContent;
+    else label = 'Slide ' + (i+1);
+    thumb.innerHTML = '<div class="thumb-num">' + (i+1) + '</div>' + label;
+    thumb.addEventListener('click', function() {
+      updateSlide(i);
+      toggleOverview(false);
+    });
+    overviewGrid.appendChild(thumb);
+  });
+
+  function updateSlide(newIndex) {
+    if (newIndex < 0 || newIndex >= total) return;
+    current = newIndex;
+
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+      else if (i < current) s.classList.add('prev');
+    });
+
+    // Progress
+    const pct = total > 1 ? (current / (total - 1)) * 100 : 0;
+    progress.style.width = pct + '%';
+
+    // Counter
+    counter.textContent = (current + 1) + ' / ' + total;
+
+    // Day indicator
+    const day = slides[current].getAttribute('data-day');
+    dayIndicator.className = '';
+    if (day === '1') {
+      dayIndicator.textContent = 'DAY 1';
+      dayIndicator.classList.add('day1');
+    } else if (day === '2') {
+      dayIndicator.textContent = 'DAY 2';
+      dayIndicator.classList.add('day2');
+    } else {
+      dayIndicator.textContent = '';
+    }
+
+    // Update overview highlights
+    const thumbs = overviewGrid.children;
+    for (let i = 0; i < thumbs.length; i++) {
+      thumbs[i].classList.toggle('current', i === current);
+    }
+
+    // Hash
+    history.replaceState(null, '', '#' + (current + 1));
+  }
+
+  function next() { updateSlide(current + 1); }
+  function prev() { updateSlide(current - 1); }
+
+  function toggleOverview(force) {
+    overviewOpen = force !== undefined ? force : !overviewOpen;
+    overview.classList.toggle('show', overviewOpen);
+  }
+
+  function toggleNotes(force) {
+    notesOpen = force !== undefined ? force : !notesOpen;
+    notesPanel.classList.toggle('show', notesOpen);
+    if (notesOpen) {
+      notesPanel.textContent = 'Presenter notes: Slide ' + (current + 1) + ' of ' + total;
+    }
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(function(){});
+    } else {
+      document.exitFullscreen().catch(function(){});
+    }
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', function(e) {
+    if (overviewOpen && e.key === 'Escape') {
+      toggleOverview(false);
+      e.preventDefault();
+      return;
+    }
+    if (overviewOpen) return;
+
+    switch(e.key) {
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+        e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+        e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); updateSlide(0); break;
+      case 'End': e.preventDefault(); updateSlide(total - 1); break;
+      case 'o': case 'O': e.preventDefault(); toggleOverview(); break;
+      case 'n': case 'N': e.preventDefault(); toggleNotes(); break;
+      case 'f': case 'F': e.preventDefault(); toggleFullscreen(); break;
+      case 'Escape':
+        if (notesOpen) toggleNotes(false);
+        break;
+    }
+  });
+
+  // Touch
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, {passive: true});
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) next(); else prev();
+    }
+  }, {passive: true});
+
+  // Hash
+  function goToHash() {
+    const hash = window.location.hash.replace('#', '');
+    const n = parseInt(hash, 10);
+    if (n >= 1 && n <= total) updateSlide(n - 1);
+  }
+  window.addEventListener('hashchange', goToHash);
+
+  // Init
+  if (window.location.hash) goToHash();
+  else updateSlide(0);
+})();
+</script>
+
+</body>
+</html>

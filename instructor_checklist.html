@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강사 준비물 체크리스트 - LLM Agent 개발 실습</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #f1f5f9;
+  }
+  .subtitle {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .section {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #3b82f6;
+  }
+  .section.critical { border-left-color: #ef4444; }
+  .section.info { border-left-color: #22c55e; }
+  .section.optional { border-left-color: #a855f7; }
+  .section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section.critical h2 { color: #fca5a5; }
+  .section h2 { color: #93c5fd; }
+  .section.info h2 { color: #86efac; }
+  .section.optional h2 { color: #d8b4fe; }
+  .badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .badge.must { background: #dc2626; color: #fff; }
+  .badge.recommended { background: #2563eb; color: #fff; }
+  .badge.opt { background: #7c3aed; color: #fff; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    background: #334155;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #334155;
+    font-size: 0.9rem;
+    vertical-align: top;
+  }
+  td:first-child { width: 40px; text-align: center; }
+  .check {
+    width: 18px; height: 18px;
+    border: 2px solid #475569;
+    border-radius: 4px;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check.checked {
+    background: #22c55e;
+    border-color: #22c55e;
+    position: relative;
+  }
+  .check.checked::after {
+    content: '✓';
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
+    top: -1px; left: 2px;
+  }
+  .item-name { font-weight: 600; color: #f1f5f9; }
+  .item-desc { color: #94a3b8; font-size: 0.82rem; margin-top: 2px; }
+  .item-example {
+    background: #0f172a;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #67e8f9;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .progress-bar {
+    background: #334155;
+    border-radius: 8px;
+    height: 8px;
+    margin: 1rem 0 2rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #3b82f6, #22c55e);
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+  .note {
+    background: #1a1a2e;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+  .note strong { color: #fbbf24; }
+  @media print {
+    body { background: #fff; color: #000; }
+    .section { border: 1px solid #ccc; }
+    .check { border-color: #999; }
+    th { background: #eee; }
+    td { border-bottom: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>강사 준비물 체크리스트</h1>
+  <p class="subtitle">LLM Agent 개발 실습 | 2026 상반기 사내교육</p>
+
+  <div class="progress-text">준비 완료: <span id="count">0</span> / <span id="total">0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <!-- 필수: 사내 인프라 정보 -->
+  <div class="section critical">
+    <h2><span class="badge must">필수</span> 사내 인프라 정보 (강사가 확인/제공)</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">LLM Gateway URL</div>
+          <div class="item-desc">사내 LLM 엔드포인트 주소 (OpenAI Compatible)</div>
+          <div class="item-example">http://&lt;gateway-host&gt;:&lt;port&gt;/v1</div>
+        </td>
+        <td>
+          <div class="item-desc">.env 파일의 LLM_GATEWAY_URL에 설정<br>수강생 전원에게 동일 URL 배포</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">LLM Gateway API Key</div>
+          <div class="item-desc">게이트웨이 인증 키 (수강생용)</div>
+          <div class="item-example">sk-xxxxxxxx 또는 사내 토큰</div>
+        </td>
+        <td>
+          <div class="item-desc">수강생별 개별 키 or 공용 키<br>실습 종료 후 만료 처리 권장</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">사용 가능한 모델 목록</div>
+          <div class="item-desc">게이트웨이에 등록된 모델 이름</div>
+          <div class="item-example">gpt-4o, gpt-4o-mini, claude-sonnet 등</div>
+        </td>
+        <td>
+          <div class="item-desc">DEFAULT_MODEL에 설정할 모델명<br>Tool calling 지원 여부 확인 필수</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">Embedding 모델명</div>
+          <div class="item-desc">RAG 실습용 임베딩 모델</div>
+          <div class="item-example">text-embedding-ada-002 등</div>
+        </td>
+        <td>
+          <div class="item-desc">EMBEDDING_MODEL에 설정<br>게이트웨이에서 /v1/embeddings 지원 확인</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">Rate Limit / 동시 접속 수</div>
+          <div class="item-desc">수강생 동시 호출 시 제한 확인</div>
+        </td>
+        <td>
+          <div class="item-desc">수강생 수 × 동시 요청 예상치<br>병목 시 실습 순서 조정 필요</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 필수: 네트워크/프록시 -->
+  <div class="section critical">
+    <h2><span class="badge must">필수</span> 네트워크 / 프록시 설정</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">프록시 서버 주소</div>
+          <div class="item-desc">외부 인터넷 접근용 HTTP/HTTPS 프록시</div>
+          <div class="item-example">http://your-proxy-host:8000</div>
+        </td>
+        <td>
+          <div class="item-desc">현재 설정값 확인 완료<br>pip, npm, playwright 모두 이 프록시 사용</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">NO_PROXY 목록</div>
+          <div class="item-desc">프록시를 우회할 내부 도메인</div>
+          <div class="item-example">localhost,127.0.0.1,.your-company.net</div>
+        </td>
+        <td>
+          <div class="item-desc">LLM Gateway가 내부망이면 NO_PROXY에 추가 필요<br>ex: .your-company.net,gateway-host</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">SSL 인증서 이슈 확인</div>
+          <div class="item-desc">사내 프록시 통과 시 SSL 오류 여부</div>
+          <div class="item-example">NODE_TLS_REJECT_UNAUTHORIZED=0</div>
+        </td>
+        <td>
+          <div class="item-desc">pip: trusted-host 설정<br>npm: strict-ssl false<br>Python: verify=False / SSL_VERIFY=false</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">방화벽 포트 확인</div>
+          <div class="item-desc">실습에 필요한 포트가 열려있는지</div>
+        </td>
+        <td>
+          <div class="item-desc">LLM Gateway 포트<br>Playwright CDP: 9222<br>MCP: stdio (포트 불필요)</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 필수: SSO -->
+  <div class="section critical">
+    <h2><span class="badge must">필수</span> SSO 관련 정보</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">SSO 서버 URL</div>
+          <div class="item-desc">사내 SSO 인증 서버 주소</div>
+        </td>
+        <td>
+          <div class="item-desc">강의 #0, #1 세션에서 사용<br>이론 설명용 (실습 아닌 경우 생략 가능)</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">SSO 연동 신청 절차</div>
+          <div class="item-desc">SSO 연동 신청 경로 / 담당 부서</div>
+        </td>
+        <td>
+          <div class="item-desc">수강생에게 안내할 신청 가이드<br>스크린샷 또는 링크 준비</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">SSO API 샘플 응답</div>
+          <div class="item-desc">1회 요청 시 반환되는 인물정보 예시</div>
+          <div class="item-example">{"name": "홍길동", "dept": "AI팀", ...}</div>
+        </td>
+        <td>
+          <div class="item-desc">실제 데이터 대신 마스킹된 예시 준비<br>응답 구조를 보여주기 위함</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 권장: 수강생 환경 -->
+  <div class="section">
+    <h2><span class="badge recommended">권장</span> 수강생 환경 사전 준비</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">Python 3.10+ 설치 확인</div>
+          <div class="item-desc">수강생 노트북에 Python 설치 여부</div>
+        </td>
+        <td>
+          <div class="item-desc">사전 공지로 설치 안내<br>WSL 사용 시 WSL 내 Python 확인</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">WSL / Docker 설치 확인</div>
+          <div class="item-desc">Windows 수강생 개발 환경</div>
+        </td>
+        <td>
+          <div class="item-desc">사전 공지 필수<br>IT 부서 승인 필요 시 미리 진행</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">Git 리포 접근 권한</div>
+          <div class="item-desc">강의 자료 리포지토리 클론 가능 여부</div>
+        </td>
+        <td>
+          <div class="item-desc">사내 Git이면 접근 권한 부여<br>GitHub면 프록시 통해 clone 가능 확인</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">패키지 사전 설치 테스트</div>
+          <div class="item-desc">requirements.txt 설치가 프록시 환경에서 되는지</div>
+        </td>
+        <td>
+          <div class="item-desc">setup_env.sh / setup_env.ps1 테스트<br>시간 소요: 약 5-10분</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">Chrome/Edge 브라우저</div>
+          <div class="item-desc">CDP 실습용 브라우저</div>
+        </td>
+        <td>
+          <div class="item-desc">--remote-debugging-port=9222로 실행 가능 확인<br>보안 정책으로 차단될 수 있음</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 권장: 강의 자료 -->
+  <div class="section">
+    <h2><span class="badge recommended">권장</span> 강의 자료 최종 확인</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">.env 파일 완성</div>
+          <div class="item-desc">.env.example → .env 복사 후 실제값 입력</div>
+        </td>
+        <td>
+          <div class="item-desc">LLM_GATEWAY_URL, API_KEY, MODEL 등<br>수강생 배포용 .env 따로 준비</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">test_connection.py 통과</div>
+          <div class="item-desc">3개 테스트 (LLM, Embedding, Proxy) 모두 PASS</div>
+        </td>
+        <td>
+          <div class="item-desc">강의 전날 반드시 테스트<br>실패 시 인프라팀 확인</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">예시 코드 실행 테스트</div>
+          <div class="item-desc">각 세션의 주요 코드 사전 실행</div>
+        </td>
+        <td>
+          <div class="item-desc">특히: tool_calling.py, mcp_with_llm.py,<br>basic_agent.py, browser_tools.py</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">presentation.html 확인</div>
+          <div class="item-desc">프레젠테이션 브라우저에서 정상 표시</div>
+        </td>
+        <td>
+          <div class="item-desc">52슬라이드 / 화살표키 네비게이션<br>프로젝터 해상도에서 확인</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 선택: 추가 준비 -->
+  <div class="section optional">
+    <h2><span class="badge opt">선택</span> 추가 준비 (있으면 좋은 것)</h2>
+    <table>
+      <tr><th></th><th>항목</th><th>설명</th></tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">사내 문서 샘플 (RAG용)</div>
+          <div class="item-desc">실제 사내 문서로 RAG 데모하면 임팩트 극대화</div>
+        </td>
+        <td>
+          <div class="item-desc">보안 등급 낮은 문서 선별<br>기본 제공: sample_docs/ 포함</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">iframe 포함 사내 시스템 URL</div>
+          <div class="item-desc">iframe 제어 실습용 내부 시스템</div>
+        </td>
+        <td>
+          <div class="item-desc">ERP, 그룹웨어 등 iframe 기반 시스템<br>테스트 계정 필요</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">실습용 Excel 데이터</div>
+          <div class="item-desc">종합 실습 과제에서 사용할 샘플 데이터</div>
+        </td>
+        <td>
+          <div class="item-desc">매출, 인사, 재고 등 가상 데이터<br>기본 제공: 코드 내 하드코딩</div>
+        </td>
+      </tr>
+      <tr>
+        <td><div class="check" onclick="toggle(this)"></div></td>
+        <td>
+          <div class="item-name">백업 LLM 엔드포인트</div>
+          <div class="item-desc">메인 게이트웨이 장애 시 대비</div>
+        </td>
+        <td>
+          <div class="item-desc">다른 모델 or 로컬 LLM 준비<br>ollama 등 로컬 백업</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <strong>참고:</strong> 이 체크리스트의 체크 상태는 브라우저 localStorage에 저장됩니다.
+    같은 브라우저에서 다시 열면 체크 상태가 유지됩니다.<br>
+    <strong>프록시 설정 요약:</strong> HTTP_PROXY=http://your-proxy-host:8000 | NO_PROXY=localhost,127.0.0.1,.your-company.net | SSL_VERIFY=false | NODE_TLS_REJECT_UNAUTHORIZED=0
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'instructor_checklist_state';
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState() {
+  const state = {};
+  document.querySelectorAll('.check').forEach((el, i) => {
+    state[i] = el.classList.contains('checked');
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function toggle(el) {
+  el.classList.toggle('checked');
+  saveState();
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.check');
+  const checked = document.querySelectorAll('.check.checked');
+  const pct = all.length ? (checked.length / all.length * 100) : 0;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('count').textContent = checked.length;
+  document.getElementById('total').textContent = all.length;
+}
+
+// 초기화
+window.addEventListener('DOMContentLoaded', () => {
+  const state = loadState();
+  document.querySelectorAll('.check').forEach((el, i) => {
+    if (state[i]) el.classList.add('checked');
+  });
+  updateProgress();
+});
+</script>
+</body>
+</html>

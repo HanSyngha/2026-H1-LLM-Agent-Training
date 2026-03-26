@@ -1,0 +1,54 @@
+테크스타 주식회사 - 기술 스택 가이드
+
+1. 사용 기술
+- 프로그래밍 언어: Python, TypeScript, Go, Kotlin
+- 프론트엔드: React, Next.js, TailwindCSS
+- 백엔드: FastAPI (Python), NestJS (TypeScript), Gin (Go)
+- 모바일: Kotlin (Android), Swift (iOS), React Native (크로스플랫폼)
+- 데이터베이스: PostgreSQL (메인 DB), Redis (캐시), MongoDB (로그/비정형)
+- 메시지 큐: Apache Kafka, RabbitMQ
+- AI/ML: PyTorch, LangChain, Hugging Face Transformers, MLflow
+
+2. 개발 환경
+- IDE: VS Code (권장), IntelliJ IDEA (Java/Kotlin)
+- 버전 관리: Git (GitHub Enterprise)
+- 브랜치 전략: Git Flow (main, develop, feature/*, release/*, hotfix/*)
+- 코드 리뷰: 최소 2명의 리뷰어 승인 필요
+- CI/CD: GitHub Actions, ArgoCD
+- 컨테이너: Docker, Kubernetes (EKS)
+
+3. 인프라 및 클라우드
+- 클라우드: AWS (메인), GCP (AI/ML 워크로드)
+- 컨테이너 오케스트레이션: Amazon EKS (Kubernetes)
+- IaC: Terraform, AWS CDK
+- 모니터링: Datadog, Grafana, Prometheus
+- 로깅: ELK Stack (Elasticsearch, Logstash, Kibana)
+- 알림: PagerDuty, Slack 연동
+
+4. 배포 프로세스
+- 개발 환경 (dev): feature 브랜치 push 시 자동 배포
+- 스테이징 환경 (staging): develop 브랜치 merge 시 자동 배포
+- 프로덕션 환경 (prod): release 브랜치에서 수동 승인 후 배포
+- 배포 전략: Blue/Green 배포, Canary 배포 (서비스별 선택)
+- 롤백: 자동 롤백 (헬스체크 실패 시), 수동 롤백 (1-Click)
+
+5. 보안 정책
+- 코드 보안: SonarQube 정적 분석, Snyk 취약점 스캔
+- 인증: OAuth 2.0, OIDC (Keycloak)
+- 시크릿 관리: AWS Secrets Manager, Vault
+- 네트워크: VPC, Security Group, WAF
+- 데이터 암호화: AES-256 (저장), TLS 1.3 (전송)
+
+6. AI/ML 파이프라인
+- 데이터 수집: Apache Airflow, AWS Glue
+- 모델 학습: SageMaker, GCP Vertex AI
+- 모델 서빙: TorchServe, vLLM, Triton Inference Server
+- 실험 관리: MLflow, Weights & Biases
+- 벡터 DB: ChromaDB (내부), Pinecone (프로덕션)
+
+7. 사내 개발 도구
+- 사내 LLM 게이트웨이: OpenAI 호환 API (모든 LLM 접근 통합)
+- 문서 시스템: Confluence, Notion
+- 이슈 트래킹: Jira
+- 커뮤니케이션: Slack, Zoom
+- 디자인: Figma
