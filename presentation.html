@@ -153,7 +153,7 @@ pre::before{content:'';position:absolute;top:10px;left:16px;width:8px;height:8px
 
 /* ===== TABLE ===== */
 table{width:100%;max-width:920px;margin:.8em auto;border-collapse:collapse;font-size:.9em;text-align:left;border-radius:12px;overflow:hidden}
-th{background:rgba(30,41,59,.8);color:var(--blue2);padding:12px 16px;border-bottom:2px solid rgba(59,130,246,.3);font-weight:600;font-size:.92em}
+th{background:rgba(30,41,59,.9);color:#93c5fd;padding:12px 16px;border-bottom:2px solid rgba(59,130,246,.3);font-weight:600;font-size:.92em}
 td{padding:11px 16px;border-bottom:1px solid var(--glass-border);color:var(--text2)}
 tr{transition:background .2s ease}
 tr:hover td{background:rgba(59,130,246,.04)}
@@ -170,9 +170,6 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .title-slide h1{font-size:3.6em;letter-spacing:-.03em}
 .title-slide .subtitle-line{font-size:1.2em;color:var(--text2);margin-top:.3em;letter-spacing:.02em}
 
-/* ===== DAY HEADER ===== */
-.day-header{font-size:3.5em;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
-
 /* ===== QUOTE ===== */
 .quote{border-left:3px solid var(--blue);padding:18px 28px;margin:.6em auto;max-width:780px;text-align:left;font-style:italic;color:var(--text2);background:rgba(59,130,246,.04);border-radius:0 12px 12px 0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:1.05em;line-height:1.7}
 .quote .author{font-style:normal;color:var(--text3);font-size:.82em;margin-top:.5em}
@@ -182,7 +179,7 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .diagram-svg text{font-family:var(--font);fill:var(--text)}
 .diagram-svg .label{font-size:13px;fill:var(--text2)}
 .diagram-svg .label-sm{font-size:11px;fill:var(--text3)}
-.diagram-svg .box-fill{fill:rgba(15,23,42,.7);stroke:rgba(148,163,184,.2);stroke-width:1.5;rx:10}
+.diagram-svg .box-fill{fill:rgba(30,41,59,.85);stroke:rgba(100,116,139,.3);stroke-width:1.5;rx:10}
 .diagram-svg .box-accent{fill:rgba(59,130,246,.12);stroke:rgba(59,130,246,.4);stroke-width:1.5;rx:10}
 .diagram-svg .box-green{fill:rgba(16,185,129,.1);stroke:rgba(16,185,129,.4);stroke-width:1.5;rx:10}
 .diagram-svg .box-purple{fill:rgba(139,92,246,.1);stroke:rgba(139,92,246,.4);stroke-width:1.5;rx:10}
@@ -193,6 +190,231 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .diagram-svg .arrow-line-green{stroke:var(--green2);stroke-width:2;fill:none;marker-end:url(#arrowGreen)}
 .diagram-svg .arrow-line-dim{stroke:var(--text3);stroke-width:1.5;fill:none;stroke-dasharray:6 4}
 
+/* ===== DAY HEADER SLIDES (DRAMATIC) ===== */
+.slide.day-header-slide{
+  background:#0f172a;
+  padding:0;
+  overflow:hidden;
+}
+.slide.day-header-slide .day-bg-number{
+  position:absolute;
+  font-size:28em;
+  font-weight:900;
+  color:rgba(241,245,249,.04);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+  z-index:0;
+}
+.slide.day-header-slide.active .day-bg-number{
+  animation:dayNumPulse 3s ease-in-out infinite;
+}
+@keyframes dayNumPulse{
+  0%,100%{opacity:.04;transform:translate(-50%,-50%) scale(1)}
+  50%{opacity:.07;transform:translate(-50%,-50%) scale(1.03)}
+}
+.slide.day-header-slide .day-content{
+  position:relative;
+  z-index:2;
+  text-align:center;
+}
+.slide.day-header-slide .day-label{
+  display:inline-block;
+  font-size:1em;
+  font-weight:700;
+  letter-spacing:6px;
+  text-transform:uppercase;
+  color:rgba(241,245,249,.4);
+  margin-bottom:.4em;
+  opacity:0;
+}
+.slide.day-header-slide.active .day-label{
+  animation:fadeUp .6s ease .1s both;
+}
+.slide.day-header-slide .day-main-title{
+  font-size:4.5em;
+  font-weight:900;
+  line-height:1.1;
+  background:linear-gradient(135deg,#60a5fa,#a78bfa,#06b6d4);
+  background-size:200% 200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  opacity:0;
+}
+.slide.day-header-slide.active .day-main-title{
+  animation:dayTitleIn .8s cubic-bezier(.22,1,.36,1) .2s both, gradientShift 4s ease infinite .2s;
+}
+@keyframes dayTitleIn{
+  from{opacity:0;transform:scale(.85) translateY(30px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+@keyframes gradientShift{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+.slide.day-header-slide .day-sub-title{
+  font-size:2.6em;
+  font-weight:800;
+  line-height:1.2;
+  margin-top:.1em;
+  opacity:0;
+}
+.slide.day-header-slide.day1-header .day-sub-title{
+  background:linear-gradient(135deg,#06b6d4,#3b82f6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.slide.day-header-slide.day2-header .day-sub-title{
+  background:linear-gradient(135deg,#10b981,#06b6d4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.slide.day-header-slide.active .day-sub-title{
+  animation:fadeUp .7s ease .4s both;
+}
+.slide.day-header-slide .day-divider{
+  width:80px;height:3px;margin:1.2em auto;border-radius:2px;opacity:0;
+}
+.slide.day-header-slide.day1-header .day-divider{
+  background:linear-gradient(90deg,#3b82f6,#06b6d4);
+}
+.slide.day-header-slide.day2-header .day-divider{
+  background:linear-gradient(90deg,#8b5cf6,#10b981);
+}
+.slide.day-header-slide.active .day-divider{
+  animation:fadeUp .5s ease .55s both;
+}
+.slide.day-header-slide .day-desc{
+  font-size:1.15em;
+  color:rgba(241,245,249,.55);
+  margin-top:.6em;
+  opacity:0;
+}
+.slide.day-header-slide.active .day-desc{
+  animation:fadeUp .5s ease .65s both;
+}
+.slide.day-header-slide .day-agenda{
+  display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+  margin-top:1.8em;opacity:0;
+}
+.slide.day-header-slide.active .day-agenda{
+  animation:fadeUp .5s ease .8s both;
+}
+.slide.day-header-slide .day-agenda-item{
+  padding:6px 18px;border-radius:20px;font-size:.82em;font-weight:500;
+  border:1px solid rgba(241,245,249,.12);color:rgba(241,245,249,.5);
+  background:rgba(241,245,249,.04);
+  transition:all .3s ease;
+}
+.slide.day-header-slide .day-agenda-item:hover{
+  border-color:rgba(241,245,249,.25);color:rgba(241,245,249,.7);background:rgba(241,245,249,.08);
+}
+/* Light streak animation */
+.slide.day-header-slide::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(105deg,transparent 40%,rgba(96,165,250,.04) 45%,rgba(167,139,250,.06) 50%,rgba(96,165,250,.04) 55%,transparent 60%);
+  z-index:1;pointer-events:none;opacity:0;
+}
+.slide.day-header-slide.active::before{
+  animation:lightStreak 1.8s ease-out .3s forwards;
+}
+@keyframes lightStreak{
+  0%{left:-100%;opacity:0}
+  10%{opacity:1}
+  100%{left:100%;opacity:0}
+}
+/* Subtle particles */
+.slide.day-header-slide::after{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%,rgba(96,165,250,.3),transparent),
+    radial-gradient(1px 1px at 30% 60%,rgba(167,139,250,.3),transparent),
+    radial-gradient(1px 1px at 50% 10%,rgba(6,182,212,.2),transparent),
+    radial-gradient(1px 1px at 70% 80%,rgba(96,165,250,.2),transparent),
+    radial-gradient(1px 1px at 90% 40%,rgba(167,139,250,.25),transparent),
+    radial-gradient(1px 1px at 15% 85%,rgba(6,182,212,.2),transparent),
+    radial-gradient(1px 1px at 85% 15%,rgba(96,165,250,.2),transparent),
+    radial-gradient(1.5px 1.5px at 45% 45%,rgba(167,139,250,.15),transparent),
+    radial-gradient(1px 1px at 60% 30%,rgba(96,165,250,.15),transparent),
+    radial-gradient(1px 1px at 25% 70%,rgba(6,182,212,.15),transparent);
+  opacity:0;
+}
+.slide.day-header-slide.active::after{
+  animation:fadeIn 2s ease .5s both;
+}
+
+/* ===== SECTION HEADER SLIDES ===== */
+.slide.section-header-slide{
+  padding:60px 80px 60px 88px;
+  border-left:8px solid var(--section-color,#64748b);
+  background:linear-gradient(135deg,
+    color-mix(in srgb, var(--section-color,#64748b) 4%, #f8fafc),
+    #f8fafc 60%,
+    color-mix(in srgb, var(--section-color,#64748b) 2%, #ffffff)
+  );
+}
+.section-header-slide .section-inner{
+  max-width:900px;width:100%;text-align:left;display:flex;flex-direction:column;align-items:flex-start;
+}
+.section-header-slide .section-number{
+  width:80px;height:80px;border-radius:50%;
+  border:3px solid var(--section-color,#64748b);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8em;font-weight:800;
+  color:var(--section-color,#64748b);
+  margin-bottom:.8em;
+  opacity:0;
+}
+.slide.section-header-slide.active .section-number{
+  animation:sectionNumIn .6s cubic-bezier(.34,1.56,.64,1) .15s forwards;
+}
+@keyframes sectionNumIn{
+  from{opacity:0;transform:scale(.4) rotate(-10deg)}
+  to{opacity:1;transform:scale(1) rotate(0)}
+}
+.section-header-slide .section-title{
+  font-size:2.6em;font-weight:800;line-height:1.15;
+  color:var(--text);
+  -webkit-text-fill-color:var(--text);
+  background:none;
+  margin-bottom:.15em;
+  opacity:0;
+}
+.slide.section-header-slide.active .section-title{
+  animation:sectionSlideIn .55s ease .2s forwards;
+}
+@keyframes sectionSlideIn{
+  from{opacity:0;transform:translateX(-40px)}
+  to{opacity:1;transform:translateX(0)}
+}
+.section-header-slide .section-subtitle{
+  font-size:1.2em;color:var(--text2);line-height:1.5;margin-bottom:.5em;
+  opacity:0;
+}
+.slide.section-header-slide.active .section-subtitle{
+  animation:sectionFadeUp .5s ease .4s forwards;
+}
+@keyframes sectionFadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.section-header-slide .section-time{
+  display:inline-block;
+  font-size:.85em;font-family:var(--mono);font-weight:500;
+  color:var(--section-color,#64748b);opacity:0;
+  padding:4px 16px;border-radius:20px;
+  background:color-mix(in srgb, var(--section-color,#64748b) 8%, transparent);
+  border:1px solid color-mix(in srgb, var(--section-color,#64748b) 15%, transparent);
+}
+.slide.section-header-slide.active .section-time{
+  animation:sectionFadeUp .5s ease .55s forwards;
+}
+.section-header-slide .section-bar-accent{
+  position:absolute;left:0;top:0;bottom:0;width:8px;
+  background:var(--section-color,#64748b);
+}
+
 /* ===== OVERVIEW MODE ===== */
 #overview{position:fixed;inset:0;z-index:2000;background:rgba(6,8,15,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;overflow-y:auto;padding:40px}
 #overview.show{display:block}
@@ -201,6 +423,8 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .overview-thumb:hover{border-color:var(--blue2);box-shadow:0 0 20px rgba(59,130,246,.2);transform:scale(1.03)}
 .overview-thumb.current{border-color:var(--blue);box-shadow:0 0 24px rgba(59,130,246,.3)}
 .overview-thumb .thumb-num{position:absolute;top:8px;left:10px;font-size:11px;color:var(--text3);font-family:var(--mono)}
+.overview-thumb.thumb-day{background:rgba(15,23,42,.85);color:#60a5fa;border-color:rgba(96,165,250,.3);font-weight:700}
+.overview-thumb.thumb-section{border-left:4px solid var(--thumb-color,#64748b);font-weight:600}
 
 /* ===== PRESENTER NOTES ===== */
 #notes-panel{position:fixed;bottom:0;left:0;right:0;z-index:1500;background:rgba(6,8,15,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--glass-border);padding:16px 32px;font-size:.85em;color:var(--text2);max-height:150px;overflow-y:auto;transform:translateY(100%);transition:transform .35s ease;font-family:var(--font)}
@@ -208,7 +432,7 @@ tr:hover td{background:rgba(59,130,246,.04)}
 
 /* ===== KEYBOARD HINT ===== */
 #kbd-hint{position:fixed;bottom:24px;left:32px;font-size:11px;color:var(--text3);z-index:999;opacity:.5;font-family:var(--mono)}
-kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:1px 6px;font-size:10px;font-family:var(--mono)}
+kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-radius:4px;padding:1px 6px;font-size:10px;font-family:var(--mono);color:var(--text2)}
 
 /* ===== PRINT ===== */
 @media print{
@@ -218,6 +442,9 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
   .slide h1,.slide h2{-webkit-text-fill-color:#1d4ed8;color:#1d4ed8}
   .slide p,.slide li,.slide td{color:#333}
   pre{border:1px solid #ccc;background:#f8f8f8;box-shadow:none}
+  .slide.day-header-slide{background:#0f172a!important}
+  .slide.day-header-slide .day-main-title{-webkit-text-fill-color:#60a5fa}
+  .slide.section-header-slide .section-title{-webkit-text-fill-color:#1e293b}
 }
 
 /* ===== RESPONSIVE ===== */
@@ -228,6 +455,12 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
   .diagram-svg{max-width:100%}
   .title-slide h1{font-size:2.4em}
+  .slide.day-header-slide .day-main-title{font-size:2.8em}
+  .slide.day-header-slide .day-sub-title{font-size:1.8em}
+  .slide.day-header-slide .day-bg-number{font-size:14em}
+  .slide.section-header-slide{padding:30px 24px 30px 32px}
+  .section-header-slide .section-title{font-size:1.8em}
+  .section-header-slide .section-number{width:60px;height:60px;font-size:1.4em}
 }
 </style>
 </head>
@@ -265,7 +498,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 
 <div id="deck">
 
-<!-- ==================== SLIDE 1: TITLE ==================== -->
+<!-- ==================== SLIDE: TITLE ==================== -->
 <div class="slide title-slide" data-day="0">
 <div class="slide-inner">
   <p class="dim anim anim-d1" style="font-size:.9em;margin-bottom:.4em;letter-spacing:2px;text-transform:uppercase">2-Day Intensive Workshop</p>
@@ -278,11 +511,11 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
     <span style="padding:6px 18px;border-radius:20px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);font-size:.85em;color:var(--green2)">Agentic Loop</span>
     <span style="padding:6px 18px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);font-size:.85em;color:var(--yellow)">Harness</span>
   </div>
-  <p class="anim anim-d6" style="margin-top:2em;color:var(--text3);font-size:.82em">화살표 키 (&#8592;&#8594;) / Space 이동 &nbsp;|&nbsp; <kbd style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font-size:.9em">O</kbd> 전체 보기</p>
+  <p class="anim anim-d6" style="margin-top:2em;color:var(--text3);font-size:.82em">화살표 키 (&#8592;&#8594;) / Space 이동 &nbsp;|&nbsp; <kbd style="border-radius:3px;padding:1px 5px;font-size:.9em">O</kbd> 전체 보기</p>
 </div>
 </div>
 
-<!-- ==================== SLIDE 2: AGENDA ==================== -->
+<!-- ==================== SLIDE: AGENDA ==================== -->
 <div class="slide" data-day="0">
 <div class="slide-inner">
   <h2 class="anim anim-d1">전체 과정 구성</h2>
@@ -314,18 +547,37 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 3: DAY 1 HEADER ==================== -->
-<div class="slide" data-day="1">
-<div class="slide-inner">
-  <span class="badge day1 anim anim-d1">DAY 1</span>
-  <div class="day-header anim anim-d2">기초 이해</div>
-  <div class="anim anim-d3" style="font-size:2.6em;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-top:.1em">LLM 제어 + Tool 개념</div>
-  <div class="divider anim anim-d4" style="margin-top:1.2em"></div>
-  <p class="anim anim-d5" style="margin-top:1em;font-size:1.1em">LLM을 단순 챗봇이 아닌, <strong class="accent">제어 가능한 엔진</strong>으로 다루는 법</p>
-</div>
+<!-- ==================== DAY 1 HEADER (DRAMATIC) ==================== -->
+<div class="slide day-header-slide day1-header" data-day="1" data-slide-type="day-header">
+  <div class="day-bg-number">1</div>
+  <div class="day-content">
+    <div class="day-label">DAY 1</div>
+    <div class="day-main-title">기초 이해</div>
+    <div class="day-sub-title">LLM 제어 + Tool 개념</div>
+    <div class="day-divider"></div>
+    <div class="day-desc">LLM을 단순 챗봇이 아닌, <strong style="color:#60a5fa">제어 가능한 엔진</strong>으로 다루는 법</div>
+    <div class="day-agenda">
+      <span class="day-agenda-item">SSO</span>
+      <span class="day-agenda-item">프롬프트</span>
+      <span class="day-agenda-item">API</span>
+      <span class="day-agenda-item">Structured Output</span>
+      <span class="day-agenda-item">MCP</span>
+      <span class="day-agenda-item">브라우저 자동화</span>
+    </div>
+  </div>
 </div>
 
-<!-- ==================== SLIDE 4: SSO 1 ==================== -->
+<!-- ==================== SECTION: #0 SSO ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#64748b">
+  <div class="section-inner">
+    <div class="section-number">#0</div>
+    <div class="section-title">SSO란?</div>
+    <div class="section-subtitle">Single Sign-On 개념과 사내 연동</div>
+    <div class="section-time">09:00 - 09:40</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: SSO 1 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO</span>
@@ -365,7 +617,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 5: SSO 2 - 사내 구조 ==================== -->
+<!-- ==================== SLIDE: SSO 2 - 사내 구조 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO</span>
@@ -400,7 +652,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 6: SSO 3 ==================== -->
+<!-- ==================== SLIDE: SSO 3 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO</span>
@@ -428,7 +680,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 7: AI 기초 1 ==================== -->
+<!-- ==================== SECTION: #2 AI 학습 ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#f59e0b">
+  <div class="section-inner">
+    <div class="section-number">#2</div>
+    <div class="section-title">AI '학습'이란?</div>
+    <div class="section-subtitle">학습의 모호성 제거, 사내 AI의 실체</div>
+    <div class="section-time">09:40 - 10:00</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: AI 기초 1 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">AI 기초</span>
@@ -443,7 +705,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 8: AI 기초 2 ==================== -->
+<!-- ==================== SLIDE: AI 기초 2 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">AI 기초</span>
@@ -470,7 +732,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 9: 프롬프트 1 ==================== -->
+<!-- ==================== SECTION: #3 프롬프트 ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#06b6d4">
+  <div class="section-inner">
+    <div class="section-number">#3</div>
+    <div class="section-title">프롬프트 & 컨텍스트 엔지니어링</div>
+    <div class="section-subtitle">결국 프롬프트가 핵심이다</div>
+    <div class="section-time">10:00 - 10:30</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: 프롬프트 1 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트</span>
@@ -492,7 +764,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 10: 프롬프트 2 ==================== -->
+<!-- ==================== SLIDE: 프롬프트 2 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트</span>
@@ -514,7 +786,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 11: 컨텍스트 엔지니어링 ==================== -->
+<!-- ==================== SLIDE: 컨텍스트 엔지니어링 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트</span>
@@ -534,7 +806,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 12: API 기초 - 애니메이션 다이어그램 ==================== -->
+<!-- ==================== SECTION: #4 API ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#2563eb">
+  <div class="section-inner">
+    <div class="section-number">#4</div>
+    <div class="section-title">API + OpenAI Compatible</div>
+    <div class="section-subtitle">사내 LLM Gateway 사용법</div>
+    <div class="section-time">10:30 - 12:00</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: API 기초 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">API</span>
@@ -581,7 +863,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 13: API 기초 2 ==================== -->
+<!-- ==================== SLIDE: API Tool 래핑 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">API</span>
@@ -611,7 +893,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 14: OpenAI Compatible - Gateway 다이어그램 ==================== -->
+<!-- ==================== SLIDE: OpenAI Compatible Gateway ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
@@ -652,7 +934,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 15: OpenAI Compatible 2 ==================== -->
+<!-- ==================== SLIDE: base_url / api_key ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
@@ -679,7 +961,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 16: OpenAI Compatible 3 ==================== -->
+<!-- ==================== SLIDE: Gateway 연결 코드 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">OpenAI Compatible</span>
@@ -705,7 +987,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 17: Structured Output 1 ==================== -->
+<!-- ==================== SECTION: #5 Structured Output ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#7c3aed">
+  <div class="section-inner">
+    <div class="section-number">#5</div>
+    <div class="section-title">OpenAI Compatible 상세 제어</div>
+    <div class="section-subtitle">JSON Formatting, Structured Output, Tool Calling</div>
+    <div class="section-time">13:00 - 14:20</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: Structured Output 1 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">Structured Output</span>
@@ -721,7 +1013,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 18: Structured Output 2 ==================== -->
+<!-- ==================== SLIDE: Structured Output 2 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">Structured Output</span>
@@ -748,7 +1040,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 19: Tool Calling 흐름 다이어그램 ==================== -->
+<!-- ==================== SLIDE: Tool Calling 흐름 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">Structured Output</span>
@@ -794,7 +1086,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 20: tool_choice ==================== -->
+<!-- ==================== SLIDE: tool_choice ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">Structured Output</span>
@@ -826,7 +1118,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 21: MCP 1 ==================== -->
+<!-- ==================== SECTION: #6 MCP ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#059669">
+  <div class="section-inner">
+    <div class="section-number">#6</div>
+    <div class="section-title">MCP (Model Context Protocol)</div>
+    <div class="section-subtitle">2026 업계 표준 프로토콜</div>
+    <div class="section-time">14:20 - 15:00</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: MCP 1 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">MCP</span>
@@ -848,7 +1150,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 22: MCP 아키텍처 다이어그램 ==================== -->
+<!-- ==================== SLIDE: MCP 아키텍처 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">MCP</span>
@@ -888,7 +1190,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 23: MCP 3 ==================== -->
+<!-- ==================== SLIDE: FastMCP 코드 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">MCP</span>
@@ -914,7 +1216,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 24: MCP + LLM 연동 ==================== -->
+<!-- ==================== SLIDE: MCP + LLM 연동 흐름 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">MCP</span>
@@ -954,7 +1256,17 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 25: 브라우저 자동화 비교 ==================== -->
+<!-- ==================== SECTION: #7 브라우저 자동화 ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#ea580c">
+  <div class="section-inner">
+    <div class="section-number">#7</div>
+    <div class="section-title">CDP / COM / Playwright / iframe</div>
+    <div class="section-subtitle">브라우저와 앱을 코드로 제어한다</div>
+    <div class="section-time">15:00 - 16:30</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: 브라우저 자동화 비교 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">브라우저 자동화</span>
@@ -989,7 +1301,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 26: CDP 구조 다이어그램 ==================== -->
+<!-- ==================== SLIDE: CDP 구조 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">브라우저 자동화</span>
@@ -1032,7 +1344,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 27: Playwright ==================== -->
+<!-- ==================== SLIDE: Playwright ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">브라우저 자동화</span>
@@ -1062,7 +1374,7 @@ kbd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);borde
 </div>
 </div>
 
-<!-- ==================== SLIDE 28: iframe/COM ==================== -->
+<!-- ==================== SLIDE: iframe/COM ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">브라우저 자동화</span>
@@ -1090,7 +1402,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 29: Day 1 실습 ==================== -->
+<!-- ==================== SECTION: Day 1 실습 ==================== -->
+<div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#0891b2">
+  <div class="section-inner">
+    <div class="section-number" style="border-style:dashed">!</div>
+    <div class="section-title">Day 1 실습 과제</div>
+    <div class="section-subtitle">오늘 배운 내용을 직접 구현해 봅니다</div>
+    <div class="section-time">16:30 -</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: Day 1 실습 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">DAY 1 실습</span>
@@ -1110,18 +1432,37 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 30: DAY 2 HEADER ==================== -->
-<div class="slide day2-slide" data-day="2">
-<div class="slide-inner">
-  <span class="badge day2 anim anim-d1">DAY 2</span>
-  <div class="anim anim-d2" style="font-size:3.5em;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--green2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">Agent 아키텍처</div>
-  <div class="anim anim-d3" style="font-size:2.8em;font-weight:800;background:linear-gradient(135deg,var(--green2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-top:.1em">실전 구현</div>
-  <div class="divider anim anim-d4" style="margin-top:1.2em;background:linear-gradient(90deg,var(--purple),var(--green2))"></div>
-  <p class="anim anim-d5" style="margin-top:1em;font-size:1.1em">프레임워크를 넘어, Agent의 원리를 이해하고 직접 만든다</p>
-</div>
+<!-- ==================== DAY 2 HEADER (DRAMATIC) ==================== -->
+<div class="slide day-header-slide day2-header" data-day="2" data-slide-type="day-header">
+  <div class="day-bg-number">2</div>
+  <div class="day-content">
+    <div class="day-label">DAY 2</div>
+    <div class="day-main-title" style="background:linear-gradient(135deg,#a78bfa,#10b981,#06b6d4);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Agent 아키텍처</div>
+    <div class="day-sub-title">실전 구현</div>
+    <div class="day-divider"></div>
+    <div class="day-desc">프레임워크를 넘어, Agent의 원리를 이해하고 직접 만든다</div>
+    <div class="day-agenda">
+      <span class="day-agenda-item">Framework</span>
+      <span class="day-agenda-item">Agentic Loop</span>
+      <span class="day-agenda-item">bash Agent</span>
+      <span class="day-agenda-item">Vector DB</span>
+      <span class="day-agenda-item">하네스</span>
+      <span class="day-agenda-item">종합 실습</span>
+    </div>
+  </div>
 </div>
 
-<!-- ==================== SLIDE 31: ADK ==================== -->
+<!-- ==================== SECTION: #8 Agent Framework ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#3b82f6">
+  <div class="section-inner">
+    <div class="section-number">#8</div>
+    <div class="section-title">Agent Framework</div>
+    <div class="section-subtitle">Google ADK, LangGraph 핵심 비교</div>
+    <div class="section-time">09:00 - 09:45</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: ADK ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agent Framework</span>
@@ -1148,7 +1489,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 32: LangGraph ==================== -->
+<!-- ==================== SLIDE: LangGraph ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agent Framework</span>
@@ -1177,7 +1518,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 33: 프레임워크 비교 ==================== -->
+<!-- ==================== SLIDE: 프레임워크 비교 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agent Framework</span>
@@ -1196,7 +1537,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 34: Agent Loop 다이어그램 ==================== -->
+<!-- ==================== SECTION: #9 Agentic Loop ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#dc2626">
+  <div class="section-inner">
+    <div class="section-number">#9</div>
+    <div class="section-title">Agentic Loop 만들기</div>
+    <div class="section-subtitle">프레임워크 없이, requests로 직접 구현</div>
+    <div class="section-time">09:45 - 11:15</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: Agent Loop 다이어그램 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agentic Loop</span>
@@ -1239,7 +1590,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 35: requests 구현 ==================== -->
+<!-- ==================== SLIDE: requests 구현 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agentic Loop</span>
@@ -1275,7 +1626,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 36: tool_calls 파싱 ==================== -->
+<!-- ==================== SLIDE: tool_calls 파싱 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agentic Loop</span>
@@ -1304,7 +1655,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 37: Multi-iteration 다이어그램 ==================== -->
+<!-- ==================== SLIDE: Multi-iteration 다이어그램 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agentic Loop</span>
@@ -1349,7 +1700,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 38: Streaming ==================== -->
+<!-- ==================== SLIDE: Streaming ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">Agentic Loop</span>
@@ -1376,7 +1727,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 39: bash Agent 1 ==================== -->
+<!-- ==================== SECTION: #10 bash Agent ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#f59e0b">
+  <div class="section-inner">
+    <div class="section-number">#10</div>
+    <div class="section-title">bash/powershell Agent</div>
+    <div class="section-subtitle">CLI로 환경을 제어하는 Agent</div>
+    <div class="section-time">11:15 - 12:00</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: bash Agent 1 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">bash Agent</span>
@@ -1404,7 +1765,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 40: bash Agent 2 ==================== -->
+<!-- ==================== SLIDE: bash Agent 2 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">bash Agent</span>
@@ -1433,7 +1794,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 41: Semantic Search ==================== -->
+<!-- ==================== SECTION: #11 Vector DB ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#059669">
+  <div class="section-inner">
+    <div class="section-number">#11</div>
+    <div class="section-title">Vector DB vs Index Explore</div>
+    <div class="section-subtitle">Semantic Search vs Claude Code 방식</div>
+    <div class="section-time">13:00 - 14:00</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: Semantic Search ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">검색 전략</span>
@@ -1460,7 +1831,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 42: Index Explore ==================== -->
+<!-- ==================== SLIDE: Index Explore ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">검색 전략</span>
@@ -1488,7 +1859,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 43: Vector DB vs Index - 비주얼 비교 ==================== -->
+<!-- ==================== SLIDE: Vector DB vs Index 비교 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">검색 전략</span>
@@ -1548,7 +1919,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 44: 하네스란 ==================== -->
+<!-- ==================== SECTION: #12 하네스 ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#7c3aed">
+  <div class="section-inner">
+    <div class="section-number">#12</div>
+    <div class="section-title">하네스 엔지니어링</div>
+    <div class="section-subtitle">모델은 엔진, 하네스는 자동차</div>
+    <div class="section-time">14:00 - 14:50</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: 하네스란 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
@@ -1582,7 +1963,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 45: 하네스 5대 요소 - Pentagon 다이어그램 ==================== -->
+<!-- ==================== SLIDE: 하네스 5대 요소 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
@@ -1590,7 +1971,6 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <div class="anim anim-d2 svg-anim" style="margin-top:.4em">
     <svg class="diagram-svg" viewBox="0 0 700 360" width="700" height="360">
       <!-- Pentagon shape (connecting lines) -->
-      <!-- Points: top(350,30) topRight(590,140) bottomRight(500,310) bottomLeft(200,310) topLeft(110,140) -->
       <polygon points="350,40 580,145 510,305 190,305 120,145" fill="rgba(139,92,246,.04)" stroke="rgba(139,92,246,.15)" stroke-width="1.5" class="node nd1"/>
       <!-- Center -->
       <circle cx="350" cy="190" r="35" fill="rgba(139,92,246,.12)" stroke="rgba(139,92,246,.3)" stroke-width="1.5" class="node nd2"/>
@@ -1632,7 +2012,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 46: 컨텍스트 엔지니어링 ==================== -->
+<!-- ==================== SLIDE: 컨텍스트 엔지니어링 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
@@ -1664,7 +2044,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 47: 보안 5계층 ==================== -->
+<!-- ==================== SLIDE: 보안 5계층 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
@@ -1689,7 +2069,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 48: CLAUDE.md ==================== -->
+<!-- ==================== SLIDE: CLAUDE.md ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
@@ -1717,7 +2097,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 49: RAG 파이프라인 다이어그램 ==================== -->
+<!-- ==================== SLIDE: RAG 파이프라인 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">검색 전략</span>
@@ -1774,7 +2154,17 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 50: 종합 실습 ==================== -->
+<!-- ==================== SECTION: 종합 실습 ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#ea580c">
+  <div class="section-inner">
+    <div class="section-number" style="border-style:dashed">!</div>
+    <div class="section-title">종합 실습</div>
+    <div class="section-subtitle">2일간 배운 모든 것을 하나로 통합</div>
+    <div class="section-time">15:00 -</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: 종합 실습 ==================== -->
 <div class="slide day2-slide" data-day="2">
 <div class="slide-inner">
   <span class="badge day2 anim anim-d1">종합 실습</span>
@@ -1825,8 +2215,18 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 51: 마무리 1 ==================== -->
-<div class="slide" data-day="0">
+<!-- ==================== SECTION: 마무리 ==================== -->
+<div class="slide section-header-slide" data-day="2" data-slide-type="section-header" style="--section-color:#8b5cf6">
+  <div class="section-inner">
+    <div class="section-number" style="font-size:1.4em;border-width:2px">&#10003;</div>
+    <div class="section-title">마무리</div>
+    <div class="section-subtitle">2일간의 여정을 정리합니다</div>
+    <div class="section-time">Wrap-up</div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE: 2일간 학습 정리 ==================== -->
+<div class="slide" data-day="2">
 <div class="slide-inner">
   <h2 class="anim anim-d1">2일간 학습 정리</h2>
   <div class="divider anim anim-d2"></div>
@@ -1855,8 +2255,8 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 52: 핵심 메시지 ==================== -->
-<div class="slide" data-day="0">
+<!-- ==================== SLIDE: 핵심 메시지 ==================== -->
+<div class="slide" data-day="2">
 <div class="slide-inner">
   <h1 class="anim anim-d1" style="font-size:2.2em">핵심 메시지</h1>
   <div class="divider anim anim-d2" style="margin:.6em auto"></div>
@@ -1882,8 +2282,8 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE 53: THANK YOU ==================== -->
-<div class="slide" data-day="0">
+<!-- ==================== SLIDE: THANK YOU ==================== -->
+<div class="slide" data-day="2">
 <div class="slide-inner">
   <div class="anim anim-d1" style="font-size:4em;font-weight:800;background:linear-gradient(135deg,var(--blue2),var(--purple2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2">감사합니다</div>
   <div class="divider anim anim-d2" style="margin:1em auto;background:linear-gradient(90deg,var(--blue),var(--purple),var(--cyan));width:80px"></div>
@@ -1912,15 +2312,41 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   const notesPanel = document.getElementById('notes-panel');
 
   // Generate overview thumbnails
-  slides.forEach((s, i) => {
-    const thumb = document.createElement('div');
+  slides.forEach(function(s, i) {
+    var thumb = document.createElement('div');
     thumb.className = 'overview-thumb';
-    const h = s.querySelector('h1, h2, .day-header');
-    const badge = s.querySelector('.badge');
-    let label = '';
-    if (badge) label = badge.textContent + ': ';
-    if (h) label += h.textContent;
-    else label = 'Slide ' + (i+1);
+    var slideType = s.getAttribute('data-slide-type');
+
+    // Style day-header thumbs
+    if (slideType === 'day-header') {
+      thumb.classList.add('thumb-day');
+    }
+
+    // Style section-header thumbs
+    if (slideType === 'section-header') {
+      thumb.classList.add('thumb-section');
+      var sc = getComputedStyle(s).getPropertyValue('--section-color').trim();
+      if (sc) thumb.style.setProperty('--thumb-color', sc);
+    }
+
+    // Get label
+    var label = '';
+    if (slideType === 'day-header') {
+      var dayTitle = s.querySelector('.day-main-title');
+      var dayLabel = s.querySelector('.day-label');
+      label = (dayLabel ? dayLabel.textContent : '') + ' ' + (dayTitle ? dayTitle.textContent : '');
+    } else if (slideType === 'section-header') {
+      var secNum = s.querySelector('.section-number');
+      var secTitle = s.querySelector('.section-title');
+      label = (secNum ? secNum.textContent : '') + ' ' + (secTitle ? secTitle.textContent : '');
+    } else {
+      var h = s.querySelector('h1, h2');
+      var badge = s.querySelector('.badge');
+      if (badge) label = badge.textContent + ': ';
+      if (h) label += h.textContent;
+      else label = 'Slide ' + (i+1);
+    }
+
     thumb.innerHTML = '<div class="thumb-num">' + (i+1) + '</div>' + label;
     thumb.addEventListener('click', function() {
       updateSlide(i);
@@ -1933,21 +2359,21 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
     if (newIndex < 0 || newIndex >= total) return;
     current = newIndex;
 
-    slides.forEach((s, i) => {
+    slides.forEach(function(s, i) {
       s.classList.remove('active', 'prev');
       if (i === current) s.classList.add('active');
       else if (i < current) s.classList.add('prev');
     });
 
     // Progress
-    const pct = total > 1 ? (current / (total - 1)) * 100 : 0;
+    var pct = total > 1 ? (current / (total - 1)) * 100 : 0;
     progress.style.width = pct + '%';
 
     // Counter
     counter.textContent = (current + 1) + ' / ' + total;
 
     // Day indicator
-    const day = slides[current].getAttribute('data-day');
+    var day = slides[current].getAttribute('data-day');
     dayIndicator.className = '';
     if (day === '1') {
       dayIndicator.textContent = 'DAY 1';
@@ -1959,9 +2385,25 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
       dayIndicator.textContent = '';
     }
 
+    // Hide UI elements on day-header slides for clean look
+    var slideType = slides[current].getAttribute('data-slide-type');
+    var bgMesh = document.getElementById('bg-mesh');
+    var dotGrid = document.getElementById('dot-grid');
+    if (slideType === 'day-header') {
+      bgMesh.style.opacity = '0';
+      dotGrid.style.opacity = '0';
+      counter.style.color = 'rgba(241,245,249,.3)';
+      dayIndicator.style.opacity = '0';
+    } else {
+      bgMesh.style.opacity = '1';
+      dotGrid.style.opacity = '1';
+      counter.style.color = '';
+      dayIndicator.style.opacity = '.85';
+    }
+
     // Update overview highlights
-    const thumbs = overviewGrid.children;
-    for (let i = 0; i < thumbs.length; i++) {
+    var thumbs = overviewGrid.children;
+    for (var i = 0; i < thumbs.length; i++) {
       thumbs[i].classList.toggle('current', i === current);
     }
 
@@ -2019,14 +2461,14 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   });
 
   // Touch
-  let touchStartX = 0, touchStartY = 0;
+  var touchStartX = 0, touchStartY = 0;
   document.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
   }, {passive: true});
   document.addEventListener('touchend', function(e) {
-    const dx = e.changedTouches[0].screenX - touchStartX;
-    const dy = e.changedTouches[0].screenY - touchStartY;
+    var dx = e.changedTouches[0].screenX - touchStartX;
+    var dy = e.changedTouches[0].screenY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
       if (dx < 0) next(); else prev();
     }
@@ -2034,8 +2476,8 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 
   // Hash
   function goToHash() {
-    const hash = window.location.hash.replace('#', '');
-    const n = parseInt(hash, 10);
+    var hash = window.location.hash.replace('#', '');
+    var n = parseInt(hash, 10);
     if (n >= 1 && n <= total) updateSlide(n - 1);
   }
   window.addEventListener('hashchange', goToHash);
