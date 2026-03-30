@@ -34,7 +34,8 @@ OUR_JWT_SECRET = "our-service-secret-key"
 OUR_TOKEN_EXPIRE_HOURS = 12
 
 # SSO 서버의 시크릿 (실제 환경에서는 인증서의 public key 사용)
-SSO_SECRET = "mock-sso-secret-key"
+# Agent-Dashboard의 Mock SSO와 동일한 시크릿
+SSO_SECRET = "agent-platform-auth-dev-secret-change-in-production"
 
 
 # ============================================
@@ -117,6 +118,7 @@ async def sso_callback(
             options={
                 "verify_signature": True,  # 실제 환경에서는 반드시 True
                 "verify_exp": True,
+                "verify_aud": False,  # Mock 환경에서는 audience 검증 생략
             },
         )
     except jwt.ExpiredSignatureError:
