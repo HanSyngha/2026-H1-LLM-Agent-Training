@@ -850,33 +850,33 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <h2 class="anim anim-d1">REST API란?</h2>
   <p class="anim anim-d2">HTTP 요청을 보내면, 서버가 응답하는 구조</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
-    <svg class="diagram-svg" viewBox="0 0 700 200" width="700" height="200">
+    <svg class="diagram-svg" viewBox="0 0 900 210" width="900" height="210">
       <!-- Client -->
-      <rect class="box-accent node nd1" x="30" y="30" width="140" height="55" rx="10"/>
-      <text x="100" y="55" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">Client</text>
-      <text x="100" y="72" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">(Python)</text>
+      <rect class="box-accent node nd1" x="30" y="30" width="160" height="60" rx="12"/>
+      <text x="110" y="57" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd1">Client</text>
+      <text x="110" y="76" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">(Python)</text>
       <!-- Server -->
-      <rect class="box-green node nd2" x="500" y="30" width="140" height="55" rx="10"/>
-      <text x="570" y="55" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd2">Server</text>
-      <text x="570" y="72" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">(API)</text>
+      <rect class="box-green node nd2" x="650" y="30" width="160" height="60" rx="12"/>
+      <text x="730" y="57" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd2">Server</text>
+      <text x="730" y="76" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">(API)</text>
       <!-- Request arrow -->
-      <line class="arrow-line line ln1" x1="172" y1="48" x2="498" y2="48"/>
-      <rect class="box-fill node nd3" x="260" y="28" width="150" height="40" rx="8"/>
-      <text x="335" y="48" text-anchor="middle" fill="var(--yellow)" font-size="12" font-weight="600" class="node nd3">HTTP POST</text>
-      <text x="335" y="62" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON body</text>
+      <line class="arrow-line line ln1" x1="192" y1="50" x2="648" y2="50"/>
+      <rect class="box-fill node nd3" x="330" y="30" width="180" height="44" rx="12"/>
+      <text x="420" y="50" text-anchor="middle" fill="var(--yellow)" font-size="14" font-weight="600" class="node nd3">HTTP POST</text>
+      <text x="420" y="66" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">JSON body</text>
       <!-- Response arrow -->
-      <line x1="498" y1="70" x2="172" y2="70" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln2"/>
+      <line x1="648" y1="74" x2="192" y2="74" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln2"/>
       <!-- Client bottom -->
-      <rect class="box-accent node nd4" x="30" y="120" width="140" height="55" rx="10"/>
-      <text x="100" y="148" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd4">Client</text>
+      <rect class="box-accent node nd4" x="30" y="125" width="160" height="60" rx="12"/>
+      <text x="110" y="160" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd4">Client</text>
       <!-- Server bottom -->
-      <rect class="box-green node nd5" x="500" y="120" width="140" height="55" rx="10"/>
-      <text x="570" y="148" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd5">Server</text>
+      <rect class="box-green node nd5" x="650" y="125" width="160" height="60" rx="12"/>
+      <text x="730" y="160" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd5">Server</text>
       <!-- Response label -->
-      <rect class="box-fill node nd6" x="245" y="128" width="180" height="40" rx="8"/>
-      <text x="335" y="148" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd6">HTTP 200 OK</text>
-      <text x="335" y="162" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">JSON response</text>
-      <line x1="498" y1="150" x2="172" y2="150" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln3"/>
+      <rect class="box-fill node nd6" x="310" y="133" width="220" height="44" rx="12"/>
+      <text x="420" y="153" text-anchor="middle" fill="var(--green2)" font-size="14" font-weight="600" class="node nd6">HTTP 200 OK</text>
+      <text x="420" y="169" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">JSON response</text>
+      <line x1="648" y1="157" x2="192" y2="157" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln3"/>
     </svg>
   </div>
   <pre class="anim anim-d4" style="font-size:.78em"><code><span class="ln">1</span><span class="kw">import</span> requests
@@ -927,32 +927,32 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <h2 class="anim anim-d1">OpenAI Compatible 표준이란?</h2>
   <p class="anim anim-d2">OpenAI가 정의한 API 인터페이스를 <strong class="accent">다른 모델/서비스</strong>도 동일하게 지원</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
-    <svg class="diagram-svg" viewBox="0 0 760 220" width="760" height="220">
+    <svg class="diagram-svg" viewBox="0 0 900 230" width="900" height="230">
       <!-- Your Code -->
-      <rect class="box-accent node nd1" x="20" y="70" width="160" height="70" rx="12"/>
-      <text x="100" y="100" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="14" class="node nd1">동일한 코드</text>
-      <text x="100" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">base_url 만 변경</text>
+      <rect class="box-accent node nd1" x="20" y="70" width="180" height="80" rx="12"/>
+      <text x="110" y="104" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="15" class="node nd1">동일한 코드</text>
+      <text x="110" y="124" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">base_url 만 변경</text>
       <!-- Gateway -->
-      <rect class="box-purple node nd2" x="270" y="55" width="170" height="100" rx="12"/>
-      <text x="355" y="90" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="14" class="node nd2">Gateway</text>
-      <text x="355" y="110" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">OpenAI Compatible</text>
-      <text x="355" y="126" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">인터페이스</text>
+      <rect class="box-purple node nd2" x="290" y="55" width="190" height="110" rx="12"/>
+      <text x="385" y="94" text-anchor="middle" fill="#6d28d9" font-weight="700" font-size="15" class="node nd2">Gateway</text>
+      <text x="385" y="114" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">OpenAI Compatible</text>
+      <text x="385" y="132" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">인터페이스</text>
       <!-- Arrow code->gateway -->
-      <line class="arrow-line line ln1" x1="182" y1="105" x2="268" y2="105"/>
+      <line class="arrow-line line ln1" x1="202" y1="110" x2="288" y2="110"/>
       <!-- LLMs -->
-      <rect class="box-fill node nd3" x="540" y="10" width="160" height="42" rx="8"/>
-      <text x="620" y="36" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd3">OpenAI GPT-4o</text>
-      <rect class="box-fill node nd4" x="540" y="65" width="160" height="42" rx="8"/>
-      <text x="620" y="91" text-anchor="middle" fill="var(--orange)" font-weight="600" font-size="13" class="node nd4">Claude Sonnet</text>
-      <rect class="box-fill node nd5" x="540" y="120" width="160" height="42" rx="8"/>
-      <text x="620" y="146" text-anchor="middle" fill="var(--cyan)" font-weight="600" font-size="13" class="node nd5">Gemini</text>
-      <rect class="box-fill node nd6" x="540" y="175" width="160" height="42" rx="8"/>
-      <text x="620" y="201" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="13" class="node nd6">Llama / Local</text>
+      <rect class="box-fill node nd3" x="590" y="10" width="180" height="45" rx="12"/>
+      <text x="680" y="38" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd3">OpenAI GPT-4o</text>
+      <rect class="box-fill node nd4" x="590" y="68" width="180" height="45" rx="12"/>
+      <text x="680" y="96" text-anchor="middle" fill="var(--orange)" font-weight="600" font-size="14" class="node nd4">Claude Sonnet</text>
+      <rect class="box-fill node nd5" x="590" y="126" width="180" height="45" rx="12"/>
+      <text x="680" y="154" text-anchor="middle" fill="var(--cyan)" font-weight="600" font-size="14" class="node nd5">Gemini</text>
+      <rect class="box-fill node nd6" x="590" y="184" width="180" height="45" rx="12"/>
+      <text x="680" y="212" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="14" class="node nd6">Llama / Local</text>
       <!-- Arrows -->
-      <path class="arrow-line-purple line ln2" d="M442,85 Q490,35 538,31"/>
-      <path class="arrow-line-purple line ln3" d="M442,95 L538,86"/>
-      <path class="arrow-line-purple line ln4" d="M442,110 L538,141"/>
-      <path class="arrow-line-purple line ln5" d="M442,120 Q490,175 538,196"/>
+      <path class="arrow-line-purple line ln2" d="M482,88 Q530,38 588,32"/>
+      <path class="arrow-line-purple line ln3" d="M482,100 L588,90"/>
+      <path class="arrow-line-purple line ln4" d="M482,115 L588,148"/>
+      <path class="arrow-line-purple line ln5" d="M482,128 Q530,185 588,206"/>
     </svg>
   </div>
   <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.92em">
@@ -1074,37 +1074,42 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <h2 class="anim anim-d1">Tool Calling 흐름</h2>
   <p class="anim anim-d2">LLM이 직접 함수를 "호출"하는 것이 아니라, <strong class="accent">호출 의도를 JSON으로 표현</strong></p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
-    <svg class="diagram-svg" viewBox="0 0 820 160" width="820" height="160">
+    <svg class="diagram-svg" viewBox="0 0 960 190" width="960" height="190">
       <!-- Step 1: Define -->
-      <rect class="box-accent node nd1" x="10" y="40" width="120" height="70" rx="10"/>
-      <text x="70" y="68" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd1">1. Define</text>
-      <text x="70" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">Tool Schema</text>
-      <text x="70" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">함수 설명서</text>
+      <rect class="box-accent node nd1" x="10" y="35" width="160" height="90" rx="12"/>
+      <text x="90" y="65" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="16" class="node nd1">1. Define</text>
+      <text x="90" y="87" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">Tool Schema 정의</text>
+      <text x="90" y="105" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">(함수 설명서)</text>
       <!-- Step 2: Send -->
-      <rect class="box-fill node nd2" x="170" y="40" width="120" height="70" rx="10"/>
-      <text x="230" y="68" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="13" class="node nd2">2. Send</text>
-      <text x="230" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">LLM에 전송</text>
-      <text x="230" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">+ messages</text>
+      <rect class="box-fill node nd2" x="205" y="35" width="160" height="90" rx="12"/>
+      <text x="285" y="65" text-anchor="middle" fill="#1e293b" font-weight="700" font-size="16" class="node nd2">2. Send</text>
+      <text x="285" y="87" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">messages + tools</text>
+      <text x="285" y="105" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">LLM에 전송</text>
       <!-- Step 3: Parse -->
-      <rect class="box-purple node nd3" x="330" y="40" width="120" height="70" rx="10"/>
-      <text x="390" y="68" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="13" class="node nd3">3. LLM 판단</text>
-      <text x="390" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">tool_calls</text>
-      <text x="390" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON 생성</text>
+      <rect class="box-purple node nd3" x="400" y="35" width="160" height="90" rx="12"/>
+      <text x="480" y="65" text-anchor="middle" fill="#6d28d9" font-weight="700" font-size="16" class="node nd3">3. LLM 판단</text>
+      <text x="480" y="87" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">tool_calls JSON</text>
+      <text x="480" y="105" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">응답 생성</text>
       <!-- Step 4: Execute -->
-      <rect class="box-green node nd4" x="490" y="40" width="120" height="70" rx="10"/>
-      <text x="550" y="68" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd4">4. Execute</text>
-      <text x="550" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">우리 코드가</text>
-      <text x="550" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">실제 실행</text>
+      <rect class="box-green node nd4" x="595" y="35" width="160" height="90" rx="12"/>
+      <text x="675" y="65" text-anchor="middle" fill="#047857" font-weight="700" font-size="16" class="node nd4">4. Execute</text>
+      <text x="675" y="87" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">우리 코드가</text>
+      <text x="675" y="105" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">함수 실행</text>
       <!-- Step 5: Return -->
-      <rect class="box-yellow node nd5" x="650" y="40" width="120" height="70" rx="10"/>
-      <text x="710" y="68" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="13" class="node nd5">5. Return</text>
-      <text x="710" y="86" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">결과를 LLM에</text>
-      <text x="710" y="99" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">다시 전달</text>
+      <rect class="box-yellow node nd5" x="790" y="35" width="160" height="90" rx="12"/>
+      <text x="870" y="65" text-anchor="middle" fill="#92400e" font-weight="700" font-size="16" class="node nd5">5. Return</text>
+      <text x="870" y="87" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">결과를 LLM에</text>
+      <text x="870" y="105" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">다시 전달</text>
       <!-- Arrows -->
-      <line class="arrow-line line ln1" x1="132" y1="75" x2="168" y2="75"/>
-      <line class="arrow-line line ln2" x1="292" y1="75" x2="328" y2="75"/>
-      <line class="arrow-line-purple line ln3" x1="452" y1="75" x2="488" y2="75"/>
-      <line class="arrow-line-green line ln4" x1="612" y1="75" x2="648" y2="75"/>
+      <line class="arrow-line line ln1" x1="172" y1="80" x2="203" y2="80"/>
+      <line class="arrow-line line ln2" x1="367" y1="80" x2="398" y2="80"/>
+      <line class="arrow-line-purple line ln3" x1="562" y1="80" x2="593" y2="80"/>
+      <line class="arrow-line-green line ln4" x1="757" y1="80" x2="788" y2="80"/>
+      <!-- Step numbers under arrows -->
+      <text x="188" y="145" text-anchor="middle" fill="#2563eb" font-size="20" class="node nd1">→</text>
+      <text x="383" y="145" text-anchor="middle" fill="#2563eb" font-size="20" class="node nd2">→</text>
+      <text x="578" y="145" text-anchor="middle" fill="#7c3aed" font-size="20" class="node nd3">→</text>
+      <text x="773" y="145" text-anchor="middle" fill="#059669" font-size="20" class="node nd4">→</text>
     </svg>
   </div>
   <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:.9em">
@@ -1184,34 +1189,34 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <h2 class="anim anim-d1">MCP 아키텍처</h2>
   <p class="anim anim-d2">Client &#8596; Server 구조, 3가지 기본 요소</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
-    <svg class="diagram-svg" viewBox="0 0 780 280" width="780" height="280">
+    <svg class="diagram-svg" viewBox="0 0 950 290" width="950" height="290">
       <!-- MCP Client -->
-      <rect class="box-accent node nd1" x="30" y="80" width="200" height="100" rx="14"/>
-      <text x="130" y="115" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="16" class="node nd1">MCP Client</text>
-      <text x="130" y="140" text-anchor="middle" fill="var(--text3)" font-size="12" class="node nd1">Claude, Cursor,</text>
-      <text x="130" y="156" text-anchor="middle" fill="var(--text3)" font-size="12" class="node nd1">VS Code, etc.</text>
+      <rect class="box-accent node nd1" x="30" y="80" width="220" height="110" rx="12"/>
+      <text x="140" y="118" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="16" class="node nd1">MCP Client</text>
+      <text x="140" y="143" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">Claude, Cursor,</text>
+      <text x="140" y="161" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">VS Code, etc.</text>
       <!-- Bidirectional arrow -->
-      <line class="arrow-line line ln1" x1="232" y1="120" x2="338" y2="120"/>
-      <line x1="338" y1="140" x2="232" y2="140" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln1" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.45s"/>
-      <text x="285" y="115" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">JSON-RPC</text>
+      <line class="arrow-line line ln1" x1="252" y1="122" x2="368" y2="122"/>
+      <line x1="368" y1="148" x2="252" y2="148" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln1" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.45s"/>
+      <text x="310" y="117" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">JSON-RPC</text>
       <!-- MCP Server outline -->
-      <rect class="box-fill node nd2" x="340" y="20" width="410" height="240" rx="14" style="stroke:rgba(16,185,129,.3)"/>
-      <text x="545" y="48" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd2">MCP Server</text>
+      <rect class="box-fill node nd2" x="370" y="20" width="550" height="250" rx="12" style="stroke:rgba(16,185,129,.3)"/>
+      <text x="645" y="50" text-anchor="middle" fill="#047857" font-weight="700" font-size="16" class="node nd2">MCP Server</text>
       <!-- Tool box -->
-      <rect class="box-accent node nd4" x="370" y="70" width="160" height="70" rx="10"/>
-      <text x="450" y="98" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd4">Tool</text>
-      <text x="450" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd4">LLM이 호출 가능한 함수</text>
-      <text x="450" y="132" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">예: search_docs()</text>
+      <rect class="box-accent node nd4" x="400" y="72" width="180" height="80" rx="12"/>
+      <text x="490" y="100" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd4">Tool</text>
+      <text x="490" y="120" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">LLM이 호출 가능한 함수</text>
+      <text x="490" y="137" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">예: search_docs()</text>
       <!-- Resource box -->
-      <rect class="box-green node nd5" x="560" y="70" width="160" height="70" rx="10"/>
-      <text x="640" y="98" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="14" class="node nd5">Resource</text>
-      <text x="640" y="118" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd5">LLM에 제공할 데이터</text>
-      <text x="640" y="132" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">예: file://config.yaml</text>
+      <rect class="box-green node nd5" x="620" y="72" width="180" height="80" rx="12"/>
+      <text x="710" y="100" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd5">Resource</text>
+      <text x="710" y="120" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">LLM에 제공할 데이터</text>
+      <text x="710" y="137" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">예: file://config.yaml</text>
       <!-- Prompt box -->
-      <rect class="box-purple node nd6" x="465" y="160" width="160" height="70" rx="10"/>
-      <text x="545" y="188" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="14" class="node nd6">Prompt</text>
-      <text x="545" y="208" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd6">미리 정의된 템플릿</text>
-      <text x="545" y="222" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">예: summarize_code</text>
+      <rect class="box-purple node nd6" x="510" y="172" width="180" height="80" rx="12"/>
+      <text x="600" y="200" text-anchor="middle" fill="#6d28d9" font-weight="600" font-size="15" class="node nd6">Prompt</text>
+      <text x="600" y="220" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">미리 정의된 템플릿</text>
+      <text x="600" y="237" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">예: summarize_code</text>
     </svg>
   </div>
 </div>
@@ -1249,35 +1254,35 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <span class="badge day1 anim anim-d1">MCP</span>
   <h2 class="anim anim-d1">MCP + LLM 연동 흐름도</h2>
   <div class="anim anim-d2 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 780 320" width="780" height="320">
+    <svg class="diagram-svg" viewBox="0 0 950 340" width="950" height="340">
       <!-- User question -->
-      <rect class="box-fill node nd1" x="250" y="10" width="280" height="36" rx="8"/>
-      <text x="390" y="33" text-anchor="middle" fill="var(--text)" font-size="12" class="node nd1">사용자: "김철수 부서 알려줘"</text>
+      <rect class="box-fill node nd1" x="310" y="10" width="320" height="40" rx="12"/>
+      <text x="470" y="35" text-anchor="middle" fill="var(--text)" font-size="14" class="node nd1">사용자: "김철수 부서 알려줘"</text>
       <!-- LLM judgment -->
-      <rect class="box-accent node nd2" x="270" y="68" width="240" height="45" rx="10"/>
-      <text x="390" y="88" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd2">LLM 판단</text>
-      <text x="390" y="104" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">tools 목록에 search_employee 있음</text>
-      <line class="arrow-line line ln1" x1="390" y1="46" x2="390" y2="66"/>
+      <rect class="box-accent node nd2" x="310" y="72" width="320" height="52" rx="12"/>
+      <text x="470" y="94" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd2">LLM 판단</text>
+      <text x="470" y="114" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">tools 목록에 search_employee 있음</text>
+      <line class="arrow-line line ln1" x1="470" y1="50" x2="470" y2="70"/>
       <!-- tool_call -->
-      <rect class="box-yellow node nd3" x="220" y="135" width="340" height="36" rx="8"/>
-      <text x="390" y="158" text-anchor="middle" fill="var(--yellow)" font-family="var(--mono)" font-size="11" class="node nd3">tool_call: search_employee(name="김철수")</text>
-      <line class="arrow-line line ln2" x1="390" y1="113" x2="390" y2="133"/>
+      <rect class="box-yellow node nd3" x="260" y="148" width="420" height="40" rx="12"/>
+      <text x="470" y="173" text-anchor="middle" fill="var(--yellow)" font-family="var(--mono)" font-size="13" class="node nd3">tool_call: search_employee(name="김철수")</text>
+      <line class="arrow-line line ln2" x1="470" y1="124" x2="470" y2="146"/>
       <!-- MCP Client/Server -->
-      <rect class="box-fill node nd4" x="100" y="195" width="160" height="45" rx="10"/>
-      <text x="180" y="222" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="13" class="node nd4">MCP Client</text>
-      <rect class="box-green node nd5" x="500" y="195" width="160" height="45" rx="10"/>
-      <text x="580" y="218" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd5">MCP Server</text>
-      <text x="580" y="232" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">(실제 실행)</text>
-      <line class="arrow-line line ln3" x1="390" y1="171" x2="180" y2="193"/>
-      <line class="arrow-line-green line ln4" x1="262" y1="217" x2="498" y2="217"/>
-      <text x="380" y="210" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">JSON-RPC</text>
+      <rect class="box-fill node nd4" x="100" y="212" width="190" height="52" rx="12"/>
+      <text x="195" y="243" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="15" class="node nd4">MCP Client</text>
+      <rect class="box-green node nd5" x="600" y="212" width="190" height="52" rx="12"/>
+      <text x="695" y="237" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd5">MCP Server</text>
+      <text x="695" y="255" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">(실제 실행)</text>
+      <line class="arrow-line line ln3" x1="470" y1="188" x2="195" y2="210"/>
+      <line class="arrow-line-green line ln4" x1="292" y1="237" x2="598" y2="237"/>
+      <text x="445" y="230" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">JSON-RPC</text>
       <!-- Return -->
-      <line x1="498" y1="230" x2="262" y2="230" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln5" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:1.05s"/>
+      <line x1="598" y1="250" x2="292" y2="250" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln5" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:1.05s"/>
       <!-- LLM response -->
-      <rect class="box-accent node nd7" x="210" y="268" width="360" height="40" rx="10"/>
-      <text x="390" y="285" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd7">LLM 응답</text>
-      <text x="390" y="300" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd7">"김철수님은 개발1팀 소속입니다."</text>
-      <line class="arrow-line line ln6" x1="180" y1="242" x2="390" y2="266"/>
+      <rect class="box-accent node nd7" x="250" y="288" width="440" height="44" rx="12"/>
+      <text x="470" y="306" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="14" class="node nd7">LLM 응답</text>
+      <text x="470" y="324" text-anchor="middle" fill="#475569" font-size="13" class="node nd7">"김철수님은 개발1팀 소속입니다."</text>
+      <line class="arrow-line line ln6" x1="195" y1="266" x2="470" y2="286"/>
     </svg>
   </div>
 </div>
@@ -1335,36 +1340,36 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <h2 class="anim anim-d1">CDP (Chrome DevTools Protocol)</h2>
   <p class="anim anim-d2">Chrome과 WebSocket으로 직접 대화하는 저수준 프로토콜</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 780 200" width="780" height="200">
+    <svg class="diagram-svg" viewBox="0 0 950 210" width="950" height="210">
       <!-- Browser -->
-      <rect class="box-accent node nd1" x="20" y="40" width="180" height="120" rx="14"/>
-      <text x="110" y="72" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="15" class="node nd1">Chrome</text>
-      <text x="110" y="92" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">Browser</text>
+      <rect class="box-accent node nd1" x="20" y="35" width="220" height="140" rx="12"/>
+      <text x="130" y="68" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="15" class="node nd1">Chrome</text>
+      <text x="130" y="88" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">Browser</text>
       <!-- Domain boxes inside browser -->
-      <rect x="35" y="105" width="65" height="28" rx="5" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd4"/>
-      <text x="67" y="123" text-anchor="middle" fill="var(--blue2)" font-size="9" class="node nd4">Page</text>
-      <rect x="107" y="105" width="65" height="28" rx="5" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd5"/>
-      <text x="139" y="123" text-anchor="middle" fill="var(--blue2)" font-size="9" class="node nd5">DOM</text>
-      <rect x="40" y="138" width="55" height="20" rx="4" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd6"/>
-      <text x="67" y="152" text-anchor="middle" fill="var(--text3)" font-size="8" class="node nd6">Network</text>
-      <rect x="102" y="138" width="55" height="20" rx="4" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd7"/>
-      <text x="129" y="152" text-anchor="middle" fill="var(--text3)" font-size="8" class="node nd7">Runtime</text>
+      <rect x="35" y="105" width="90" height="30" rx="6" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd4"/>
+      <text x="80" y="124" text-anchor="middle" fill="var(--blue2)" font-size="13" class="node nd4">Page</text>
+      <rect x="135" y="105" width="90" height="30" rx="6" fill="rgba(59,130,246,.15)" stroke="rgba(59,130,246,.3)" stroke-width="1" class="node nd5"/>
+      <text x="180" y="124" text-anchor="middle" fill="var(--blue2)" font-size="13" class="node nd5">DOM</text>
+      <rect x="35" y="143" width="90" height="26" rx="5" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd6"/>
+      <text x="80" y="160" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">Network</text>
+      <rect x="135" y="143" width="90" height="26" rx="5" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.15)" stroke-width="1" class="node nd7"/>
+      <text x="180" y="160" text-anchor="middle" fill="#475569" font-size="13" class="node nd7">Runtime</text>
       <!-- WebSocket -->
-      <rect class="box-yellow node nd2" x="290" y="60" width="180" height="80" rx="12"/>
-      <text x="380" y="92" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="14" class="node nd2">WebSocket</text>
-      <text x="380" y="112" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd2">DevTools Protocol</text>
-      <text x="380" y="128" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">ws://localhost:9222</text>
+      <rect class="box-yellow node nd2" x="335" y="55" width="220" height="95" rx="12"/>
+      <text x="445" y="90" text-anchor="middle" fill="#92400e" font-weight="600" font-size="15" class="node nd2">WebSocket</text>
+      <text x="445" y="112" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">DevTools Protocol</text>
+      <text x="445" y="130" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">ws://localhost:9222</text>
       <!-- Your Code -->
-      <rect class="box-green node nd3" x="560" y="40" width="180" height="120" rx="14"/>
-      <text x="650" y="80" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="15" class="node nd3">Your Code</text>
-      <text x="650" y="100" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd3">Python / Node.js</text>
-      <text x="650" y="130" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Page.navigate()</text>
-      <text x="650" y="145" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Runtime.evaluate()</text>
+      <rect class="box-green node nd3" x="650" y="35" width="220" height="140" rx="12"/>
+      <text x="760" y="78" text-anchor="middle" fill="#047857" font-weight="700" font-size="15" class="node nd3">Your Code</text>
+      <text x="760" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Python / Node.js</text>
+      <text x="760" y="132" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Page.navigate()</text>
+      <text x="760" y="150" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Runtime.evaluate()</text>
       <!-- Arrows -->
-      <line class="arrow-line line ln1" x1="202" y1="90" x2="288" y2="90"/>
-      <line x1="288" y1="110" x2="202" y2="110" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln2"/>
-      <line class="arrow-line-green line ln3" x1="472" y1="90" x2="558" y2="90"/>
-      <line x1="558" y1="110" x2="472" y2="110" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4"/>
+      <line class="arrow-line line ln1" x1="242" y1="92" x2="333" y2="92"/>
+      <line x1="333" y1="112" x2="242" y2="112" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#arrowBlue)" class="line ln2"/>
+      <line class="arrow-line-green line ln3" x1="557" y1="92" x2="648" y2="92"/>
+      <line x1="648" y1="112" x2="557" y2="112" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4"/>
     </svg>
   </div>
   <pre class="anim anim-d4" style="font-size:.76em;max-width:700px"><code><span class="ln">1</span><span class="kw">await</span> ws.<span class="fn">send</span>(json.<span class="fn">dumps</span>({<span class="st">"id"</span>:<span class="nu">1</span>, <span class="st">"method"</span>:<span class="st">"Page.navigate"</span>, <span class="st">"params"</span>:{<span class="st">"url"</span>:url}}))<span class="lang-tag">python</span></code></pre>
@@ -1615,37 +1620,37 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <h2 class="anim anim-d1">Agent Loop 패턴</h2>
   <p class="anim anim-d2">모든 Agent의 핵심: <strong class="accent">반복적 LLM &#8596; Tool 상호작용</strong></p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 700 300" width="700" height="300">
+    <svg class="diagram-svg" viewBox="0 0 900 320" width="900" height="320">
       <!-- User Input -->
-      <rect class="box-accent node nd1" x="260" y="10" width="160" height="45" rx="10"/>
-      <text x="340" y="38" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="14" class="node nd1">User 입력</text>
+      <rect class="box-accent node nd1" x="310" y="10" width="180" height="50" rx="12"/>
+      <text x="400" y="40" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd1">User 입력</text>
       <!-- LLM -->
-      <rect class="box-purple node nd2" x="260" y="80" width="160" height="50" rx="12"/>
-      <text x="340" y="110" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="16" class="node nd2">LLM</text>
+      <rect class="box-purple node nd2" x="310" y="85" width="180" height="55" rx="12"/>
+      <text x="400" y="118" text-anchor="middle" fill="#6d28d9" font-weight="700" font-size="16" class="node nd2">LLM</text>
       <!-- Decision -->
-      <polygon points="340,155 400,185 340,215 280,185" fill="rgba(245,158,11,.1)" stroke="rgba(245,158,11,.4)" stroke-width="1.5" class="node nd3"/>
-      <text x="340" y="189" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd3">tool_call?</text>
+      <polygon points="400,165 468,198 400,231 332,198" fill="rgba(245,158,11,.1)" stroke="rgba(245,158,11,.4)" stroke-width="1.5" class="node nd3"/>
+      <text x="400" y="202" text-anchor="middle" fill="#92400e" font-weight="600" font-size="14" class="node nd3">tool_call?</text>
       <!-- Arrow user->LLM -->
-      <line class="arrow-line line ln1" x1="340" y1="55" x2="340" y2="78"/>
+      <line class="arrow-line line ln1" x1="400" y1="60" x2="400" y2="83"/>
       <!-- Arrow LLM->decision -->
-      <line class="arrow-line-purple line ln2" x1="340" y1="130" x2="340" y2="155"/>
+      <line class="arrow-line-purple line ln2" x1="400" y1="140" x2="400" y2="165"/>
       <!-- Yes path: Execute Tool -->
-      <rect class="box-green node nd4" x="480" y="163" width="140" height="45" rx="10"/>
-      <text x="550" y="190" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="13" class="node nd4">Tool 실행</text>
-      <line class="arrow-line-green line ln3" x1="400" y1="185" x2="478" y2="185"/>
-      <text x="435" y="178" text-anchor="middle" fill="var(--green2)" font-size="10" class="node nd5">Yes</text>
+      <rect class="box-green node nd4" x="570" y="175" width="170" height="50" rx="12"/>
+      <text x="655" y="205" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd4">Tool 실행</text>
+      <line class="arrow-line-green line ln3" x1="468" y1="198" x2="568" y2="198"/>
+      <text x="510" y="190" text-anchor="middle" fill="#047857" font-size="13" class="node nd5">Yes</text>
       <!-- Loop back arrow -->
-      <path d="M550,163 L550,105 L422,105" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.9s"/>
-      <text x="500" y="85" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">결과를 messages에 추가</text>
+      <path d="M655,175 L655,112 L492,112" stroke="var(--green2)" stroke-width="2" fill="none" marker-end="url(#arrowGreen)" class="line ln4" style="stroke-dasharray:200;animation:drawLineShort .8s ease both;animation-delay:.9s"/>
+      <text x="590" y="95" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">결과를 messages에 추가</text>
       <!-- No path: Final Response -->
-      <rect class="box-accent node nd7" x="260" y="240" width="160" height="45" rx="10"/>
-      <text x="340" y="267" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="13" class="node nd7">최종 응답 반환</text>
-      <line class="arrow-line line ln5" x1="340" y1="215" x2="340" y2="238"/>
-      <text x="310" y="230" text-anchor="middle" fill="var(--red)" font-size="10" class="node nd8">No</text>
+      <rect class="box-accent node nd7" x="310" y="255" width="180" height="50" rx="12"/>
+      <text x="400" y="285" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd7">최종 응답 반환</text>
+      <line class="arrow-line line ln5" x1="400" y1="231" x2="400" y2="253"/>
+      <text x="365" y="247" text-anchor="middle" fill="var(--red)" font-size="13" class="node nd8">No</text>
       <!-- Loop indicator -->
-      <rect x="60" y="80" width="80" height="30" rx="6" fill="rgba(139,92,246,.08)" stroke="rgba(139,92,246,.2)" stroke-width="1" class="node nd6"/>
-      <text x="100" y="99" text-anchor="middle" fill="var(--purple2)" font-size="10" font-weight="600" class="node nd6">Loop</text>
-      <path d="M140,95 L258,95" stroke="var(--purple2)" stroke-width="1" stroke-dasharray="4 3" fill="none" class="line ln6"/>
+      <rect x="80" y="88" width="100" height="35" rx="6" fill="rgba(139,92,246,.08)" stroke="rgba(139,92,246,.2)" stroke-width="1" class="node nd6"/>
+      <text x="130" y="110" text-anchor="middle" fill="var(--purple2)" font-size="13" font-weight="600" class="node nd6">Loop</text>
+      <path d="M180,106 L308,106" stroke="var(--purple2)" stroke-width="1" stroke-dasharray="4 3" fill="none" class="line ln6"/>
     </svg>
   </div>
 </div>
@@ -1723,38 +1728,38 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <h2 class="anim anim-d1">Multi-iteration 아키텍처</h2>
   <p class="anim anim-d2">Claude Code 방식 &mdash; 여러 Tool을 연쇄 호출하여 복잡한 작업 수행</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 780 240" width="780" height="240">
+    <svg class="diagram-svg" viewBox="0 0 950 260" width="950" height="260">
       <!-- User question -->
-      <rect class="box-fill node nd1" x="10" y="10" width="320" height="30" rx="6"/>
-      <text x="170" y="30" text-anchor="middle" fill="var(--text)" font-size="11" class="node nd1">"프로젝트에서 TODO 찾아서 이슈 생성해줘"</text>
+      <rect class="box-fill node nd1" x="10" y="10" width="400" height="36" rx="12"/>
+      <text x="210" y="33" text-anchor="middle" fill="var(--text)" font-size="14" class="node nd1">"프로젝트에서 TODO 찾아서 이슈 생성해줘"</text>
       <!-- Iteration boxes -->
-      <rect class="box-accent node nd2" x="10" y="55" width="170" height="42" rx="8"/>
-      <text x="95" y="73" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="11" class="node nd2">반복 1: glob("**/*.py")</text>
-      <text x="95" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd2">&#8594; 파일 목록 반환</text>
-      <rect class="box-accent node nd3" x="200" y="55" width="190" height="42" rx="8"/>
-      <text x="295" y="73" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="11" class="node nd3">반복 2: grep("TODO", files)</text>
-      <text x="295" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">&#8594; TODO 항목들 반환</text>
-      <rect class="box-purple node nd4" x="410" y="55" width="170" height="42" rx="8"/>
-      <text x="495" y="73" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="11" class="node nd4">반복 3: read_file(...)</text>
-      <text x="495" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd4">&#8594; 컨텍스트 확인</text>
-      <rect class="box-green node nd5" x="600" y="55" width="170" height="42" rx="8"/>
-      <text x="685" y="73" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="11" class="node nd5">반복 4: create_issue(...)</text>
-      <text x="685" y="88" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd5">&#8594; 이슈 생성 완료</text>
+      <rect class="box-accent node nd2" x="10" y="62" width="200" height="50" rx="12"/>
+      <text x="110" y="82" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="13" class="node nd2">반복 1: glob("**/*.py")</text>
+      <text x="110" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">&#8594; 파일 목록 반환</text>
+      <rect class="box-accent node nd3" x="245" y="62" width="220" height="50" rx="12"/>
+      <text x="355" y="82" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="13" class="node nd3">반복 2: grep("TODO", files)</text>
+      <text x="355" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">&#8594; TODO 항목들 반환</text>
+      <rect class="box-purple node nd4" x="500" y="62" width="200" height="50" rx="12"/>
+      <text x="600" y="82" text-anchor="middle" fill="#6d28d9" font-weight="600" font-size="13" class="node nd4">반복 3: read_file(...)</text>
+      <text x="600" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">&#8594; 컨텍스트 확인</text>
+      <rect class="box-green node nd5" x="735" y="62" width="200" height="50" rx="12"/>
+      <text x="835" y="82" text-anchor="middle" fill="#047857" font-weight="600" font-size="13" class="node nd5">반복 4: create_issue(...)</text>
+      <text x="835" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">&#8594; 이슈 생성 완료</text>
       <!-- Arrows between iterations -->
-      <line class="arrow-line line ln1" x1="182" y1="76" x2="198" y2="76"/>
-      <line class="arrow-line-purple line ln2" x1="392" y1="76" x2="408" y2="76"/>
-      <line class="arrow-line-green line ln3" x1="582" y1="76" x2="598" y2="76"/>
+      <line class="arrow-line line ln1" x1="212" y1="87" x2="243" y2="87"/>
+      <line class="arrow-line-purple line ln2" x1="467" y1="87" x2="498" y2="87"/>
+      <line class="arrow-line-green line ln3" x1="702" y1="87" x2="733" y2="87"/>
       <!-- Final response -->
-      <rect class="box-fill node nd6" x="200" y="115" width="380" height="35" rx="8"/>
-      <text x="390" y="137" text-anchor="middle" fill="var(--green2)" font-size="12" class="node nd6">반복 5: "3개의 TODO를 찾아 이슈를 생성했습니다." (종료)</text>
+      <rect class="box-fill node nd6" x="220" y="130" width="500" height="40" rx="12"/>
+      <text x="470" y="155" text-anchor="middle" fill="var(--green2)" font-size="14" class="node nd6">반복 5: "3개의 TODO를 찾아 이슈를 생성했습니다." (종료)</text>
       <!-- Spiral/progress visualization -->
-      <text x="40" y="175" fill="var(--text3)" font-size="11" class="node nd7">messages 배열이 매 반복마다 성장:</text>
+      <text x="40" y="198" fill="#475569" font-size="13" class="node nd7">messages 배열이 매 반복마다 성장:</text>
       <!-- Growing message bars -->
-      <rect x="40" y="185" width="80" height="10" rx="3" fill="rgba(59,130,246,.3)" class="node nd7"/>
-      <rect x="40" y="200" width="200" height="10" rx="3" fill="rgba(59,130,246,.4)" class="node nd7"/>
-      <rect x="40" y="215" width="350" height="10" rx="3" fill="rgba(59,130,246,.5)" class="node nd7"/>
-      <rect x="40" y="230" width="520" height="10" rx="3" fill="rgba(59,130,246,.6)" class="node nd8"/>
-      <text x="580" y="240" fill="var(--text3)" font-size="9" class="node nd8">context grows &#8594;</text>
+      <rect x="40" y="208" width="100" height="11" rx="3" fill="rgba(59,130,246,.3)" class="node nd7"/>
+      <rect x="40" y="224" width="250" height="11" rx="3" fill="rgba(59,130,246,.4)" class="node nd7"/>
+      <rect x="40" y="240" width="430" height="11" rx="3" fill="rgba(59,130,246,.5)" class="node nd7"/>
+      <rect x="40" y="256" width="630" height="11" rx="3" fill="rgba(59,130,246,.6)" class="node nd8"/>
+      <text x="690" y="266" fill="#475569" font-size="13" class="node nd8">context grows &#8594;</text>
     </svg>
   </div>
   <p class="anim anim-d4" style="font-size:.88em;color:var(--text3)">핵심: max_iterations로 무한 루프 방지, 각 단계의 결과가 다음 판단의 입력</p>
@@ -1926,52 +1931,52 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <span class="badge day2 anim anim-d1">검색 전략</span>
   <h2 class="anim anim-d1">비교: 언제 무엇을 쓸 것인가</h2>
   <div class="anim anim-d2 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 780 260" width="780" height="260">
+    <svg class="diagram-svg" viewBox="0 0 950 270" width="950" height="270">
       <!-- Left: Vector DB -->
-      <rect class="box-accent node nd1" x="20" y="10" width="350" height="240" rx="14"/>
-      <text x="195" y="40" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="16" class="node nd1">Vector DB (Semantic)</text>
+      <rect class="box-accent node nd1" x="20" y="10" width="420" height="250" rx="12"/>
+      <text x="230" y="42" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="16" class="node nd1">Vector DB (Semantic)</text>
       <!-- Visual metaphor: scattered dots clustering -->
-      <circle cx="80" cy="90" r="6" fill="rgba(59,130,246,.4)" class="node nd2"/>
-      <circle cx="120" cy="80" r="6" fill="rgba(59,130,246,.5)" class="node nd2"/>
-      <circle cx="100" cy="110" r="6" fill="rgba(59,130,246,.6)" class="node nd2"/>
-      <circle cx="95" cy="95" r="18" fill="none" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="node nd3"/>
-      <text x="95" y="145" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">유사도 클러스터</text>
+      <circle cx="85" cy="95" r="7" fill="rgba(59,130,246,.4)" class="node nd2"/>
+      <circle cx="125" cy="84" r="7" fill="rgba(59,130,246,.5)" class="node nd2"/>
+      <circle cx="105" cy="116" r="7" fill="rgba(59,130,246,.6)" class="node nd2"/>
+      <circle cx="100" cy="100" r="22" fill="none" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="node nd3"/>
+      <text x="100" y="155" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">유사도 클러스터</text>
       <!-- Pros -->
-      <text x="195" y="80" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd4">장점</text>
-      <text x="195" y="100" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4">동의어/유사 표현 인식</text>
-      <text x="195" y="118" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4">자연어 질문 가능</text>
+      <text x="230" y="84" text-anchor="middle" fill="var(--green2)" font-size="14" font-weight="600" class="node nd4">장점</text>
+      <text x="230" y="106" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd4">동의어/유사 표현 인식</text>
+      <text x="230" y="126" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd4">자연어 질문 가능</text>
       <!-- Cons -->
-      <text x="195" y="148" text-anchor="middle" fill="var(--red)" font-size="12" font-weight="600" class="node nd5">단점</text>
-      <text x="195" y="168" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5">임베딩 비용</text>
-      <text x="195" y="186" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5">정확도 불확실</text>
+      <text x="230" y="156" text-anchor="middle" fill="var(--red)" font-size="14" font-weight="600" class="node nd5">단점</text>
+      <text x="230" y="178" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd5">임베딩 비용</text>
+      <text x="230" y="198" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd5">정확도 불확실</text>
       <!-- Use case -->
-      <rect x="50" y="210" width="270" height="28" rx="6" fill="rgba(59,130,246,.12)" stroke="rgba(59,130,246,.2)" stroke-width="1" class="node nd6"/>
-      <text x="185" y="228" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="600" class="node nd6">문서 검색, FAQ, 지식베이스</text>
+      <rect x="55" y="220" width="320" height="30" rx="6" fill="rgba(59,130,246,.12)" stroke="rgba(59,130,246,.2)" stroke-width="1" class="node nd6"/>
+      <text x="215" y="240" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="600" class="node nd6">문서 검색, FAQ, 지식베이스</text>
 
       <!-- Right: Index Explore -->
-      <rect class="box-green node nd1" x="410" y="10" width="350" height="240" rx="14" style="animation-delay:.3s"/>
-      <text x="585" y="40" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd1" style="animation-delay:.3s">Index Explore (Exact)</text>
+      <rect class="box-green node nd1" x="510" y="10" width="420" height="250" rx="12" style="animation-delay:.3s"/>
+      <text x="720" y="42" text-anchor="middle" fill="#047857" font-weight="700" font-size="16" class="node nd1" style="animation-delay:.3s">Index Explore (Exact)</text>
       <!-- Visual metaphor: tree structure -->
-      <line x1="500" y1="75" x2="480" y2="100" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
-      <line x1="500" y1="75" x2="520" y2="100" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
-      <circle cx="500" cy="72" r="5" fill="var(--green2)" class="node nd2"/>
-      <circle cx="480" cy="103" r="4" fill="rgba(16,185,129,.5)" class="node nd3"/>
-      <circle cx="520" cy="103" r="4" fill="rgba(16,185,129,.5)" class="node nd3"/>
-      <text x="500" y="130" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">구조적 탐색</text>
+      <line x1="590" y1="78" x2="568" y2="106" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
+      <line x1="590" y1="78" x2="612" y2="106" stroke="var(--green2)" stroke-width="1.5" class="node nd3"/>
+      <circle cx="590" cy="75" r="6" fill="var(--green2)" class="node nd2"/>
+      <circle cx="568" cy="109" r="5" fill="rgba(16,185,129,.5)" class="node nd3"/>
+      <circle cx="612" cy="109" r="5" fill="rgba(16,185,129,.5)" class="node nd3"/>
+      <text x="590" y="140" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">구조적 탐색</text>
       <!-- Pros -->
-      <text x="585" y="80" text-anchor="middle" fill="var(--green2)" font-size="12" font-weight="600" class="node nd4" style="animation-delay:.35s">장점</text>
-      <text x="585" y="100" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4" style="animation-delay:.35s">정확한 결과</text>
-      <text x="585" y="118" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd4" style="animation-delay:.35s">구조적 탐색, 빠름</text>
+      <text x="720" y="84" text-anchor="middle" fill="var(--green2)" font-size="14" font-weight="600" class="node nd4" style="animation-delay:.35s">장점</text>
+      <text x="720" y="106" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd4" style="animation-delay:.35s">정확한 결과</text>
+      <text x="720" y="126" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd4" style="animation-delay:.35s">구조적 탐색, 빠름</text>
       <!-- Cons -->
-      <text x="585" y="148" text-anchor="middle" fill="var(--red)" font-size="12" font-weight="600" class="node nd5" style="animation-delay:.4s">단점</text>
-      <text x="585" y="168" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5" style="animation-delay:.4s">의미적 연결 불가</text>
-      <text x="585" y="186" text-anchor="middle" fill="var(--text2)" font-size="11" class="node nd5" style="animation-delay:.4s">패턴을 알아야 함</text>
+      <text x="720" y="156" text-anchor="middle" fill="var(--red)" font-size="14" font-weight="600" class="node nd5" style="animation-delay:.4s">단점</text>
+      <text x="720" y="178" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd5" style="animation-delay:.4s">의미적 연결 불가</text>
+      <text x="720" y="198" text-anchor="middle" fill="var(--text2)" font-size="13" class="node nd5" style="animation-delay:.4s">패턴을 알아야 함</text>
       <!-- Use case -->
-      <rect x="440" y="210" width="270" height="28" rx="6" fill="rgba(16,185,129,.12)" stroke="rgba(16,185,129,.2)" stroke-width="1" class="node nd6"/>
-      <text x="575" y="228" text-anchor="middle" fill="var(--green2)" font-size="11" font-weight="600" class="node nd6">코드 탐색, 설정 파일, 로그</text>
+      <rect x="545" y="220" width="320" height="30" rx="6" fill="rgba(16,185,129,.12)" stroke="rgba(16,185,129,.2)" stroke-width="1" class="node nd6"/>
+      <text x="705" y="240" text-anchor="middle" fill="#047857" font-size="13" font-weight="600" class="node nd6">코드 탐색, 설정 파일, 로그</text>
 
       <!-- VS divider -->
-      <text x="390" y="135" text-anchor="middle" fill="var(--text3)" font-size="18" font-weight="800" class="node nd7">VS</text>
+      <text x="475" y="140" text-anchor="middle" fill="var(--text3)" font-size="18" font-weight="800" class="node nd7">VS</text>
     </svg>
   </div>
   <div class="box blue anim anim-d3" style="margin-top:.4em;font-size:.88em">
@@ -2000,24 +2005,24 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
     <div class="author">모델의 성능을 실제 가치로 변환하는 모든 시스템</div>
   </div>
   <div class="anim anim-d3 svg-anim" style="margin-top:1em">
-    <svg class="diagram-svg" viewBox="0 0 700 110" width="700" height="110">
+    <svg class="diagram-svg" viewBox="0 0 900 120" width="900" height="120">
       <!-- LLM core -->
-      <rect class="box-fill node nd1" x="50" y="25" width="130" height="55" rx="12"/>
-      <text x="115" y="50" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="15" class="node nd1">LLM</text>
-      <text x="115" y="68" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd1">엔진</text>
+      <rect class="box-fill node nd1" x="40" y="20" width="160" height="80" rx="12"/>
+      <text x="120" y="52" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="16" class="node nd1">LLM</text>
+      <text x="120" y="74" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">엔진</text>
       <!-- + -->
-      <text x="215" y="58" text-anchor="middle" fill="var(--text3)" font-size="24" font-weight="300" class="node nd2">+</text>
+      <text x="240" y="65" text-anchor="middle" fill="var(--text3)" font-size="26" font-weight="300" class="node nd2">+</text>
       <!-- Harness -->
-      <rect class="box-purple node nd3" x="250" y="15" width="220" height="75" rx="12"/>
-      <text x="360" y="42" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="15" class="node nd3">하네스</text>
-      <text x="360" y="62" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd3">Tool + Loop + Guard + Log</text>
-      <text x="360" y="78" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Context Engineering</text>
+      <rect class="box-purple node nd3" x="280" y="10" width="260" height="95" rx="12"/>
+      <text x="410" y="42" text-anchor="middle" fill="#6d28d9" font-weight="700" font-size="16" class="node nd3">하네스</text>
+      <text x="410" y="64" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Tool + Loop + Guard + Log</text>
+      <text x="410" y="84" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Context Engineering</text>
       <!-- = -->
-      <text x="505" y="58" text-anchor="middle" fill="var(--text3)" font-size="24" font-weight="300" class="node nd4">=</text>
+      <text x="585" y="65" text-anchor="middle" fill="var(--text3)" font-size="26" font-weight="300" class="node nd4">=</text>
       <!-- Agent -->
-      <rect class="box-green node nd5" x="540" y="20" width="130" height="65" rx="12"/>
-      <text x="605" y="48" text-anchor="middle" fill="var(--green2)" font-weight="700" font-size="16" class="node nd5">Agent</text>
-      <text x="605" y="68" text-anchor="middle" fill="var(--text3)" font-size="11" class="node nd5">실용적 시스템</text>
+      <rect class="box-green node nd5" x="625" y="15" width="160" height="85" rx="12"/>
+      <text x="705" y="50" text-anchor="middle" fill="#047857" font-weight="700" font-size="16" class="node nd5">Agent</text>
+      <text x="705" y="74" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">실용적 시스템</text>
     </svg>
   </div>
   <p class="anim anim-d4" style="margin-top:.8em;font-size:1em">동일한 LLM이라도 하네스 설계에 따라 <strong class="accent">성능이 완전히 달라집니다</strong></p>
@@ -2030,44 +2035,44 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <span class="badge day2 anim anim-d1">하네스 엔지니어링</span>
   <h2 class="anim anim-d1">하네스 5대 요소</h2>
   <div class="anim anim-d2 svg-anim" style="margin-top:.4em">
-    <svg class="diagram-svg" viewBox="0 0 700 360" width="700" height="360">
+    <svg class="diagram-svg" viewBox="0 0 900 380" width="900" height="380">
       <!-- Pentagon shape (connecting lines) -->
-      <polygon points="350,40 580,145 510,305 190,305 120,145" fill="rgba(139,92,246,.04)" stroke="rgba(139,92,246,.15)" stroke-width="1.5" class="node nd1"/>
+      <polygon points="450,45 700,155 635,320 265,320 200,155" fill="rgba(139,92,246,.04)" stroke="rgba(139,92,246,.15)" stroke-width="1.5" class="node nd1"/>
       <!-- Center -->
-      <circle cx="350" cy="190" r="35" fill="rgba(139,92,246,.12)" stroke="rgba(139,92,246,.3)" stroke-width="1.5" class="node nd2"/>
-      <text x="350" y="186" text-anchor="middle" fill="var(--purple2)" font-weight="700" font-size="12" class="node nd2">하네스</text>
-      <text x="350" y="200" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd2">5대 요소</text>
+      <circle cx="450" cy="200" r="40" fill="rgba(139,92,246,.12)" stroke="rgba(139,92,246,.3)" stroke-width="1.5" class="node nd2"/>
+      <text x="450" y="196" text-anchor="middle" fill="#6d28d9" font-weight="700" font-size="14" class="node nd2">하네스</text>
+      <text x="450" y="212" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">5대 요소</text>
       <!-- Lines from center to vertices -->
-      <line x1="350" y1="155" x2="350" y2="65" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln1"/>
-      <line x1="380" y1="175" x2="555" y2="145" stroke="rgba(239,68,68,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln2"/>
-      <line x1="370" y1="215" x2="490" y2="290" stroke="rgba(16,185,129,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln3"/>
-      <line x1="330" y1="215" x2="210" y2="290" stroke="rgba(245,158,11,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln4"/>
-      <line x1="320" y1="175" x2="145" y2="145" stroke="rgba(139,92,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln5"/>
+      <line x1="450" y1="160" x2="450" y2="72" stroke="rgba(59,130,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln1"/>
+      <line x1="485" y1="185" x2="670" y2="155" stroke="rgba(239,68,68,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln2"/>
+      <line x1="475" y1="230" x2="610" y2="305" stroke="rgba(16,185,129,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln3"/>
+      <line x1="425" y1="230" x2="290" y2="305" stroke="rgba(245,158,11,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln4"/>
+      <line x1="415" y1="185" x2="230" y2="155" stroke="rgba(139,92,246,.3)" stroke-width="1" stroke-dasharray="4 3" class="line ln5"/>
 
       <!-- 1. Tool Orchestration (top) -->
-      <rect class="box-accent node nd3" x="270" y="10" width="160" height="50" rx="10"/>
-      <text x="350" y="33" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd3">1. Tool Orchestration</text>
-      <text x="350" y="49" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">Tool 선택/실행/결과 처리</text>
+      <rect class="box-accent node nd3" x="355" y="10" width="190" height="58" rx="12"/>
+      <text x="450" y="36" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="14" class="node nd3">1. Tool Orchestration</text>
+      <text x="450" y="55" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">Tool 선택/실행/결과 처리</text>
 
       <!-- 2. Guardrails (top right) -->
-      <rect class="box-red node nd4" x="510" y="115" width="150" height="50" rx="10"/>
-      <text x="585" y="138" text-anchor="middle" fill="var(--red)" font-weight="600" font-size="12" class="node nd4">2. Guardrails</text>
-      <text x="585" y="154" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">입/출력 검증, 차단</text>
+      <rect class="box-red node nd4" x="630" y="120" width="180" height="58" rx="12"/>
+      <text x="720" y="146" text-anchor="middle" fill="var(--red)" font-weight="600" font-size="14" class="node nd4">2. Guardrails</text>
+      <text x="720" y="165" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">입/출력 검증, 차단</text>
 
       <!-- 3. Error Recovery (bottom right) -->
-      <rect class="box-green node nd5" x="440" y="275" width="150" height="50" rx="10"/>
-      <text x="515" y="298" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd5">3. Error Recovery</text>
-      <text x="515" y="314" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">재시도, 대안 경로</text>
+      <rect class="box-green node nd5" x="555" y="290" width="180" height="58" rx="12"/>
+      <text x="645" y="316" text-anchor="middle" fill="#047857" font-weight="600" font-size="14" class="node nd5">3. Error Recovery</text>
+      <text x="645" y="335" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">재시도, 대안 경로</text>
 
       <!-- 4. Observability (bottom left) -->
-      <rect class="box-yellow node nd6" x="110" y="275" width="150" height="50" rx="10"/>
-      <text x="185" y="298" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd6">4. Observability</text>
-      <text x="185" y="314" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">로깅, 트레이싱, 비용</text>
+      <rect class="box-yellow node nd6" x="165" y="290" width="180" height="58" rx="12"/>
+      <text x="255" y="316" text-anchor="middle" fill="#92400e" font-weight="600" font-size="14" class="node nd6">4. Observability</text>
+      <text x="255" y="335" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">로깅, 트레이싱, 비용</text>
 
       <!-- 5. HITL (top left) -->
-      <rect class="box-purple node nd7" x="40" y="115" width="160" height="50" rx="10"/>
-      <text x="120" y="138" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd7">5. Human-in-the-Loop</text>
-      <text x="120" y="154" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd7">위험 작업 승인 요청</text>
+      <rect class="box-purple node nd7" x="90" y="120" width="190" height="58" rx="12"/>
+      <text x="185" y="146" text-anchor="middle" fill="#6d28d9" font-weight="600" font-size="14" class="node nd7">5. Human-in-the-Loop</text>
+      <text x="185" y="165" text-anchor="middle" fill="#475569" font-size="13" class="node nd7">위험 작업 승인 요청</text>
     </svg>
   </div>
 </div>
@@ -2165,51 +2170,51 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <h2 class="anim anim-d1">RAG 파이프라인</h2>
   <p class="anim anim-d2">Retrieval-Augmented Generation &mdash; 문서 기반 답변 생성의 전체 흐름</p>
   <div class="anim anim-d3 svg-anim" style="margin-top:.8em">
-    <svg class="diagram-svg" viewBox="0 0 820 180" width="820" height="180">
+    <svg class="diagram-svg" viewBox="0 0 1040 195" width="1040" height="195">
       <!-- Step 1: Documents -->
-      <rect class="box-fill node nd1" x="10" y="50" width="100" height="65" rx="10"/>
-      <text x="60" y="76" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="12" class="node nd1">문서</text>
-      <text x="60" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">PDF, DB,</text>
-      <text x="60" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd1">Confluence</text>
+      <rect class="box-fill node nd1" x="10" y="52" width="140" height="80" rx="12"/>
+      <text x="80" y="80" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="15" class="node nd1">문서</text>
+      <text x="80" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">PDF, DB,</text>
+      <text x="80" y="116" text-anchor="middle" fill="#475569" font-size="13" class="node nd1">Confluence</text>
       <!-- Step 2: Chunking -->
-      <rect class="box-accent node nd2" x="145" y="50" width="100" height="65" rx="10"/>
-      <text x="195" y="76" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd2">청킹</text>
-      <text x="195" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">Chunk</text>
-      <text x="195" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd2">512 tokens</text>
+      <rect class="box-accent node nd2" x="185" y="52" width="140" height="80" rx="12"/>
+      <text x="255" y="80" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="15" class="node nd2">청킹</text>
+      <text x="255" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">Chunk</text>
+      <text x="255" y="116" text-anchor="middle" fill="#475569" font-size="13" class="node nd2">512 tokens</text>
       <!-- Step 3: Embedding -->
-      <rect class="box-purple node nd3" x="280" y="50" width="100" height="65" rx="10"/>
-      <text x="330" y="76" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd3">임베딩</text>
-      <text x="330" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">text &#8594; vector</text>
-      <text x="330" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd3">[0.12, ...]</text>
+      <rect class="box-purple node nd3" x="360" y="52" width="140" height="80" rx="12"/>
+      <text x="430" y="80" text-anchor="middle" fill="#6d28d9" font-weight="600" font-size="15" class="node nd3">임베딩</text>
+      <text x="430" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">text &#8594; vector</text>
+      <text x="430" y="116" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">[0.12, ...]</text>
       <!-- Step 4: Vector DB -->
-      <rect class="box-green node nd4" x="415" y="50" width="100" height="65" rx="10"/>
-      <text x="465" y="76" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd4">Vector DB</text>
-      <text x="465" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">저장 &</text>
-      <text x="465" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd4">인덱싱</text>
+      <rect class="box-green node nd4" x="535" y="52" width="140" height="80" rx="12"/>
+      <text x="605" y="80" text-anchor="middle" fill="#047857" font-weight="600" font-size="15" class="node nd4">Vector DB</text>
+      <text x="605" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">저장 &</text>
+      <text x="605" y="116" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">인덱싱</text>
       <!-- Step 5: Search -->
-      <rect class="box-yellow node nd5" x="550" y="50" width="100" height="65" rx="10"/>
-      <text x="600" y="76" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd5">검색</text>
-      <text x="600" y="94" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">질의 &#8594;</text>
-      <text x="600" y="107" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd5">Top-K 결과</text>
+      <rect class="box-yellow node nd5" x="710" y="52" width="140" height="80" rx="12"/>
+      <text x="780" y="80" text-anchor="middle" fill="#92400e" font-weight="600" font-size="15" class="node nd5">검색</text>
+      <text x="780" y="100" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">질의 &#8594;</text>
+      <text x="780" y="116" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">Top-K 결과</text>
       <!-- Step 6: Generate -->
-      <rect class="box-accent node nd6" x="685" y="40" width="115" height="85" rx="12" style="stroke:rgba(59,130,246,.5)"/>
-      <text x="742" y="68" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="14" class="node nd6">LLM 생성</text>
-      <text x="742" y="88" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">질문 + 검색결과</text>
-      <text x="742" y="103" text-anchor="middle" fill="var(--text3)" font-size="10" class="node nd6">&#8594; 최종 답변</text>
+      <rect class="box-accent node nd6" x="880" y="42" width="145" height="95" rx="12" style="stroke:rgba(59,130,246,.5)"/>
+      <text x="952" y="73" text-anchor="middle" fill="#1d4ed8" font-weight="700" font-size="15" class="node nd6">LLM 생성</text>
+      <text x="952" y="95" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">질문 + 검색결과</text>
+      <text x="952" y="113" text-anchor="middle" fill="#475569" font-size="13" class="node nd6">→ 최종 답변</text>
       <!-- Arrows -->
-      <line class="arrow-line line ln1" x1="112" y1="82" x2="143" y2="82"/>
-      <line class="arrow-line line ln2" x1="247" y1="82" x2="278" y2="82"/>
-      <line class="arrow-line-purple line ln3" x1="382" y1="82" x2="413" y2="82"/>
-      <line class="arrow-line-green line ln4" x1="517" y1="82" x2="548" y2="82"/>
-      <line class="arrow-line line ln5" x1="652" y1="82" x2="683" y2="82"/>
+      <line class="arrow-line line ln1" x1="152" y1="92" x2="183" y2="92"/>
+      <line class="arrow-line line ln2" x1="327" y1="92" x2="358" y2="92"/>
+      <line class="arrow-line-purple line ln3" x1="502" y1="92" x2="533" y2="92"/>
+      <line class="arrow-line-green line ln4" x1="677" y1="92" x2="708" y2="92"/>
+      <line class="arrow-line line ln5" x1="852" y1="92" x2="878" y2="92"/>
       <!-- Labels above -->
-      <text x="60" y="40" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd7">Indexing Phase</text>
-      <line x1="10" y1="44" x2="515" y2="44" stroke="rgba(148,163,184,.1)" stroke-width="1" stroke-dasharray="4 3" class="line ln6"/>
-      <text x="600" y="40" text-anchor="middle" fill="var(--yellow)" font-size="9" class="node nd8">Query Phase</text>
+      <text x="80" y="42" text-anchor="middle" fill="#475569" font-size="13" class="node nd7">Indexing Phase</text>
+      <line x1="10" y1="46" x2="675" y2="46" stroke="rgba(148,163,184,.1)" stroke-width="1" stroke-dasharray="4 3" class="line ln6"/>
+      <text x="780" y="42" text-anchor="middle" fill="var(--yellow)" font-size="13" class="node nd8">Query Phase</text>
       <!-- User query input -->
-      <rect class="box-fill node nd8" x="530" y="140" width="140" height="28" rx="6"/>
-      <text x="600" y="158" text-anchor="middle" fill="var(--text)" font-size="10" class="node nd8">사용자 질문</text>
-      <line x1="600" y1="140" x2="600" y2="117" stroke="var(--yellow)" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)" class="line ln7" style="stroke:var(--yellow)"/>
+      <rect class="box-fill node nd8" x="690" y="155" width="180" height="32" rx="12"/>
+      <text x="780" y="176" text-anchor="middle" fill="var(--text)" font-size="13" class="node nd8">사용자 질문</text>
+      <line x1="780" y1="155" x2="780" y2="134" stroke="var(--yellow)" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)" class="line ln7" style="stroke:var(--yellow)"/>
     </svg>
   </div>
 </div>
@@ -2235,24 +2240,24 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
     <div style="color:var(--purple2);font-weight:700;font-size:1.1em;text-align:center">브라우저 검색 &#8594; 추출 &#8594; Excel 저장 Agent</div>
   </div>
   <div class="anim anim-d4 svg-anim" style="margin-top:.6em">
-    <svg class="diagram-svg" viewBox="0 0 780 80" width="780" height="80">
-      <rect class="box-accent node nd1" x="10" y="15" width="110" height="45" rx="8"/>
-      <text x="65" y="42" text-anchor="middle" fill="#60a5fa" font-weight="600" font-size="12" class="node nd1">사용자 질문</text>
-      <rect class="box-fill node nd2" x="155" y="15" width="100" height="45" rx="8"/>
-      <text x="205" y="42" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="12" class="node nd2">LLM 판단</text>
-      <rect class="box-green node nd3" x="290" y="15" width="120" height="45" rx="8"/>
-      <text x="350" y="36" text-anchor="middle" fill="var(--green2)" font-weight="600" font-size="12" class="node nd3">Playwright</text>
-      <text x="350" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd3">웹 검색</text>
-      <rect class="box-yellow node nd4" x="445" y="15" width="120" height="45" rx="8"/>
-      <text x="505" y="36" text-anchor="middle" fill="var(--yellow)" font-weight="600" font-size="12" class="node nd4">데이터 추출</text>
-      <text x="505" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd4">정제</text>
-      <rect class="box-purple node nd5" x="600" y="15" width="120" height="45" rx="8"/>
-      <text x="660" y="36" text-anchor="middle" fill="var(--purple2)" font-weight="600" font-size="12" class="node nd5">Excel 저장</text>
-      <text x="660" y="50" text-anchor="middle" fill="var(--text3)" font-size="9" class="node nd5">openpyxl</text>
-      <line class="arrow-line line ln1" x1="122" y1="37" x2="153" y2="37"/>
-      <line class="arrow-line line ln2" x1="257" y1="37" x2="288" y2="37"/>
-      <line class="arrow-line-green line ln3" x1="412" y1="37" x2="443" y2="37"/>
-      <line class="arrow-line-purple line ln4" x1="567" y1="37" x2="598" y2="37"/>
+    <svg class="diagram-svg" viewBox="0 0 950 90" width="950" height="90">
+      <rect class="box-accent node nd1" x="10" y="15" width="150" height="55" rx="12"/>
+      <text x="85" y="47" text-anchor="middle" fill="#1d4ed8" font-weight="600" font-size="14" class="node nd1">사용자 질문</text>
+      <rect class="box-fill node nd2" x="195" y="15" width="150" height="55" rx="12"/>
+      <text x="270" y="47" text-anchor="middle" fill="var(--text)" font-weight="600" font-size="14" class="node nd2">LLM 판단</text>
+      <rect class="box-green node nd3" x="380" y="15" width="150" height="55" rx="12"/>
+      <text x="455" y="40" text-anchor="middle" fill="#047857" font-weight="600" font-size="14" class="node nd3">Playwright</text>
+      <text x="455" y="57" text-anchor="middle" fill="#475569" font-size="13" class="node nd3">웹 검색</text>
+      <rect class="box-yellow node nd4" x="565" y="15" width="150" height="55" rx="12"/>
+      <text x="640" y="40" text-anchor="middle" fill="#92400e" font-weight="600" font-size="14" class="node nd4">데이터 추출</text>
+      <text x="640" y="57" text-anchor="middle" fill="#475569" font-size="13" class="node nd4">정제</text>
+      <rect class="box-purple node nd5" x="750" y="15" width="150" height="55" rx="12"/>
+      <text x="825" y="40" text-anchor="middle" fill="#6d28d9" font-weight="600" font-size="14" class="node nd5">Excel 저장</text>
+      <text x="825" y="57" text-anchor="middle" fill="#475569" font-size="13" class="node nd5">openpyxl</text>
+      <line class="arrow-line line ln1" x1="162" y1="42" x2="193" y2="42"/>
+      <line class="arrow-line line ln2" x1="347" y1="42" x2="378" y2="42"/>
+      <line class="arrow-line-green line ln3" x1="532" y1="42" x2="563" y2="42"/>
+      <line class="arrow-line-purple line ln4" x1="717" y1="42" x2="748" y2="42"/>
     </svg>
   </div>
   <div class="grid grid-2 anim anim-d5" style="margin-top:.6em">
