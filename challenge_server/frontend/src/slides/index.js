@@ -117,8 +117,8 @@ const SLIDES = [
   { id: 17, component: Slide16_AILearning1, title: '학습의 모호성', day: 1 },
   { id: 18, component: Slide17_AILearning2, title: '사내에서의 AI 활용', day: 1 },
   // 프롬프트
-  { id: 19, component: SectionPrompt, title: '#3 프롬프트', day: 1 },
   { id: 0, component: Slide21a_Poll, title: 'PE 시대는 끝났다?', day: 1 },
+  { id: 19, component: SectionPrompt, title: '#3 프롬프트', day: 1 },
   { id: 20, component: Slide18_Prompt1, title: '프롬프트가 핵심', day: 1 },
   { id: 21, component: Slide19_Prompt2, title: 'system/user/assistant', day: 1 },
   { id: 22, component: Slide20_ContextEng, title: '컨텍스트 엔지니어링', day: 1 },
