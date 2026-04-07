@@ -23,6 +23,7 @@ import Slide18_Prompt1 from './Slide18_Prompt1';
 import Slide19_Prompt2 from './Slide19_Prompt2';
 import Slide20_ContextEng from './Slide20_ContextEng';
 import Slide21_PromptTask from './Slide21_PromptTask';
+import Slide21a_Poll from './Slide21a_Poll';
 import Slide22_PromptAnswer from './Slide22_PromptAnswer';
 import SectionAPI from './SectionAPI';
 import Slide23_APIBasic from './Slide23_APIBasic';
@@ -121,6 +122,7 @@ const SLIDES = [
   { id: 21, component: Slide19_Prompt2, title: 'system/user/assistant', day: 1 },
   { id: 22, component: Slide20_ContextEng, title: '컨텍스트 엔지니어링', day: 1 },
   { id: 23, component: Slide21_PromptTask, title: '프롬프트 과제', day: 1 },
+  { id: 0, component: Slide21a_Poll, title: 'PE 시대는 끝났다?', day: 1 },
   { id: 24, component: Slide22_PromptAnswer, title: '예시 답안', day: 1 },
   // API
   { id: 25, component: SectionAPI, title: '#4 API', day: 1 },
