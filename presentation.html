@@ -686,6 +686,33 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 
 
 
+<!-- ==================== SLIDE: SSO 실습 안내 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO</span>
+  <h2 class="anim anim-d1">실습 안내</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="box blue anim anim-d3" style="font-size:1.1em;line-height:1.8;text-align:center">
+    Agent Dashboard에 <strong>OAuth2 / OIDC 인증 서버</strong>를 준비해 두었습니다.<br>
+    여러분은 <strong>클라이언트</strong>를 만들어서 연결하면 됩니다.
+  </div>
+  <div class="grid grid-2 anim anim-d4" style="margin-top:1em">
+    <div class="card" style="border-top:3px solid var(--blue);text-align:left;padding:24px 28px">
+      <h4 style="margin-bottom:.5em">OAuth2</h4>
+      <p style="font-size:.95em;line-height:1.7">authorize → code 받기 → token 교환 → <code>/userinfo</code> 호출<br><strong>3단계</strong> — API로 사용자 정보를 가져옵니다</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);text-align:left;padding:24px 28px">
+      <h4 style="color:var(--purple);margin-bottom:.5em">OIDC</h4>
+      <p style="font-size:.95em;line-height:1.7">authorize → code 받기 → token 교환 (id_token 포함!)<br><strong>2단계</strong> — JWT 디코딩만으로 사용자 정보를 얻습니다</p>
+    </div>
+  </div>
+  <div class="quote anim anim-d5" style="margin-top:1em;text-align:center;font-style:normal;border-left-color:var(--green)">
+    OAuth2와 OIDC의 <strong>대략적인 개념</strong>만 이해하면 쉽게 성공할 수 있습니다.<br>
+    이 토큰은 <strong>이후 모든 과제의 인증 수단</strong>으로 사용됩니다.
+  </div>
+</div>
+</div>
+
 <!-- ==================== SLIDE: SSO 실습 과제 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
