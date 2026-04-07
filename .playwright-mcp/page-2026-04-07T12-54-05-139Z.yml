@@ -1,0 +1,219 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - link "LLM Agent 교육" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "대시보드" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "강의" [ref=e9] [cursor=pointer]:
+        - /url: /slides
+    - generic [ref=e10]:
+      - generic [ref=e11]: 한승하
+      - generic [ref=e12]: (S/W혁신팀)
+  - generic [ref=e13]:
+    - generic [ref=e14]:
+      - heading "설정" [level=1] [ref=e15]
+      - paragraph [ref=e16]: LLM 엔드포인트 관리 및 과제 매핑
+    - generic [ref=e17]:
+      - heading "LLM 엔드포인트 추가" [level=3] [ref=e18]
+      - generic [ref=e19]:
+        - textbox "이름" [ref=e20]: Qwen 3.5 9B (Host)
+        - textbox "모델" [ref=e21]: qwen/qwen3.5-9b
+      - textbox "Base URL" [ref=e22]: http://122.38.19.8:1313/v1
+      - textbox "API Key" [ref=e23]
+      - button "+ 추가 및 테스트" [active] [ref=e24] [cursor=pointer]
+      - generic [ref=e122]: "연결 실패: Qwen 3.5 9B (Host)"
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]: qwen3.5-9b
+            - generic [ref=e41]: http://localhost:1313
+          - generic [ref=e42]: f0b79ef2
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]: qwen3.5-9b
+            - generic [ref=e46]: http://122.38.19.8:1313
+          - generic [ref=e47]: 0b6c54de
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: qwen3.5-9b
+            - generic [ref=e51]: http://localhost:1313/v1
+          - generic [ref=e52]: 6c306e0d
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: qwen3.5-9b
+            - generic [ref=e56]: http://localhost:1313/v1
+          - generic [ref=e57]: cef23d1a
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - generic [ref=e60]: qwen3.5-9b
+            - generic [ref=e61]: http://localhost:1313/v1
+          - generic [ref=e62]: 6eb03595
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: qwen3.5-9b
+            - generic [ref=e66]: http://localhost:1313/v1
+          - generic [ref=e67]: 9887a376
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - generic [ref=e70]: qwen3.5-9b
+            - generic [ref=e71]: http://localhost:1313/v1
+          - generic [ref=e72]: f9eb7fbf
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - generic [ref=e75]: qwen/qwen3.5-9b
+            - generic [ref=e76]: http://localhost:1313/v1
+          - generic [ref=e77]: 323e7e53
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - generic [ref=e80]: qwen/qwen3.5-9b
+            - generic [ref=e81]: http://localhost:1313/v1
+          - generic [ref=e82]: b74283e9
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]: Qwen 3.5 9B
+            - generic [ref=e86]: http://localhost:1313/v1
+          - generic [ref=e87]: qwen9b
+    - generic [ref=e25]:
+      - heading "과제별 LLM 매핑" [level=3] [ref=e26]
+      - table [ref=e27]:
+        - rowgroup [ref=e28]:
+          - row "과제 LLM" [ref=e29]:
+            - columnheader "과제" [ref=e30]
+            - columnheader "LLM" [ref=e31]
+        - rowgroup [ref=e32]:
+          - row "프롬프트 엔지니어링 Qwen 3.5 9B (qwen/qwen3.5-9b)" [ref=e88]:
+            - cell "프롬프트 엔지니어링" [ref=e34]
+            - cell "Qwen 3.5 9B (qwen/qwen3.5-9b)" [ref=e89]:
+              - combobox [ref=e36]:
+                - option "선택 안 함"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)" [selected]
+          - row "SSO OIDC 로그인 선택 안 함" [ref=e90]:
+            - cell "SSO OIDC 로그인" [ref=e91]
+            - cell "선택 안 함" [ref=e92]:
+              - combobox [ref=e93]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "프롬프트 엔지니어링 Qwen 3.5 9B (qwen/qwen3.5-9b)" [ref=e94]:
+            - cell "프롬프트 엔지니어링" [ref=e95]
+            - cell "Qwen 3.5 9B (qwen/qwen3.5-9b)" [ref=e96]:
+              - combobox [ref=e97]:
+                - option "선택 안 함"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)" [selected]
+          - row "LLM Endpoint 연결 선택 안 함" [ref=e98]:
+            - cell "LLM Endpoint 연결" [ref=e99]
+            - cell "선택 안 함" [ref=e100]:
+              - combobox [ref=e101]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "Structured Output 선택 안 함" [ref=e102]:
+            - cell "Structured Output" [ref=e103]
+            - cell "선택 안 함" [ref=e104]:
+              - combobox [ref=e105]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "MCP Tool 호출 선택 안 함" [ref=e106]:
+            - cell "MCP Tool 호출" [ref=e107]
+            - cell "선택 안 함" [ref=e108]:
+              - combobox [ref=e109]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "브라우저 자동화 선택 안 함" [ref=e110]:
+            - cell "브라우저 자동화" [ref=e111]
+            - cell "선택 안 함" [ref=e112]:
+              - combobox [ref=e113]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "Agentic Loop 선택 안 함" [ref=e114]:
+            - cell "Agentic Loop" [ref=e115]
+            - cell "선택 안 함" [ref=e116]:
+              - combobox [ref=e117]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"
+          - row "종합 실습 선택 안 함" [ref=e118]:
+            - cell "종합 실습" [ref=e119]
+            - cell "선택 안 함" [ref=e120]:
+              - combobox [ref=e121]:
+                - option "선택 안 함" [selected]
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "qwen/qwen3.5-9b (qwen/qwen3.5-9b)"
+                - option "Qwen 3.5 9B (qwen/qwen3.5-9b)"

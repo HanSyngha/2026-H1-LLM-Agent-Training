@@ -68,9 +68,18 @@ export default function Settings() {
                 padding: '10px 14px', background: 'var(--bg)', borderRadius: 8, marginTop: 8 }}>
                 <div>
                   <div style={{ fontWeight: 600 }}>{e.name}</div>
-                  <div style={{ fontSize: '.78em', color: 'var(--text3)', fontFamily: 'monospace' }}>{e.base_url}</div>
+                  <div style={{ fontSize: '.78em', color: 'var(--text3)', fontFamily: 'monospace' }}>{e.base_url} · {e.model}</div>
                 </div>
-                <span style={{ fontSize: '.78em', color: 'var(--text3)' }}>{id}</span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ fontSize: '.78em', color: 'var(--text3)' }}>{id}</span>
+                  <button onClick={async () => {
+                    await fetch(`/settings/llm-endpoints/${id}`, { method: 'DELETE' });
+                    const d = await fetchJSON('/settings/llm-endpoints');
+                    setEndpoints(d.endpoints || {});
+                    setChallengeMap(d.challenge_map || {});
+                  }} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #fca5a5', background: '#fef2f2',
+                    color: '#dc2626', fontSize: '.75em', cursor: 'pointer', fontWeight: 600 }}>삭제</button>
+                </div>
               </div>
             ))}
           </div>

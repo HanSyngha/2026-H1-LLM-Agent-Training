@@ -697,6 +697,18 @@ async def add_llm_endpoint(request: Request):
     return {"status": "ok" if ok else "error", "id": eid, "message": f"{'연결 성공' if ok else '연결 실패'}: {llm_endpoints[eid]['name']}"}
 
 
+@app.delete("/settings/llm-endpoints/{endpoint_id}")
+async def delete_llm_endpoint(endpoint_id: str):
+    if endpoint_id in llm_endpoints:
+        del llm_endpoints[endpoint_id]
+        # 매핑에서도 제거
+        for k, v in list(challenge_llm_map.items()):
+            if v == endpoint_id:
+                del challenge_llm_map[k]
+        return {"status": "ok", "message": f"'{endpoint_id}' 삭제됨"}
+    return JSONResponse({"status": "error", "message": "없는 ID"}, status_code=404)
+
+
 @app.post("/settings/challenge-llm")
 async def set_challenge_llm(request: Request):
     """과제에 LLM 연결"""

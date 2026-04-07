@@ -28,8 +28,7 @@ services:
         <<: *proxy-env
     container_name: challenge-server
     restart: unless-stopped
-    ports:
-      - "${CHALLENGE_PORT:-47777}:47777"
+    network_mode: host
     environment:
       <<: *proxy-env
       AUTH_SERVER: "${AUTH_SERVER:-https://12.81.222.45:9050}"
