@@ -7,9 +7,9 @@
 
 | 항목 | 값 |
 |------|---|
-| Challenge 서버 | `https://a2g.samsungds.net:70777` |
-| 타겟 페이지 | `https://a2g.samsungds.net:70777/browser-target` |
-| 정답 제출 | `POST https://a2g.samsungds.net:70777/challenges/browser/submit` |
+| Challenge 서버 | `https://a2g.samsungds.net:47777` |
+| 타겟 페이지 | `https://a2g.samsungds.net:47777/browser-target` |
+| 정답 제출 | `POST https://a2g.samsungds.net:47777/challenges/browser/submit` |
 
 ## 과제
 
@@ -49,10 +49,10 @@ Chrome CDP로 웹페이지에서 상품 데이터를 추출하는 Python 코드�
 1. Chrome을 --remote-debugging-port=9222 옵션으로 실행
    (Windows: chrome.exe --remote-debugging-port=9222 --user-data-dir=C:\temp\chrome)
 2. CDP WebSocket으로 연결
-3. https://a2g.samsungds.net:70777/browser-target 페이지로 이동
+3. https://a2g.samsungds.net:47777/browser-target 페이지로 이동
 4. 이 페이지는 JavaScript로 데이터를 렌더링하므로 JS 실행 대기 필요
 5. 테이블에서 제품명과 가격 추출
-6. POST https://a2g.samsungds.net:70777/challenges/browser/submit 에 제출
+6. POST https://a2g.samsungds.net:47777/challenges/browser/submit 에 제출
    형식: {"token": "SSO토큰", "answer": {"products": [{"name": "...", "price": 123000}]}}
 
 CDP 명령: Page.navigate, Runtime.evaluate 등 사용.

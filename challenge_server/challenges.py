@@ -254,7 +254,7 @@ def validate_mcp(answer: dict) -> dict:
 # 과제 5: 브라우저 자동화
 # ============================================
 BROWSER_MISSION = {
-    "target_url": "https://a2g.samsungds.net:70777/browser-target",
+    "target_url": "https://a2g.samsungds.net:47777/browser-target",
     "description": "위 URL의 페이지에서 상품 목록(이름, 가격)을 추출하세요.",
 }
 

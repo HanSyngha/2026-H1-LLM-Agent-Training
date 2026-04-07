@@ -1,0 +1,50 @@
+# ============================================
+# Challenge Server - Docker Compose
+# ============================================
+#
+# 사용법:
+#   ./deploy.sh         # 빌드 + 시작
+#   ./deploy.sh stop    # 중지
+#   ./deploy.sh restart # 재시작
+#   ./deploy.sh logs    # 로그 확인
+#   ./deploy.sh status  # 상태 확인
+#
+
+x-proxy-env: &proxy-env
+  HTTP_PROXY: "${HTTP_PROXY:-}"
+  HTTPS_PROXY: "${HTTPS_PROXY:-}"
+  NO_PROXY: "localhost,127.0.0.1,.samsungds.net"
+  http_proxy: "${HTTP_PROXY:-}"
+  https_proxy: "${HTTPS_PROXY:-}"
+  no_proxy: "localhost,127.0.0.1,.samsungds.net"
+  TZ: Asia/Seoul
+
+services:
+  challenge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        <<: *proxy-env
+    container_name: challenge-server
+    restart: unless-stopped
+    ports:
+      - "${CHALLENGE_PORT:-47777}:47777"
+    environment:
+      <<: *proxy-env
+      AUTH_SERVER: "${AUTH_SERVER:-https://a2g.samsungds.net:8090}"
+      CHALLENGE_PORT: "47777"
+      LLM_GATEWAY_URL: "${LLM_GATEWAY_URL:-}"
+      LLM_GATEWAY_API_KEY: "${LLM_GATEWAY_API_KEY:-}"
+      LLM_MODEL: "${LLM_MODEL:-gpt-4o}"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:47777/health')"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -2,14 +2,33 @@
 
 ## 개요
 
-강사가 `a2g.samsungds.net:70777`에 띄워두면, 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
+강사가 `a2g.samsungds.net:47777`에 띄워두면, 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
 
 | 구성요소 | 주소 | 역할 |
 |---------|------|------|
 | 인증 서버 | `a2g.samsungds.net:8090` | SSO/OIDC 토큰 발급, 사용자 정보 |
-| Challenge 서버 | `a2g.samsungds.net:70777` | 과제 미션 제공, 정답 검증, 성공자 대시보드 |
+| Challenge 서버 | `a2g.samsungds.net:47777` | 과제 미션 제공, 정답 검증, 성공자 대시보드 |
 
-## 1. 파일 복사
+## 1. Docker 배포 (권장)
+
+```bash
+git clone https://github.com/HanSyngha/2026-H1-LLM-Agent-Training.git
+cd 2026-H1-LLM-Agent-Training/challenge_server
+
+# 설정
+cp .env.example .env
+# .env 편집: LLM_GATEWAY_URL, LLM_GATEWAY_API_KEY (선택)
+
+# 배포
+./deploy.sh              # 빌드 + 시작
+./deploy.sh status       # 상태 확인
+./deploy.sh test         # 전체 테스트
+./deploy.sh logs         # 실시간 로그
+./deploy.sh restart      # 재빌드 + 재시작
+./deploy.sh stop         # 중지
+```
+
+## 2. 직접 실행 (Docker 없이)
 
 ```bash
 git clone https://github.com/HanSyngha/2026-H1-LLM-Agent-Training.git
@@ -33,7 +52,7 @@ python server.py
 ```
 ============================================================
   LLM Agent 교육 Challenge 서버
-  http://0.0.0.0:70777
+  http://0.0.0.0:47777
   인증 서버: https://a2g.samsungds.net:8090
   과제 수: 7개
 ============================================================
@@ -56,19 +75,19 @@ kill $(cat challenge.pid)
 ### 4-1. 헬스체크
 
 ```bash
-curl http://localhost:70777/health
+curl http://localhost:47777/health
 ```
 
 ### 4-2. 대시보드
 
 ```
-브라우저에서 http://a2g.samsungds.net:70777
+브라우저에서 http://a2g.samsungds.net:47777
 ```
 
 ### 4-3. LLM 채점 설정
 
 ```
-브라우저에서 http://a2g.samsungds.net:70777/settings
+브라우저에서 http://a2g.samsungds.net:47777/settings
 → LLM Base URL, API Key, Model 입력 → 저장 및 테스트
 ```
 
@@ -77,7 +96,7 @@ curl http://localhost:70777/health
 ### 4-4. 미션 조회
 
 ```bash
-curl http://localhost:70777/challenges/endpoint/mission
+curl http://localhost:47777/challenges/endpoint/mission
 ```
 
 ### 4-5. 정답 제출 테스트
@@ -85,7 +104,7 @@ curl http://localhost:70777/challenges/endpoint/mission
 ```bash
 TOKEN="access_token_여기에"
 
-curl -X POST http://localhost:70777/challenges/endpoint/submit \
+curl -X POST http://localhost:47777/challenges/endpoint/submit \
   -H "Content-Type: application/json" \
   -d "{
     \"token\": \"$TOKEN\",
@@ -108,16 +127,16 @@ curl -X POST http://localhost:70777/challenges/endpoint/submit \
 
 ```bash
 # requests로 접근 → "데이터 로드 중..."만 보임 (정상)
-curl http://localhost:70777/browser-target | grep "로드 중"
+curl http://localhost:47777/browser-target | grep "로드 중"
 
 # 데이터 API 직접 확인
-curl http://localhost:70777/api/wiki-data
+curl http://localhost:47777/api/wiki-data
 ```
 
 ### 4-7. 대시보드에서 성공자 확인
 
 ```
-브라우저에서 http://a2g.samsungds.net:70777
+브라우저에서 http://a2g.samsungds.net:47777
 → 제출 성공 시 이름/부서가 실시간 표시됩니다
 ```
 
@@ -151,8 +170,8 @@ curl http://localhost:70777/api/wiki-data
 ## 7. 강의 당일 체크리스트
 
 - [ ] 인증 서버(`:8090`) 정상 동작
-- [ ] Challenge 서버(`:70777`) 실행
-- [ ] `curl :70777/health` 응답 확인
+- [ ] Challenge 서버(`:47777`) 실행
+- [ ] `curl :47777/health` 응답 확인
 - [ ] `/settings`에서 LLM 연결 설정 완료
 - [ ] 본인 토큰으로 endpoint 과제 제출 테스트
 - [ ] 대시보드에 이름 표시 확인

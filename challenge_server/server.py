@@ -1,11 +1,11 @@
 """
 통합 Challenge 서버
 
-강사가 a2g.samsungds.net:70777에 띄워두면,
+강사가 a2g.samsungds.net:47777에 띄워두면,
 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
 
 실행: python server.py
-주소: http://0.0.0.0:70777
+주소: http://0.0.0.0:47777
 
 인증: a2g.samsungds.net:8090 (OIDC 인증 서버)
 """
@@ -39,7 +39,7 @@ app.add_middleware(
 # 설정
 # ============================================
 AUTH_SERVER = os.getenv("AUTH_SERVER", "https://a2g.samsungds.net:8090")
-PORT = int(os.getenv("CHALLENGE_PORT", "70777"))
+PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
 # LLM 설정 (설정 페이지에서 변경 가능)
 llm_config = {
