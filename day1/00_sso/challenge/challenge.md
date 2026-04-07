@@ -1,90 +1,99 @@
 # SSO 실습
 
-> AI를 적극 활용하세요. 강의에서 배운 내용을 AI에게 정확히 설명할 수 있어야 합니다.
+> 제공된 Streamlit 앱에 SSO 로그인을 연동하세요.
 
-## 서버 정보
+## 시작
+
+```bash
+pip install streamlit requests PyJWT
+streamlit run app.py --server.port 3000
+```
+
+http://localhost:3000 에 접속하면 로그인 버튼만 있는 빈 앱이 뜹니다.
+바이브 코딩으로 이 앱에 SSO 로그인을 연동하세요.
+
+## 인증 서버 정보
 
 | 항목 | 값 |
 |------|---|
 | 인증 서버 | `https://a2g.samsungds.net:8090` |
-| Discovery | `https://a2g.samsungds.net:8090/.well-known/openid-configuration` |
+| Authorize | `GET https://a2g.samsungds.net:8090/oidc/authorize` |
+| Token | `POST https://a2g.samsungds.net:8090/oidc/token` |
+| UserInfo | `GET https://a2g.samsungds.net:8090/oidc/userinfo` |
 | Client ID | `cli-default` |
-| Client Secret | 없음 (빈 문자열) |
+| Client Secret | `""` (빈 문자열) |
+| SSL | `verify=False` (사내 인증서) |
 
 ---
 
-## 과제 1: OAuth2로 로그인하기
+## 과제 1: OAuth2
 
-`http://localhost:<포트>` 에서 SSO 로그인 후, **본인의 이름과 부서**가 브라우저에 표시되면 성공입니다.
+app.py를 수정하여 OAuth2 로그인을 연동하세요.
+로그인 성공 시 본인의 **이름(한글)**과 **부서(한글)**가 화면에 표시되면 성공입니다.
 
 ### 성공 화면
 
 ```
-✅ OAuth2 로그인 성공!
-
-사번: hong.gildong
+✅ 로그인 성공!
 이름: 홍길동
 부서: 개발팀
-이메일: hong.gildong@samsung.com
+```
 
-방식: access_token으로 /userinfo API를 호출
+### 제출
+
+```
+POST https://a2g.samsungds.net:47777/challenges/sso_oauth2/submit
+{"token": "access_token", "answer": {"name": "홍길동", "dept": "개발팀"}}
 ```
 
 ---
 
-## 과제 2: OIDC로 로그인하기
+## 과제 2: OIDC
 
-과제 1과 같은 결과를, **`/userinfo` API를 호출하지 않고** 달성하세요.
+같은 앱에서 `/userinfo` 호출 없이, `id_token` JWT 디코딩만으로 이름/부서를 표시하세요.
 
-### 성공 화면
+### 제출
 
 ```
-✅ OIDC 로그인 성공!
-
-사번: hong.gildong
-이름: 홍길동
-부서: 개발팀
-
-방식: id_token JWT 디코딩 — /userinfo 호출 없음
-nonce 검증: ✅ 일치
+POST https://a2g.samsungds.net:47777/challenges/sso_oidc/submit
+{"token": "access_token", "answer": {"name": "홍길동", "dept": "개발팀", "method": "oidc"}}
 ```
 
 ---
 
 ## 막히면? 예시 답안 프롬프트
 
-> 아래는 AI에게 이렇게 말하면 된다는 참고용입니다. 본인 상황에 맞게 수정하세요.
-
 ### 과제 1 (OAuth2)
 
 ```
-Python FastAPI로 OAuth2 Authorization Code Flow 클라이언트를 만들어줘.
+이 Streamlit 앱(app.py)에 OAuth2 로그인을 연동해줘.
 
-- 인증 서버: https://a2g.samsungds.net:8090
-- Discovery URL: https://a2g.samsungds.net:8090/.well-known/openid-configuration
-- client_id: cli-default
-- client_secret: 빈 문자열 (없음)
-- redirect_uri: http://localhost:3000/callback
-- scope: openid
+인증 서버: https://a2g.samsungds.net:8090
+Authorize: GET /oidc/authorize
+Token: POST /oidc/token
+UserInfo: GET /oidc/userinfo
+client_id: cli-default
+client_secret: 빈 문자열 (Basic Auth에서 password 비움)
+redirect_uri: http://localhost:3000
+scope: openid
+response_type: code
+SSL: verify=False
 
-주의사항:
-- SSL 인증서가 사내 자체 인증서라서 verify=False 필요
-- client_secret이 빈 문자열이니 Basic Auth에서 password를 비워둬야 함
-- /login 접속 시 authorize URL로 리다이렉트
-- /callback에서 code 받아서 /oidc/token으로 교환
-- access_token으로 /oidc/userinfo 호출해서 이름/부서 표시
+로그인 성공하면 st.session_state.user에 이름/부서 저장하고 화면에 표시해줘.
+access_token도 st.session_state.access_token에 저장해줘.
 ```
 
 ### 과제 2 (OIDC)
 
 ```
-위 코드를 수정해서 OIDC 방식으로 바꿔줘.
+이 Streamlit 앱에 OIDC 로그인을 연동해줘.
 
+OAuth2와 같은 서버인데 다른 점:
 - scope를 "openid profile email"로 변경
-- authorize 요청에 nonce 파라미터 추가 (UUID로 생성)
-- token 응답에서 id_token 필드를 JWT 디코딩
-- /userinfo 호출 없이 id_token의 claims에서 이름/부서 추출
-- nonce가 없으면 id_token이 안 오니까 반드시 포함
+- authorize에 nonce 파라미터 추가 (UUID, 필수 — 없으면 id_token 안 옴)
+- token 응답에서 id_token 필드를 PyJWT로 디코딩
+  jwt.decode(id_token, options={"verify_signature": False})
+- /userinfo 호출 하지 마. claims의 name, dept 사용
 
-PyJWT로 디코딩할 때 verify_signature=False로 해줘.
+나머지는 OAuth2와 동일 (client_id, SSL 등)
 ```

@@ -814,84 +814,62 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 </div>
 </div>
 
-<!-- ==================== SLIDE: SSO 과제 1 — OAuth2 (1/2) 엔드포인트 ==================== -->
+<!-- ==================== SLIDE: SSO 과제 — Streamlit + SSO ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO 실습</span>
-  <h2 class="anim anim-d1">과제 1: OAuth2 로그인</h2>
+  <h2 class="anim anim-d1">과제: Streamlit 앱에 SSO 연동하기</h2>
   <div class="divider anim anim-d2"></div>
-  <div class="box blue anim anim-d3" style="font-size:.92em;padding:20px 28px;text-align:left">
-    <div class="box-title">사용할 API 엔드포인트</div>
-    <table style="font-size:.95em;margin:0;max-width:100%">
-      <tr><th style="width:30%;padding:8px 12px">단계</th><th style="padding:8px 12px">URL</th></tr>
-      <tr><td><strong>1. 인가 요청</strong></td><td><code>GET https://a2g.samsungds.net:8090/oidc/authorize</code></td></tr>
-      <tr><td><strong>2. 콜백 수신</strong></td><td><code>GET http://localhost:3000/callback?code=...</code> (내가 만드는 서버)</td></tr>
-      <tr><td><strong>3. 토큰 교환</strong></td><td><code>POST https://a2g.samsungds.net:8090/oidc/token</code></td></tr>
-      <tr><td><strong>4. 사용자 정보</strong></td><td><code>GET https://a2g.samsungds.net:8090/oidc/userinfo</code></td></tr>
+  <div class="box blue anim anim-d3" style="font-size:1em;padding:22px 28px">
+    <div class="box-title">시작</div>
+    <code>pip install streamlit requests PyJWT</code> → <code>streamlit run app.py --server.port 3000</code><br>
+    로그인 버튼만 있는 빈 앱이 뜹니다. <strong>바이브 코딩으로 SSO 로그인을 연동하세요.</strong>
+  </div>
+  <div class="box yellow anim anim-d4" style="margin-top:.5em;font-size:.9em;padding:18px 28px;text-align:left">
+    <div class="box-title" style="color:var(--yellow)">인증 서버 정보</div>
+    <table style="font-size:.92em;margin:0;max-width:100%">
+      <tr><th style="width:25%;padding:6px 10px">Authorize</th><td style="padding:6px 10px"><code>GET https://a2g.samsungds.net:8090/oidc/authorize</code></td></tr>
+      <tr><th style="padding:6px 10px">Token</th><td style="padding:6px 10px"><code>POST https://a2g.samsungds.net:8090/oidc/token</code></td></tr>
+      <tr><th style="padding:6px 10px">UserInfo</th><td style="padding:6px 10px"><code>GET https://a2g.samsungds.net:8090/oidc/userinfo</code></td></tr>
     </table>
-  </div>
-  <div class="grid grid-2 anim anim-d4" style="margin-top:.5em">
-    <div class="box yellow" style="font-size:.88em;padding:14px 22px">
-      <strong>인증 정보</strong><br>
-      client_id: <code>cli-default</code> &nbsp; client_secret: <code>""</code> (빈 문자열)<br>
-      redirect_uri: <code>http://localhost:3000/callback</code><br>
-      scope: <code>openid</code> &nbsp; response_type: <code>code</code>
+    <div style="margin-top:.5em">
+      client_id: <code>cli-default</code> &nbsp; secret: <code>""</code> (빈 문자열) &nbsp; SSL: <code>verify=False</code>
     </div>
-    <div class="box yellow" style="font-size:.88em;padding:14px 22px">
-      <strong>주의사항</strong><br>
-      &bull; SSL: <code>verify=False</code> (사내 인증서)<br>
-      &bull; Basic Auth: password를 빈 문자열로<br>
-      &bull; userinfo 호출 시 <code>Authorization: Bearer 토큰</code>
+  </div>
+  <div class="grid grid-2 anim anim-d5" style="margin-top:.5em">
+    <div class="box green" style="font-size:.92em;padding:14px 22px;text-align:center">
+      <strong>과제 1 (OAuth2):</strong> <code>/userinfo</code> 호출로 이름/부서 표시<br>
+      <code>POST /challenges/sso_oauth2/submit</code><br>
+      <code>{"token":"토큰","answer":{"name":"홍길동","dept":"개발팀"}}</code>
+    </div>
+    <div class="box purple" style="font-size:.92em;padding:14px 22px;text-align:center">
+      <strong>과제 2 (OIDC):</strong> <code>id_token</code> JWT 디코딩으로 이름/부서<br>
+      <code>POST /challenges/sso_oidc/submit</code><br>
+      <code>{"token":"토큰","answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}</code>
     </div>
   </div>
 </div>
 </div>
 
-<!-- ==================== SLIDE: SSO 과제 1 — OAuth2 (2/2) 제출 ==================== -->
+<!-- ==================== SLIDE: SSO 과제 2 — OIDC 차이점 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO 실습</span>
-  <h2 class="anim anim-d1">과제 1: 제출 방법</h2>
+  <h2 class="anim anim-d1">과제 2: OIDC — OAuth2와 무엇이 다른가</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em">userinfo에서 받은 <strong>이름(한글)</strong>과 <strong>부서명(한글)</strong>을 Challenge 서버에 제출하세요.</p>
-  <div class="box blue anim anim-d4" style="margin-top:.8em;font-size:.92em;padding:20px 28px">
-    <strong>제출 URL:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/sso_oauth2/submit</code>
-    <pre style="margin:.6em 0 0;padding:12px;font-size:.9em;background:rgba(0,0,0,.03);border-radius:6px;border:none;box-shadow:none"><code>{
-  "token": "여기에_access_token",
-  "answer": {
-    "name": "홍길동",
-    "dept": "개발팀"
-  }
-}</code></pre>
-  </div>
-  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1.1em;text-align:center;padding:18px">
-    🎉 <strong>홍길동님, SSO OAuth2 로그인 통과!</strong> — 대시보드에 이름이 표시됩니다
-  </div>
-</div>
-</div>
-
-<!-- ==================== SLIDE: SSO 과제 2 — OIDC 정보 ==================== -->
-<div class="slide" data-day="1">
-<div class="slide-inner">
-  <span class="badge day1 anim anim-d1">SSO 실습</span>
-  <h2 class="anim anim-d1">과제 2: OIDC 로그인</h2>
-  <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.05em">OAuth2와 <strong>동일한 엔드포인트</strong>를 쓰되, <code>/userinfo</code> 호출 없이 <code>id_token</code>에서 직접 이름/부서를 추출하세요.</p>
-  <div class="box purple anim anim-d4" style="font-size:.92em;padding:22px 28px;text-align:left">
-    <div class="box-title" style="color:var(--purple)">OAuth2와 다른 점</div>
-    <table style="font-size:.95em;margin:0;max-width:100%">
-      <tr><th style="width:35%;padding:8px 12px">항목</th><th style="padding:8px 12px">변경</th></tr>
+  <p class="anim anim-d3" style="font-size:1.05em">같은 앱에서 <code>/userinfo</code> 호출 없이, <code>id_token</code> JWT 디코딩만으로 이름/부서를 표시하세요.</p>
+  <div class="box purple anim anim-d4" style="font-size:.92em;padding:20px 28px;text-align:left">
+    <div class="box-title" style="color:var(--purple)">OAuth2에서 바꿀 것</div>
+    <table style="font-size:.92em;margin:0;max-width:100%">
+      <tr><th style="width:30%;padding:8px 12px">항목</th><th style="padding:8px 12px">변경</th></tr>
       <tr><td>scope</td><td><code>openid</code> → <code>openid profile email</code></td></tr>
-      <tr><td>authorize 파라미터</td><td><code>nonce</code> 추가 (UUID로 생성, <strong class="red">필수</strong>)</td></tr>
+      <tr><td>authorize</td><td><code>nonce</code> 파라미터 추가 (UUID, <strong class="red">필수</strong>)</td></tr>
       <tr><td>token 응답</td><td><code>access_token</code> + <strong><code>id_token</code></strong> (JWT)</td></tr>
-      <tr><td>사용자 정보</td><td><code>/userinfo</code> 호출 <strong class="red">안 함</strong> → <code>id_token</code>을 JWT 디코딩</td></tr>
-      <tr><td>JWT 디코딩</td><td><code>jwt.decode(id_token, options={"verify_signature": False})</code></td></tr>
-      <tr><td>claims</td><td><code>name</code> = 한글 이름, <code>dept</code> = 한글 부서명</td></tr>
+      <tr><td>사용자 정보</td><td><code>/userinfo</code> <strong class="red">안 함</strong> → <code>jwt.decode(id_token)</code></td></tr>
     </table>
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.5em;font-size:.95em;padding:14px 24px">
-    <strong>성공:</strong> id_token에서 추출한 <strong>이름</strong>과 <strong>부서명</strong>을 <code>POST /challenges/sso_oidc/submit</code>에 제출<br>
-    <code>{"token":"access_token", "answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}</code> → 🎉 대시보드에 이름 표시
+  <div class="box green anim anim-d5" style="margin-top:.5em;font-size:.95em;padding:14px 24px;text-align:center">
+    🎉 <strong>홍길동님, SSO OIDC 로그인 통과!</strong> — <code>/userinfo</code> 호출 없이 이름/부서 표시 성공
   </div>
 </div>
 </div>
@@ -902,42 +880,37 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <span class="badge day1 anim anim-d1">SSO 실습</span>
   <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
   <div class="grid grid-2 anim anim-d2" style="margin-top:.6em">
-    <div class="box blue" style="padding:20px 24px">
+    <div class="box blue" style="padding:18px 22px">
       <div class="box-title">과제 1 — OAuth2</div>
-      <pre style="font-size:.75em;max-width:100%;margin:0"><code>Python으로 OAuth2 로그인 서버를 처음부터 만들어줘.
+      <pre style="font-size:.72em;max-width:100%;margin:0"><code>이 Streamlit 앱(app.py)에 OAuth2 로그인을 연동해줘.
 
 인증 서버: https://a2g.samsungds.net:8090
-1단계: GET /oidc/authorize?client_id=cli-default
-  &redirect_uri=http://localhost:3000/callback
-  &response_type=code&scope=openid
-2단계: 콜백에서 code 받기
-3단계: POST /oidc/token (Basic Auth, password 빈 문자열)
-4단계: GET /oidc/userinfo (Bearer 토큰)
+Authorize: GET /oidc/authorize
+Token: POST /oidc/token
+UserInfo: GET /oidc/userinfo
+client_id: cli-default
+client_secret: 빈 문자열
+redirect_uri: http://localhost:3000
+scope: openid, response_type: code
+SSL: verify=False
 
-SSL verify=False 필수.
-이름(name)과 부서(dept)를 가져와서
+로그인 성공하면 이름/부서를 화면에 표시하고
 POST a2g.samsungds.net:47777/challenges/sso_oauth2/submit
 에 {"token":"토큰","answer":{"name":"...","dept":"..."}}
 형태로 제출해줘.</code></pre>
     </div>
-    <div class="box purple" style="padding:20px 24px">
+    <div class="box purple" style="padding:18px 22px">
       <div class="box-title" style="color:var(--purple)">과제 2 — OIDC</div>
-      <pre style="font-size:.75em;max-width:100%;margin:0"><code>Python으로 OIDC 로그인 서버를 처음부터 만들어줘.
+      <pre style="font-size:.72em;max-width:100%;margin:0"><code>이 Streamlit 앱에 OIDC 로그인을 연동해줘.
 
-인증 서버: https://a2g.samsungds.net:8090
-1단계: GET /oidc/authorize?client_id=cli-default
-  &redirect_uri=http://localhost:3000/callback
-  &response_type=code
-  &scope=openid+profile+email
-  &nonce=UUID로생성 (필수! 없으면 id_token 안 옴)
-2단계: 콜백에서 code 받기
-3단계: POST /oidc/token (Basic Auth, password 빈 문자열)
-  → 응답에서 id_token 필드 추출
-4단계: PyJWT로 id_token 디코딩
-  jwt.decode(token, options={"verify_signature":False})
-  → claims의 name, dept 사용
+OAuth2와 같은 서버인데 다른 점:
+- scope를 "openid profile email"로 변경
+- authorize에 nonce 파라미터 추가 (UUID)
+  (필수! 없으면 id_token 안 옴)
+- token 응답에서 id_token을 PyJWT로 디코딩
+  jwt.decode(token,options={"verify_signature":False})
+- /userinfo 호출 하지 마. claims의 name,dept 사용
 
-SSL verify=False 필수. /userinfo 호출 하지 마.
 POST a2g.samsungds.net:47777/challenges/sso_oidc/submit
 에 {"token":"토큰","answer":{"name":"...","dept":"...",
 "method":"oidc"}} 형태로 제출해줘.</code></pre>
