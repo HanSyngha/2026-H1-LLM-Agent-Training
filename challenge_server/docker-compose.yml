@@ -28,8 +28,6 @@ services:
         <<: *proxy-env
     container_name: challenge-server
     restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "${CHALLENGE_PORT:-47777}:47777"
     environment:

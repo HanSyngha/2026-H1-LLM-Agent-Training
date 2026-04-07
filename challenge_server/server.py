@@ -38,7 +38,7 @@ app.add_middleware(
 # ============================================
 # 설정
 # ============================================
-AUTH_SERVER = os.getenv("AUTH_SERVER", "http://host.docker.internal:8090")
+AUTH_SERVER = os.getenv("AUTH_SERVER", "http://12.81.222.45:8090")
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
 # LLM 설정 (설정 페이지에서 변경 가능)

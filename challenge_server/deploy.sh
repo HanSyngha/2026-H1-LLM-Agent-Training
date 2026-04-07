@@ -49,6 +49,7 @@ case "${1:-start}" in
         log "인증 서버: ${AUTH_SERVER}"
         echo ""
 
+        docker compose down --rmi local 2>/dev/null
         docker compose build --no-cache
         docker compose up -d
 
