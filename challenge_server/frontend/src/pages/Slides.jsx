@@ -224,7 +224,7 @@ export default function Slides({ user }) {
   const SlideComponent = slideData?.component;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 49px)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* 떠오르는 이모지 */}
       <AnimatePresence>
         {floatingEmojis.map(e => (

@@ -27,9 +27,11 @@ export default function App() {
     return <div className="loading">SSO 로그인으로 이동 중...</div>;
   }
 
+  const isSlides = window.location.pathname === '/slides';
+
   return (
     <BrowserRouter>
-      <Navbar user={user} />
+      {!isSlides && <Navbar user={user} />}
       <Routes>
         <Route path="/" element={<Dashboard user={user} />} />
         <Route path="/slides" element={<Slides user={user} />} />
