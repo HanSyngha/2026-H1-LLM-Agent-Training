@@ -42,6 +42,7 @@ app.add_middleware(
 # 설정
 # ============================================
 AUTH_SERVER = os.getenv("AUTH_SERVER", "https://12.81.222.45:9050")
+DEV_MODE = os.getenv("DEV_MODE", "false").lower() == "true"  # 로컬 테스트용 SSO 우회
 AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "http://a2g.samsungds.net:8090")  # 브라우저가 접근하는 주소
 CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://a2g.samsungds.net:47777")  # 콜백 URL용
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
@@ -186,8 +187,10 @@ async def update_settings(request: Request):
 def get_user_from_token(token: str) -> dict | None:
     """
     인증 서버의 /oidc/userinfo에 토큰을 보내서 사용자 정보를 확인합니다.
-    Challenge 서버는 토큰을 직접 디코딩하지 않습니다.
+    DEV_MODE=true이면 토큰 검증 없이 더미 사용자 반환.
     """
+    if DEV_MODE:
+        return {"sub": "dev.user", "name": "개발자", "dept": "개발팀", "email": "dev@test.com"}
     url = f"{AUTH_SERVER}/oidc/userinfo"
     print(f"[AUTH] 토큰 검증 요청: {url}")
     print(f"[AUTH] 토큰 앞 30자: {token[:30]}...")
@@ -656,13 +659,13 @@ async def prompt_submit(request: Request):
 @app.get("/challenges/prompt", response_class=HTMLResponse)
 async def prompt_page(request: Request):
     """프롬프트 과제 전용 페이지. 로그인 안 되어있으면 자동 리다이렉트."""
-    token = request.cookies.get("challenge_token", "")
-    if not token:
-        return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
-    # 토큰 유효성 확인
-    user = get_user_from_token(token)
-    if not user:
-        return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
+    if not DEV_MODE:
+        token = request.cookies.get("challenge_token", "")
+        if not token:
+            return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
+        user = get_user_from_token(token)
+        if not user:
+            return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
     html_file = Path(__file__).parent / "prompt_page.html"
     if html_file.exists():
         return HTMLResponse(html_file.read_text(encoding="utf-8"))
