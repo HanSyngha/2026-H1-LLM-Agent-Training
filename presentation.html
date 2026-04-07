@@ -1002,36 +1002,58 @@ nonce 없으면 id_token 안 옴!</code></pre>
 </div>
 </div>
 
-<!-- ==================== SLIDE: 프롬프트 과제 ==================== -->
+<!-- ==================== SLIDE: 프롬프트 과제 (1/2) ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: 프롬프트 엔지니어링</h2>
   <div class="divider anim anim-d2"></div>
   <p class="anim anim-d3" style="font-size:1.05em">아래 3가지 텍스트를 LLM에게 보내서 <strong>정확한 결과</strong>를 받아 제출하세요.</p>
-  <div class="grid grid-3 anim anim-d4" style="margin-top:.6em">
-    <div class="card" style="border-top:3px solid var(--blue);padding:18px;text-align:left">
-      <h4>1. 감정 분류</h4>
-      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">"이 제품 정말 괜찮은데 배송이 너무 느려서 다시는 안 살 것 같아요."</p>
-      <p style="font-size:.85em;margin-top:.4em"><strong>→ 긍정/부정/중립/혼합</strong> 중 하나</p>
-    </div>
-    <div class="card" style="border-top:3px solid var(--green);padding:18px;text-align:left">
-      <h4 style="color:var(--green)">2. 요약</h4>
-      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">반도체 공정 AI 적용 기술 문서 (미션에서 제공)</p>
-      <p style="font-size:.85em;margin-top:.4em"><strong>→ 3문장 이내</strong>, 핵심 키워드 포함</p>
-    </div>
-    <div class="card" style="border-top:3px solid var(--purple);padding:18px;text-align:left">
-      <h4 style="color:var(--purple)">3. 정보 추출</h4>
-      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">"다음 주 화요일 오후 2시 본관 3층 대회의실..."</p>
-      <p style="font-size:.85em;margin-top:.4em"><strong>→ {date, time, location, attendees}</strong></p>
-    </div>
+  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px;text-align:left">
+    <div class="box-title">1. 감정 분류 → <strong>긍정/부정/중립/혼합</strong> 중 하나</div>
+    <p style="color:var(--text2);line-height:1.6;font-style:italic">"이 제품 정말 괜찮은데 배송이 너무 느려서 다시는 안 살 것 같아요. 품질은 좋은데 서비스가 별로네요."</p>
   </div>
-  <div class="box blue anim anim-d5" style="margin-top:.6em;font-size:.92em">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/prompt/submit</code><br>
-    <code style="font-size:.9em">{"token":"SSO토큰", "answer":{"classify":"혼합", "summarize":"요약문", "extract":{"date":"...","time":"...","location":"...","attendees":[...]}}}</code>
+  <div class="box green anim anim-d5" style="margin-top:.4em;font-size:.95em;padding:18px 28px;text-align:left">
+    <div class="box-title" style="color:var(--green)">2. 요약 → <strong>3문장 이내</strong>, 핵심 키워드(반도체, AI, 불량 등) 포함</div>
+    <p style="color:var(--text2);line-height:1.6;font-style:italic">"인공지능(AI) 기술이 제조업에 미치는 영향이 날로 커지고 있습니다. 특히 반도체 공정에서는 불량 검출, 수율 예측, 설비 예지보전 등에 AI가 활발히 적용되고 있습니다. 기존에 엔지니어가 수동으로 분석하던 공정 데이터를 AI가 자동으로 분석하여 이상 징후를 조기에 감지할 수 있게 되었습니다. 이에 따라 불량률이 평균 30% 감소하고, 설비 가동률은 15% 향상되었다는 보고가 있습니다..."</p>
   </div>
-  <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
-    <strong>성공:</strong> 🎉 홍길동님, 프롬프트 엔지니어링 통과! <strong>3/3 미션 통과</strong>
+  <div class="box purple anim anim-d6" style="margin-top:.4em;font-size:.95em;padding:18px 28px;text-align:left">
+    <div class="box-title" style="color:var(--purple)">3. 정보 추출 → <strong>{date, time, location, attendees}</strong> JSON</div>
+    <p style="color:var(--text2);line-height:1.6;font-style:italic">"안녕하세요, 다음 주 화요일 (4월 15일) 오후 2시에 본관 3층 대회의실에서 AI 전략 회의를 진행할 예정입니다. 참석자는 김부장, 이과장, 박대리입니다. 회의 자료는 전날까지 공유 부탁드립니다."</p>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 프롬프트 과제 (2/2) 제출 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트 실습</span>
+  <h2 class="anim anim-d1">제출 방법 및 성공 조건</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="box yellow anim anim-d3" style="margin-top:.8em;font-size:.95em;padding:20px 28px">
+    <strong>성공 조건:</strong><br>
+    &bull; 감정 분류: <strong>"혼합"</strong> (긍정+부정이 섞인 리뷰)<br>
+    &bull; 요약: <strong>3문장 이내</strong> + 핵심 키워드(반도체, AI, 불량, 수율, 데이터 중 하나 이상) 포함<br>
+    &bull; 정보 추출: date에 <strong>"4월 15일"</strong>, time에 <strong>"오후 2시"</strong>, location에 <strong>"대회의실"</strong>, attendees가 <strong>배열</strong>
+  </div>
+  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.88em;padding:18px 28px">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/prompt/submit</code>
+    <pre style="margin:.5em 0 0;padding:10px;font-size:.9em;background:rgba(0,0,0,.03);border-radius:6px;border:none;box-shadow:none"><code>{
+  "token": "SSO access_token",
+  "answer": {
+    "classify": "혼합",
+    "summarize": "AI 기술이 반도체 공정에 적용되어...",
+    "extract": {
+      "date": "4월 15일",
+      "time": "오후 2시",
+      "location": "본관 3층 대회의실",
+      "attendees": ["김부장", "이과장", "박대리"]
+    }
+  }
+}</code></pre>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.4em;font-size:1.05em;text-align:center">
+    🎉 <strong>홍길동님, 프롬프트 엔지니어링 통과! 3/3 미션 통과</strong>
   </div>
 </div>
 </div>
@@ -1850,7 +1872,7 @@ CDP: Page.navigate, Runtime.evaluate 사용
     <div class="box blue" style="padding:24px 28px">
       <div class="box-title">진행 방법</div>
       <ol style="font-size:1em;line-height:1.8">
-        <li>Challenge 서버에서 <strong>미션 조회</strong></li>
+        <li>슬라이드의 <strong>문제와 성공 조건</strong> 확인</li>
         <li>AI를 활용하여 <strong>바이브 코딩</strong></li>
         <li>SSO 토큰 + 정답을 <strong>서버에 제출</strong></li>
         <li>대시보드에 <strong>본인 이름</strong> 뜨면 성공!</li>
@@ -1862,7 +1884,6 @@ CDP: Page.navigate, Runtime.evaluate 사용
         <div><strong>Challenge:</strong> <code style="color:var(--blue)">a2g.samsungds.net:70777</code></div>
         <div><strong>인증(SSO):</strong> <code style="color:var(--blue)">a2g.samsungds.net:8090</code></div>
         <div><strong>대시보드:</strong> <code style="color:var(--blue)">a2g.samsungds.net:70777</code></div>
-        <div><strong>미션 조회:</strong> <code>GET /challenges/{id}/mission</code></div>
         <div><strong>정답 제출:</strong> <code>POST /challenges/{id}/submit</code></div>
       </div>
     </div>
