@@ -35,3 +35,19 @@
 🎉 홍길동님, Structured Output 통과!
 5/5 필드 검증 통과
 ```
+
+---
+
+## 막히면? 예시 답안 프롬프트
+
+```
+Python으로 LLM의 Structured Output 기능을 사용해서 뉴스 기사를 분석하는 코드를 만들어줘.
+
+1. GET https://a2g.samsungds.net:70777/challenges/structured/mission 에서 뉴스 기사 받기
+2. LLM에게 response_format으로 JSON Schema를 지정해서 분석 요청
+   필요한 필드: title, category(기술/경제/정치/사회/스포츠), sentiment(긍정/부정/중립), keywords(3~5개 배열), summary(2문장)
+3. POST https://a2g.samsungds.net:70777/challenges/structured/submit 에 제출
+   형식: {"token": "SSO토큰", "answer": {title, category, sentiment, keywords, summary}}
+
+OpenAI Compatible의 response_format: {"type": "json_object"} 사용.
+```

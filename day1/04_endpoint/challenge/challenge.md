@@ -33,3 +33,19 @@ LLM Gateway에 연결하여 미션 질문에 대한 응답을 받아 제출하�
 🎉 홍길동님, LLM Endpoint 연결 통과!
 LLM Gateway 연결 및 응답 확인 완료
 ```
+
+---
+
+## 막히면? 예시 답안 프롬프트
+
+```
+Python requests로 사내 LLM Gateway에 연결해서 질문에 답변 받는 코드를 만들어줘.
+
+- LLM Gateway URL: .env의 LLM_GATEWAY_URL (OpenAI Compatible)
+- 질문: "대한민국의 수도는 어디이며, 그 도시의 영문명을 알려주세요."
+- 응답을 받아서 POST https://a2g.samsungds.net:70777/challenges/endpoint/submit 에 제출
+- 제출 형식: {"token": "SSO토큰", "answer": {"response": "LLM 응답 텍스트"}}
+
+OpenAI Compatible이니까 /v1/chat/completions 엔드포인트에
+{"model": "모델명", "messages": [{"role": "user", "content": "질문"}]} 보내면 됨.
+```
