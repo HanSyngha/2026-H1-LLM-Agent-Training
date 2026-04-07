@@ -286,23 +286,7 @@ export default function Slides({ user }) {
           {currentSlide} / {totalSlides}
         </div>
 
-        {/* 강사 컨트롤 */}
-        {isPresenter && (
-          <div style={{
-            position: 'absolute', bottom: 8, left: 16, display: 'flex', gap: 8, alignItems: 'center',
-          }}>
-            <button onClick={() => goTo(currentSlide - 1)} className="btn btn-blue" style={{ padding: '4px 12px', fontSize: '.8em' }}>←</button>
-            <span style={{ fontSize: '.8em', color: '#64748b', fontFamily: 'monospace' }}>{currentSlide}</span>
-            <button onClick={() => goTo(currentSlide + 1)} className="btn btn-blue" style={{ padding: '4px 12px', fontSize: '.8em' }}>→</button>
-            <span style={{ fontSize: '.7em', color: '#d97706', background: '#fef3c7', padding: '2px 8px', borderRadius: 8 }}>강사 모드</span>
-            <button
-              onClick={() => setShowHistory(prev => !prev)}
-              style={{ fontSize: '.7em', color: '#2563eb', background: '#dbeafe', padding: '2px 8px', borderRadius: 8, border: 'none', cursor: 'pointer' }}
-            >
-              💬 질문 {allQuestions.length}
-            </button>
-          </div>
-        )}
+        {/* 슬라이드 카운터만 (강사 컨트롤은 하단 반응바로 이동) */}
 
         {/* 강사 전용 질문 히스토리 */}
         {isPresenter && showHistory && (
@@ -340,10 +324,24 @@ export default function Slides({ user }) {
       <div style={{
         borderTop: '1px solid #e2e8f0',
         background: 'linear-gradient(180deg, #f8fafc, #fff)',
-        padding: '16px 32px',
-        display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0,
+        padding: '12px 24px',
+        display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
         boxShadow: '0 -2px 12px rgba(0,0,0,.04)',
       }}>
+        {/* 강사 컨트롤 (강사만) */}
+        {isPresenter && (
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginRight: 8 }}>
+            <button onClick={() => goTo(currentSlide - 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>←</button>
+            <span style={{ fontSize: '.8em', color: '#64748b', fontFamily: 'monospace', minWidth: 50, textAlign: 'center' }}>{currentSlide}/{SLIDES.length}</span>
+            <button onClick={() => goTo(currentSlide + 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>→</button>
+            <button onClick={() => setShowHistory(prev => !prev)}
+              style={{ padding: '6px 10px', border: '1px solid #dbeafe', borderRadius: 8, background: '#eff6ff', cursor: 'pointer', fontSize: '.78em', color: '#2563eb' }}>
+              💬{allQuestions.length > 0 ? ` ${allQuestions.length}` : ''}
+            </button>
+            <div style={{ width: 1, height: 24, background: '#e2e8f0' }} />
+          </div>
+        )}
+
         <div style={{ display: 'flex', gap: 8 }}>
           {REACTIONS.map(r => (
             <button

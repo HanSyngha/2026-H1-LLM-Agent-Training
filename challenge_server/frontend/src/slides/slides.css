@@ -1,12 +1,12 @@
 /* ===== 슬라이드 컨테이너 ===== */
 .slide-container {
   width: 100%;
-  height: calc(100vh - 180px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 32px 64px;
+  padding: 20px 64px 50px;
   text-align: center;
   overflow: hidden;
 }
@@ -187,7 +187,7 @@
 .slide-day-header {
   background: #0f172a;
   color: #f1f5f9;
-  min-height: calc(100vh - 180px);
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -254,7 +254,7 @@
 
 /* ===== Section 헤더 ===== */
 .slide-section-header {
-  min-height: calc(100vh - 180px);
+  min-height: 100%;
   display: flex;
   align-items: center;
   padding: 48px 64px;
