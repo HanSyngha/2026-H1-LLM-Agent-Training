@@ -814,39 +814,67 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 </div>
 </div>
 
-<!-- ==================== SLIDE: SSO 과제 — Streamlit + SSO ==================== -->
+<!-- ==================== SLIDE: SSO 과제 (1/2) — 실행 안내 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO 실습</span>
   <h2 class="anim anim-d1">과제: Streamlit 앱에 SSO 연동하기</h2>
   <div class="divider anim anim-d2"></div>
   <div class="box blue anim anim-d3" style="font-size:1em;padding:22px 28px">
-    <div class="box-title">시작</div>
-    <code>pip install streamlit requests PyJWT</code> → <code>streamlit run app.py --server.port 3000</code><br>
-    로그인 버튼만 있는 빈 앱이 뜹니다. <strong>바이브 코딩으로 SSO 로그인을 연동하세요.</strong>
+    <div class="box-title">1단계: 앱 실행</div>
+    <code style="font-size:1.05em">cd day1/00_sso/challenge</code><br>
+    <code style="font-size:1.05em">pip install streamlit requests PyJWT</code><br>
+    <code style="font-size:1.05em">streamlit run app.py --server.port 3000</code>
   </div>
-  <div class="box yellow anim anim-d4" style="margin-top:.5em;font-size:.9em;padding:18px 28px;text-align:left">
-    <div class="box-title" style="color:var(--yellow)">인증 서버 정보</div>
-    <table style="font-size:.92em;margin:0;max-width:100%">
-      <tr><th style="width:25%;padding:6px 10px">Authorize</th><td style="padding:6px 10px"><code>GET https://a2g.samsungds.net:8090/oidc/authorize</code></td></tr>
+  <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:1em;padding:22px 28px">
+    <div class="box-title" style="color:var(--yellow)">2단계: 빈 화면 확인</div>
+    <code>http://localhost:3000</code> 에 접속하면 이런 화면이 뜹니다:
+    <div style="margin-top:.6em;padding:16px 20px;background:rgba(0,0,0,.03);border-radius:8px;font-size:.95em;line-height:1.8">
+      🔐 <strong>SSO 로그인 실습</strong><br>
+      ⚠️ 로그인이 필요합니다.<br>
+      🔑 SSO 로그인 <span style="color:var(--text3)">(비활성)</span><br>
+      이름: <span style="color:var(--text3)">__________</span> &nbsp; 부서: <span style="color:var(--text3)">__________</span><br>
+      🎯 Challenge 서버에 제출 <span style="color:var(--text3)">(비활성)</span>
+    </div>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1.05em;padding:18px 28px;text-align:center">
+    <strong>3단계:</strong> 바이브 코딩으로 로그인 버튼에 SSO를 연결하세요. 로그인 성공 → 정보 표시 → 제출 버튼 활성화!
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: SSO 과제 (2/2) — 서버 정보 + 제출 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO 실습</span>
+  <h2 class="anim anim-d1">인증 서버 정보 & 제출</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="box blue anim anim-d3" style="font-size:.92em;padding:18px 28px;text-align:left">
+    <table style="font-size:.95em;margin:0;max-width:100%">
+      <tr><th style="width:22%;padding:6px 10px">Authorize</th><td style="padding:6px 10px"><code>GET https://a2g.samsungds.net:8090/oidc/authorize</code></td></tr>
       <tr><th style="padding:6px 10px">Token</th><td style="padding:6px 10px"><code>POST https://a2g.samsungds.net:8090/oidc/token</code></td></tr>
       <tr><th style="padding:6px 10px">UserInfo</th><td style="padding:6px 10px"><code>GET https://a2g.samsungds.net:8090/oidc/userinfo</code></td></tr>
     </table>
     <div style="margin-top:.5em">
-      client_id: <code>cli-default</code> &nbsp; secret: <code>""</code> (빈 문자열) &nbsp; SSL: <code>verify=False</code>
+      client_id: <code>cli-default</code> &nbsp; secret: <code>""</code> (빈 문자열) &nbsp; SSL: <code>verify=False</code> &nbsp; redirect_uri: <code>http://localhost:3000</code>
     </div>
   </div>
-  <div class="grid grid-2 anim anim-d5" style="margin-top:.5em">
-    <div class="box green" style="font-size:.92em;padding:14px 22px;text-align:center">
-      <strong>과제 1 (OAuth2):</strong> <code>/userinfo</code> 호출로 이름/부서 표시<br>
-      <code>POST /challenges/sso_oauth2/submit</code><br>
-      <code>{"token":"토큰","answer":{"name":"홍길동","dept":"개발팀"}}</code>
+  <div class="grid grid-2 anim anim-d4" style="margin-top:.6em">
+    <div class="box green" style="font-size:.92em;padding:16px 22px">
+      <div class="box-title" style="color:var(--green)">과제 1: OAuth2</div>
+      <code>/userinfo</code> API 호출로 이름/부서 가져오기<br>
+      <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 클릭<br>
+      → <code>/challenges/sso_oauth2/submit</code>
     </div>
-    <div class="box purple" style="font-size:.92em;padding:14px 22px;text-align:center">
-      <strong>과제 2 (OIDC):</strong> <code>id_token</code> JWT 디코딩으로 이름/부서<br>
-      <code>POST /challenges/sso_oidc/submit</code><br>
-      <code>{"token":"토큰","answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}</code>
+    <div class="box purple" style="font-size:.92em;padding:16px 22px">
+      <div class="box-title" style="color:var(--purple)">과제 2: OIDC</div>
+      <code>id_token</code> JWT 디코딩으로 이름/부서 (userinfo 호출 X)<br>
+      <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 클릭<br>
+      → <code>/challenges/sso_oidc/submit</code>
     </div>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.5em;font-size:1.05em;text-align:center;padding:16px">
+    🎉 <strong>홍길동님 통과!</strong> — 대시보드에 이름이 표시됩니다
   </div>
 </div>
 </div>
