@@ -281,6 +281,10 @@ export default function Slides({ user }) {
               <span style={{ fontWeight: 700, fontSize: '.9em', color: '#1e293b' }}>슬라이드 목록</span>
               <button onClick={() => setShowSidebar(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1em' }}>✕</button>
             </div>
+            <div style={{ display: 'flex', gap: 6, padding: '8px 16px', borderBottom: '1px solid #f1f5f9' }}>
+              <a href="/" style={{ padding: '4px 12px', borderRadius: 8, background: '#f1f5f9', color: '#475569', fontSize: '.78em', textDecoration: 'none', fontWeight: 600 }}>대시보드</a>
+              <a href="/challenges/prompt" style={{ padding: '4px 12px', borderRadius: 8, background: '#f1f5f9', color: '#475569', fontSize: '.78em', textDecoration: 'none', fontWeight: 600 }}>프롬프트 과제</a>
+            </div>
             {SLIDES.map((s, i) => {
               const num = i + 1;
               const isCurrent = num === currentSlide;
