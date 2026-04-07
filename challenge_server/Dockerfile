@@ -16,9 +16,8 @@ WORKDIR /app
 # 의존성 설치
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
-    --trusted-host pypi.org \
-    --trusted-host files.pythonhosted.org \
-    ${HTTP_PROXY:+--proxy ${HTTP_PROXY}}
+    -i http://repo.samsungds.net/artifactory/api/pypi/pypi-remote/simple \
+    --trusted-host repo.samsungds.net
 
 # 애플리케이션 복사
 COPY server.py challenges.py dashboard.html ./
