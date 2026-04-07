@@ -63,9 +63,14 @@ textarea::placeholder{color:#475569}
 .case-expected strong{color:#a78bfa}
 
 /* 결과 상세 */
-.detail-table{width:100%;font-size:.78em;margin-top:.5em;border-collapse:collapse}
-.detail-table th{text-align:left;padding:4px 8px;color:#94a3b8;border-bottom:1px solid #334155}
-.detail-table td{padding:4px 8px;border-bottom:1px solid rgba(51,65,85,.5)}
+.detail-table{width:100%;font-size:.72em;margin-top:.5em;border-collapse:collapse;table-layout:fixed}
+.detail-table th{text-align:left;padding:4px 6px;color:#94a3b8;border-bottom:1px solid #334155;font-size:.9em}
+.detail-table td{padding:4px 6px;border-bottom:1px solid rgba(51,65,85,.5);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;max-width:100px}
+.detail-table td:first-child{width:25%;font-weight:600;color:#a5b4fc}
+.detail-table td:nth-child(2){width:8%;text-align:center}
+.detail-table td:nth-child(3),.detail-table td:nth-child(4){width:33%}
+.detail-table td:hover{white-space:normal;word-break:break-all}
 .detail-table .pass-cell{color:#34d399}
 .detail-table .fail-cell{color:#f87171}
 
@@ -95,7 +100,8 @@ textarea::placeholder{color:#475569}
 
     <div class="token-row">
       <label>SSO Token:</label>
-      <input id="token" type="password" placeholder="SSO access_token을 입력하세요 (제출 시 필요)">
+      <input id="token" type="text" placeholder="SSO access_token (OIDC 과제에서 획득한 토큰)">
+      <span style="color:#64748b;font-size:.75em">제출 시 필요</span>
     </div>
 
     <div class="btn-group">

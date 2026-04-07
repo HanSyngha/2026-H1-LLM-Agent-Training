@@ -1,0 +1,98 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - heading "프롬프트 엔지니어링 Challenge" [level=1] [ref=e3]
+    - paragraph [ref=e4]: 하나의 프롬프트로 10개 바이오 데이터를 정확한 JSON으로 추출하세요
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "✍️ System Prompt 작성" [level=2] [ref=e7]
+      - textbox "바이오 데이터에서 구조화된 JSON을 추출하는 system prompt를 작성하세요. 이 프롬프트 하나로 10개의 서로 다른 바이오 데이터를 처리해야 합니다. 각 테스트 케이스마다 다른 스키마(키)가 요구됩니다." [ref=e8]:
+        - /placeholder: "바이오 데이터에서 구조화된 JSON을 추출하는 system prompt를 작성하세요.\n\n이 프롬프트 하나로 10개의 서로 다른 바이오 데이터를 처리해야 합니다.\n각 테스트 케이스마다 다른 스키마(키)가 요구됩니다."
+        - text: Extract data as JSON. Return only JSON.
+      - generic [ref=e9]:
+        - generic [ref=e10]: "SSO Token:"
+        - textbox "SSO access_token을 입력하세요 (제출 시 필요)" [ref=e11]
+      - generic [ref=e12]:
+        - button "🧪 전체 테스트 (10개)" [active] [ref=e13] [cursor=pointer]
+        - button "🎯 제출 (전체 통과 시)" [disabled] [ref=e14]
+      - generic [ref=e89]: "0 / 10 (실행 중: #1)"
+    - generic [ref=e15]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]: "#1 CBC 혈액검사"
+          - generic [ref=e93]: 실행 중...
+        - generic [ref=e94]: "Patient ID: BIO-2024-0391. Specimen: Peripheral blood. WBC: 12.3 x10^9/L (ref: 4.0-11.0), RBC: 4.52 x10^12/L (ref: 4.5-5.5), Hemoglobin: 13.8 g/dL (re..."
+        - generic [ref=e95]:
+          - strong [ref=e96]: "Expected keys:"
+          - text: patient_id, specimen, abnormal_values, morphology_findings, blast_cells
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - generic [ref=e99]: "#2 NGS 종양 유전체"
+          - generic [ref=e100]: FAIL
+        - generic [ref=e101]: "Genomic Analysis Report - Sample: FFPE Tissue Block (Lung Adenocarcinoma). NGS Panel: TruSight Oncology 500. Key Variants: EGFR p.L858R (exon 21), VAF..."
+        - generic [ref=e102]:
+          - strong [ref=e103]: "Expected keys:"
+          - text: sample_type, diagnosis, variants, tmb, msi_status, pd_l1
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - generic [ref=e106]: "#3 약물동태학 (PK)"
+          - generic [ref=e107]: FAIL
+        - generic [ref=e108]: "Pharmacokinetics Summary - Drug: Pembrolizumab (anti-PD-1 mAb). Dose: 200mg IV q3w. Cmax: 83.4 μg/mL (SD ±12.1). Tmax: 0.5h post-infusion. AUC0-21d: 2..."
+        - generic [ref=e109]:
+          - strong [ref=e110]: "Expected keys:"
+          - text: drug, dose, cmax, half_life_days, clearance, steady_state_week, accumulation_ratio
+      - generic [ref=e111]:
+        - generic [ref=e112]:
+          - generic [ref=e113]: "#4 유세포 분석 (Flow Cytometry)"
+          - generic [ref=e114]: FAIL
+        - generic [ref=e115]: "Flow Cytometry Report - Specimen: Bone marrow aspirate. Clinical indication: R/O AML. CD45 dim population identified (12.3% of total events). Immunoph..."
+        - generic [ref=e116]:
+          - strong [ref=e117]: "Expected keys:"
+          - text: specimen, indication, blast_percentage, positive_markers, negative_markers, interpretation
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - generic [ref=e120]: "#5 CRISPR 스크린"
+          - generic [ref=e121]: FAIL
+        - generic [ref=e122]: "CRISPR Screen Results - Cell line: HeLa-Cas9. Library: Brunello (77,441 sgRNAs). Screen type: Negative selection (dropout). Treatment: Cisplatin 5μM, ..."
+        - generic [ref=e123]:
+          - strong [ref=e124]: "Expected keys:"
+          - text: cell_line, library, treatment, top_gene, top_log2fc, num_significant_genes, enriched_pathway
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e127]: "#6 질량분석 단백체학"
+          - generic [ref=e128]: FAIL
+        - generic [ref=e129]: "Mass Spectrometry Proteomics - Sample: Cerebrospinal fluid (CSF). Method: LC-MS/MS, DIA. Total proteins identified: 1,247. Significantly upregulated (..."
+        - generic [ref=e130]:
+          - strong [ref=e131]: "Expected keys:"
+          - text: sample, method, total_proteins, most_upregulated, most_upregulated_fc, amyloid_positive, tau_elevated
+      - generic [ref=e132]:
+        - generic [ref=e133]:
+          - generic [ref=e134]: "#7 마이크로바이옴 16S rRNA"
+          - generic [ref=e135]: FAIL
+        - generic [ref=e136]: "Microbiome 16S rRNA Sequencing - Sample: Fecal. Diversity metrics: Shannon index: 2.14 (healthy ref: 3.0-4.5), Simpson index: 0.68, Observed ASVs: 187..."
+        - generic [ref=e137]:
+          - strong [ref=e138]: "Expected keys:"
+          - text: sample, shannon_index, diversity_status, dominant_phylum, fb_ratio, dysbiosis, c_difficile_detected
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - generic [ref=e141]: "#8 단일세포 RNA-seq"
+          - generic [ref=e142]: FAIL
+        - generic [ref=e143]: "Single-Cell RNA-seq Summary - Platform: 10x Chromium (v3.1). Tissue: Human PBMC. Cells captured: 8,247 (post-QC: 7,891). Median genes/cell: 2,341. Clu..."
+        - generic [ref=e144]:
+          - strong [ref=e145]: "Expected keys:"
+          - text: platform, cells_post_qc, median_genes, num_clusters, largest_cluster, largest_cluster_pct, cd8_upregulated_genes
+      - generic [ref=e146]:
+        - generic [ref=e147]:
+          - generic [ref=e148]: "#9 ChIP-seq 히스톤 변형"
+          - generic [ref=e149]: FAIL
+        - generic [ref=e150]: "ChIP-seq Analysis - Target: H3K27ac (active enhancers). Cell type: iPSC-derived cardiomyocytes. Total peaks: 42,891. Peaks in promoters (TSS ±2kb): 12..."
+        - generic [ref=e151]:
+          - strong [ref=e152]: "Expected keys:"
+          - text: target, cell_type, total_peaks, super_enhancers, top_se_gene, top_motif, promoter_peak_pct
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - generic [ref=e155]: "#10 임상시험 바이오마커"
+          - generic [ref=e156]: FAIL
+        - generic [ref=e157]: "Clinical Trial Biomarker Analysis - Study: KEYNOTE-789, Phase III. Endpoint: PFS by ctDNA clearance. Patients (n=318): ctDNA clearance at Week 9: 47.2..."
+        - generic [ref=e158]:
+          - strong [ref=e159]: "Expected keys:"
+          - text: study, total_patients, clearance_rate, pfs_cleared_months, pfs_not_cleared_months, hazard_ratio, auc
