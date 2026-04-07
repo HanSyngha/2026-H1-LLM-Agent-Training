@@ -251,18 +251,24 @@ def get_user_from_token(token: str) -> dict | None:
     인증 서버의 /oidc/userinfo에 토큰을 보내서 사용자 정보를 확인합니다.
     Challenge 서버는 토큰을 직접 디코딩하지 않습니다.
     """
+    url = f"{AUTH_SERVER}/oidc/userinfo"
+    print(f"[AUTH] 토큰 검증 요청: {url}")
+    print(f"[AUTH] 토큰 앞 30자: {token[:30]}...")
     try:
         resp = requests.get(
-            f"{AUTH_SERVER}/oidc/userinfo",
+            url,
             headers={"Authorization": f"Bearer {token}"},
             verify=False,
             timeout=10,
-            proxies={"http": None, "https": None},  # 프록시 우회
+            proxies={"http": None, "https": None},
         )
+        print(f"[AUTH] 응답: HTTP {resp.status_code}")
+        print(f"[AUTH] 응답 본문: {resp.text[:200]}")
         if resp.status_code == 200:
             return resp.json()
         return None
-    except Exception:
+    except Exception as e:
+        print(f"[AUTH] 에러: {type(e).__name__}: {e}")
         return None
 
 
@@ -338,6 +344,11 @@ async def submit_answer(challenge_id: str, request: Request):
     body = await request.json()
     token = body.get("token")
     answer = body.get("answer")
+
+    print(f"[SUBMIT] 과제: {challenge_id}")
+    print(f"[SUBMIT] 토큰 존재: {bool(token)}, 답변 존재: {bool(answer)}")
+    if token:
+        print(f"[SUBMIT] 토큰 앞 30자: {token[:30]}...")
 
     if not token:
         return JSONResponse(
