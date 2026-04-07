@@ -846,6 +846,36 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 </div>
 </div>
 
+<!-- ==================== SLIDE: SSO 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <div class="grid grid-2 anim anim-d2" style="margin-top:.8em">
+    <div class="box blue" style="padding:24px 28px">
+      <div class="box-title">과제 1 — OAuth2</div>
+      <pre style="font-size:.78em;max-width:100%;margin:0"><code>Python FastAPI로 OAuth2 클라이언트를 만들어줘.
+인증 서버: https://a2g.samsungds.net:8090
+client_id: cli-default, secret: 빈 문자열
+redirect_uri: http://localhost:3000/callback
+
+주의: SSL verify=False, secret 빈 문자열,
+/callback에서 code→token→/userinfo 호출</code></pre>
+    </div>
+    <div class="box purple" style="padding:24px 28px">
+      <div class="box-title" style="color:var(--purple)">과제 2 — OIDC</div>
+      <pre style="font-size:.78em;max-width:100%;margin:0"><code>위 코드를 OIDC 방식으로 바꿔줘.
+scope를 "openid profile email"로 변경
+authorize에 nonce 파라미터 추가 (UUID)
+token 응답의 id_token을 JWT 디코딩
+/userinfo 호출 없이 claims에서 이름/부서 추출
+
+nonce 없으면 id_token 안 옴!</code></pre>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- ==================== SECTION: #2 AI 학습 ==================== -->
 <div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#f59e0b">
   <div class="section-inner">
@@ -969,6 +999,43 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
     <div class="card"><h4 style="color:var(--purple2)">대화<br>히스토리</h4><p style="font-size:.82em">이전 맥락 유지</p></div>
   </div>
   <p class="anim anim-d5" style="margin-top:.8em;font-size:.95em">무엇을 넣고, 무엇을 <strong class="red">빼는지</strong>가 성능을 결정합니다</p>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 프롬프트 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: 프롬프트 엔지니어링</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em"><code>GET /challenges/prompt/mission</code> 에서 3가지 미션을 받아 LLM으로 해결하세요.</p>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:.8em">
+    <div class="card" style="border-top:3px solid var(--blue);padding:20px"><h4>감정 분류</h4><p style="font-size:.9em">긍정/부정/중립/혼합<br>중 정확히 판별</p></div>
+    <div class="card" style="border-top:3px solid var(--green);padding:20px"><h4 style="color:var(--green)">3문장 요약</h4><p style="font-size:.9em">핵심 키워드 포함<br>3문장 이내</p></div>
+    <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">정보 추출</h4><p style="font-size:.9em">날짜/시간/장소/참석자<br>JSON으로 추출</p></div>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, 프롬프트 엔지니어링 통과! <strong>3/3 미션 통과</strong>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 프롬프트 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">프롬프트 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>GET https://a2g.samsungds.net:70777/challenges/prompt/mission
+으로 미션 3개를 받아서 각각 LLM에게 보내줘.
+
+1. classify: 리뷰 감정 분류 (긍정/부정/중립/혼합)
+2. summarize: 기술 문서 3문장 요약
+3. extract: 이메일에서 날짜/시간/장소/참석자를 JSON으로 추출
+
+결과를 POST /challenges/prompt/submit 에 제출
+형식: {"token":"SSO토큰","answer":{"classify":"혼합","summarize":"...","extract":{...}}}
+
+LLM Gateway는 .env 참고, SSL verify=False</code></pre>
 </div>
 </div>
 
@@ -1153,6 +1220,39 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 </div>
 </div>
 
+<!-- ==================== SLIDE: Endpoint 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Endpoint 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: LLM Gateway 연결</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em">사내 LLM Gateway에 연결하여 미션 질문에 대한 응답을 받아오세요.</p>
+  <div class="box blue anim anim-d4" style="margin-top:1em;font-size:1em;text-align:center">
+    <strong>미션:</strong> <code>GET /challenges/endpoint/mission</code> → 질문 확인 → LLM에게 전송 → 응답 제출
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, LLM Endpoint 연결 통과!
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Endpoint 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Endpoint 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>Python requests로 사내 LLM Gateway에 연결해줘.
+
+- URL: .env의 LLM_GATEWAY_URL (OpenAI Compatible)
+- /v1/chat/completions 에 POST
+- 미션 질문을 보내고 응답을 받아서
+- POST /challenges/endpoint/submit 에 제출
+  {"token":"SSO토큰","answer":{"response":"LLM 응답 텍스트"}}
+
+SSL verify=False 필요</code></pre>
+</div>
+</div>
+
 <!-- ==================== SECTION: #5 Structured Output ==================== -->
 <div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#7c3aed">
   <div class="section-inner">
@@ -1286,6 +1386,43 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
       <td>확정된 워크플로우</td>
     </tr>
   </table>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Structured Output 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: 뉴스 기사 분석</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em"><code>GET /challenges/structured/mission</code> 에서 뉴스 기사를 받아 구조화된 JSON으로 추출하세요.</p>
+  <div class="grid grid-5 anim anim-d4" style="margin-top:.8em;grid-template-columns:repeat(5,1fr)">
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em">title</h4><p style="font-size:.8em">기사 제목</p></div>
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--green)">category</h4><p style="font-size:.8em">기술/경제/...</p></div>
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--purple)">sentiment</h4><p style="font-size:.8em">긍정/부정/중립</p></div>
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--yellow)">keywords</h4><p style="font-size:.8em">3~5개 배열</p></div>
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--cyan)">summary</h4><p style="font-size:.8em">2문장 요약</p></div>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, Structured Output 통과! <strong>5/5 필드 검증 통과</strong>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Structured Output 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">Structured Output 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>LLM의 Structured Output으로 뉴스 기사를 분석해줘.
+
+GET /challenges/structured/mission 에서 기사 받기
+response_format: {"type": "json_object"} 사용
+필요 필드: title, category(기술/경제/정치/사회/스포츠),
+  sentiment(긍정/부정/중립), keywords(3~5개 배열), summary(2문장)
+
+POST /challenges/structured/submit 에 제출
+{"token":"SSO토큰","answer":{title,category,sentiment,keywords,summary}}</code></pre>
 </div>
 </div>
 
@@ -1424,6 +1561,43 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
       <line class="arrow-line line ln6" x1="195" y1="266" x2="470" y2="286"/>
     </svg>
   </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: MCP 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: MCP Tool 호출</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em">MCP 서버를 실행하고, 클라이언트 + LLM을 연동하여 3개 도구를 호출하세요.</p>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:.8em">
+    <div class="card" style="border-top:3px solid var(--blue);padding:20px"><h4>add(157, 289)</h4><p style="font-size:.9em">→ 446</p></div>
+    <div class="card" style="border-top:3px solid var(--green);padding:20px"><h4 style="color:var(--green)">get_weather("서울")</h4><p style="font-size:.9em">→ 맑음, 15°C</p></div>
+    <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">search_employee("김")</h4><p style="font-size:.9em">→ 김OO 정보</p></div>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, MCP Tool 호출 통과! <strong>3/3 도구 호출 성공</strong>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: MCP 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">MCP 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>FastMCP 클라이언트로 MCP 서버에 연결해줘.
+
+1. python day1/01_mcp/mcp_server.py 로 서버 실행 (별도 터미널)
+2. FastMCP Client로 연결
+3. 3개 도구 호출: add(157,289), get_weather("서울"), search_employee("김")
+4. POST /challenges/mcp/submit 에 제출
+   {"token":"SSO토큰","answer":{"results":["결과1","결과2","결과3"]}}
+
+from fastmcp import Client
+async with Client("mcp_server.py") as client:
+    result = await client.call_tool("add", {"a":157, "b":289})</code></pre>
 </div>
 </div>
 
@@ -1570,6 +1744,43 @@ excel = win32com.client.<span class="fn">Dispatch</span>(
 wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
     </div>
   </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 브라우저 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: CDP로 데이터 추출</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em">타겟 페이지는 <strong class="red">JavaScript로 렌더링</strong>됩니다. <code>requests.get()</code>으로는 빈 페이지입니다.</p>
+  <div class="box blue anim anim-d4" style="margin-top:.8em;font-size:1em">
+    <strong>타겟:</strong> <code>a2g.samsungds.net:70777/browser-target</code><br>
+    <strong>추출:</strong> 상품명 + 가격 (5개) → <code>POST /challenges/browser/submit</code>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, 브라우저 자동화 통과! <strong>5/5 상품 데이터 일치</strong>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 브라우저 예시 프롬프트 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">브라우저 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>Chrome CDP로 웹페이지에서 데이터를 추출해줘.
+
+1. Chrome을 --remote-debugging-port=9222로 실행
+   (Windows: chrome.exe --remote-debugging-port=9222)
+2. CDP WebSocket으로 연결
+3. https://a2g.samsungds.net:70777/browser-target 로 이동
+4. JS 렌더링 대기 후 테이블에서 제품명/가격 추출
+5. POST /challenges/browser/submit 에 제출
+   {"token":"SSO토큰","answer":{"products":[{"name":"...","price":123000}]}}
+
+CDP: Page.navigate, Runtime.evaluate 사용
+가격은 숫자만 (쉼표, '원' 제거)</code></pre>
 </div>
 </div>
 
@@ -1942,6 +2153,45 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 <span class="ln">16</span>        delta = data[<span class="st">"choices"</span>][<span class="nu">0</span>][<span class="st">"delta"</span>]
 <span class="ln">17</span>        <span class="kw">if</span> <span class="st">"content"</span> <span class="kw">in</span> delta:
 <span class="ln">18</span>            <span class="nb">print</span>(delta[<span class="st">"content"</span>], <span class="nb">end</span>=<span class="st">""</span>, <span class="nb">flush</span>=<span class="kw">True</span>)<span class="lang-tag">python</span></code></pre>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Agentic Loop 과제 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: Agent Loop 구현</h2>
+  <div class="divider anim anim-d2"></div>
+  <p class="anim anim-d3" style="font-size:1.1em"><strong>requests만</strong> 사용하여 Agent Loop를 구현하고, 복합 질문에 답하세요. <strong class="red">프레임워크 사용 금지.</strong></p>
+  <div class="box blue anim anim-d4" style="margin-top:.8em;font-size:1em">
+    <strong>미션:</strong> <code>GET /challenges/agent_loop/mission</code> → 복합 질문 확인<br>
+    <strong>도구:</strong> get_weather(city), calculate(expression) — LLM tool_calls로 처리<br>
+    <strong>제출:</strong> 최종 답변을 <code>POST /challenges/agent_loop/submit</code>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
+    <strong>성공:</strong> 🎉 홍길동님, Agentic Loop 통과!
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Agentic Loop 예시 프롬프트 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">Agentic Loop 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>Python requests만 사용해서 Agent Loop를 구현해줘.
+
+1. GET /challenges/agent_loop/mission 에서 미션 확인
+2. 도구 정의: get_weather(city), calculate(expression)
+3. Agent Loop:
+   - 질문 + tools를 LLM에 전송
+   - tool_calls 있으면 → 실행 → 결과를 messages에 추가 → 재호출
+   - tool_calls 없으면 → 최종 답변
+4. POST /challenges/agent_loop/submit 에 제출
+   {"token":"SSO토큰","answer":{"response":"섭씨: X°C, 화씨: Y°F"}}
+
+/v1/chat/completions에 tools 파라미터로 정의
+choices[0].message.tool_calls 파싱</code></pre>
 </div>
 </div>
 
@@ -2430,6 +2680,24 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
       </div>
     </div>
   </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: 종합 실습 예시 프롬프트 ==================== -->
+<div class="slide day2-slide" data-day="2">
+<div class="slide-inner">
+  <span class="badge day2 anim anim-d1">종합 실습</span>
+  <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
+  <pre class="anim anim-d2" style="font-size:.82em"><code>브라우저로 검색하고 결과를 추출하는 코드를 만들어줘.
+
+1. GET /challenges/final/mission 에서 검색 키워드 확인
+2. Chrome CDP로 네이버/구글에서 키워드 검색
+3. 검색 결과 상위 5개의 제목과 링크 추출
+4. POST /challenges/final/submit 에 제출
+   {"token":"SSO토큰","answer":{"items":[{"title":"...","link":"https://..."}]}}
+
+Chrome --remote-debugging-port=9222 로 실행
+CDP로 검색 → 결과 대기 → DOM에서 추출</code></pre>
 </div>
 </div>
 
