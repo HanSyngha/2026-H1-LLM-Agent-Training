@@ -1,9 +1,18 @@
 # Stage 1: React 빌드
 FROM node:24-alpine AS frontend
 
+ARG HTTP_PROXY=""
+ARG HTTPS_PROXY=""
+ENV HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY}
+
 WORKDIR /app/frontend
+
+# npm 프록시 + SSL 설정 (사내망)
+RUN npm config set strict-ssl false
+
 COPY frontend/package*.json ./
 RUN npm install --legacy-peer-deps
+
 COPY frontend/ ./
 RUN npm run build
 
@@ -16,18 +25,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Python 의존성
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     -i http://repo.samsungds.net/artifactory/api/pypi/pypi-remote/simple \
     --trusted-host repo.samsungds.net
 
-# 서버 코드
 COPY server.py challenges.py prompt_challenge.py ./
 COPY dashboard.html prompt_page.html settings_page.html ./
 COPY financial_articles.json ./
 
-# React 빌드 결과물
 COPY --from=frontend /app/frontend/dist ./frontend/dist
 
 EXPOSE 47777
