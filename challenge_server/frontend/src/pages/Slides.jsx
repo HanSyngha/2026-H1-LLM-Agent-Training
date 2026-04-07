@@ -88,33 +88,39 @@ function FloatingQuestion({ text, user, id, lane, onDone }) {
   );
 }
 
-// 슬라이드 내용이 넘치면 자동 축소
+// 슬라이드 내용이 넘치면 자동 축소 (최소 75%)
 function AutoFitSlide({ children }) {
-  const containerRef = useRef(null);
-  const innerRef = useRef(null);
+  const ref = useRef(null);
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    const fit = () => {
-      if (!containerRef.current || !innerRef.current) return;
-      const containerH = containerRef.current.offsetHeight;
-      const innerH = innerRef.current.scrollHeight;
-      if (innerH > containerH) {
-        setScale(Math.max(0.55, containerH / innerH));
+    const el = ref.current;
+    if (!el) return;
+    // 렌더 후 측정
+    const timer = setTimeout(() => {
+      const parent = el.parentElement;
+      if (!parent) return;
+      const available = parent.offsetHeight;
+      // scale 1로 측정
+      el.style.transform = 'scale(1)';
+      const needed = el.scrollHeight;
+      if (needed > available && available > 0) {
+        setScale(Math.max(0.72, available / needed));
       } else {
         setScale(1);
       }
-    };
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
+    }, 100);
+    return () => clearTimeout(timer);
   }, [children]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
-      <div ref={innerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'top center', width: '100%' }}>
-        {children}
-      </div>
+    <div ref={ref} style={{
+      transform: `scale(${scale})`,
+      transformOrigin: 'top center',
+      width: scale < 1 ? `${100 / scale}%` : '100%',
+      marginLeft: scale < 1 ? `${-(100 / scale - 100) / 2}%` : 0,
+    }}>
+      {children}
     </div>
   );
 }
