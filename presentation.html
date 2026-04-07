@@ -1008,13 +1008,29 @@ nonce 없으면 id_token 안 옴!</code></pre>
   <span class="badge day1 anim anim-d1">프롬프트 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: 프롬프트 엔지니어링</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em"><code>GET /challenges/prompt/mission</code> 에서 3가지 미션을 받아 LLM으로 해결하세요.</p>
-  <div class="grid grid-3 anim anim-d4" style="margin-top:.8em">
-    <div class="card" style="border-top:3px solid var(--blue);padding:20px"><h4>감정 분류</h4><p style="font-size:.9em">긍정/부정/중립/혼합<br>중 정확히 판별</p></div>
-    <div class="card" style="border-top:3px solid var(--green);padding:20px"><h4 style="color:var(--green)">3문장 요약</h4><p style="font-size:.9em">핵심 키워드 포함<br>3문장 이내</p></div>
-    <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">정보 추출</h4><p style="font-size:.9em">날짜/시간/장소/참석자<br>JSON으로 추출</p></div>
+  <p class="anim anim-d3" style="font-size:1.05em">아래 3가지 텍스트를 LLM에게 보내서 <strong>정확한 결과</strong>를 받아 제출하세요.</p>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:.6em">
+    <div class="card" style="border-top:3px solid var(--blue);padding:18px;text-align:left">
+      <h4>1. 감정 분류</h4>
+      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">"이 제품 정말 괜찮은데 배송이 너무 느려서 다시는 안 살 것 같아요."</p>
+      <p style="font-size:.85em;margin-top:.4em"><strong>→ 긍정/부정/중립/혼합</strong> 중 하나</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);padding:18px;text-align:left">
+      <h4 style="color:var(--green)">2. 요약</h4>
+      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">반도체 공정 AI 적용 기술 문서 (미션에서 제공)</p>
+      <p style="font-size:.85em;margin-top:.4em"><strong>→ 3문장 이내</strong>, 핵심 키워드 포함</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);padding:18px;text-align:left">
+      <h4 style="color:var(--purple)">3. 정보 추출</h4>
+      <p style="font-size:.85em;line-height:1.5;color:var(--text2)">"다음 주 화요일 오후 2시 본관 3층 대회의실..."</p>
+      <p style="font-size:.85em;margin-top:.4em"><strong>→ {date, time, location, attendees}</strong></p>
+    </div>
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+  <div class="box blue anim anim-d5" style="margin-top:.6em;font-size:.92em">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/prompt/submit</code><br>
+    <code style="font-size:.9em">{"token":"SSO토큰", "answer":{"classify":"혼합", "summarize":"요약문", "extract":{"date":"...","time":"...","location":"...","attendees":[...]}}}</code>
+  </div>
+  <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
     <strong>성공:</strong> 🎉 홍길동님, 프롬프트 엔지니어링 통과! <strong>3/3 미션 통과</strong>
   </div>
 </div>
@@ -1226,12 +1242,18 @@ LLM Gateway는 .env 참고, SSL verify=False</code></pre>
   <span class="badge day1 anim anim-d1">Endpoint 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: LLM Gateway 연결</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em">사내 LLM Gateway에 연결하여 미션 질문에 대한 응답을 받아오세요.</p>
-  <div class="box blue anim anim-d4" style="margin-top:1em;font-size:1em;text-align:center">
-    <strong>미션:</strong> <code>GET /challenges/endpoint/mission</code> → 질문 확인 → LLM에게 전송 → 응답 제출
+  <div class="box blue anim anim-d3" style="margin-top:.8em;font-size:1.05em;padding:28px 32px">
+    <div class="box-title">문제</div>
+    사내 LLM Gateway에 연결하여 아래 질문의 응답을 받아오세요.<br>
+    <strong style="margin-top:.4em;display:inline-block">"대한민국의 수도는 어디이며, 그 도시의 영문명을 알려주세요."</strong>
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
-    <strong>성공:</strong> 🎉 홍길동님, LLM Endpoint 연결 통과!
+  <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:.92em;padding:20px 28px">
+    <strong>성공 조건:</strong> 응답에 <code>"서울"</code>과 <code>"Seoul"</code>이 모두 포함되어야 합니다.
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:.92em;padding:20px 28px">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/endpoint/submit</code><br>
+    <code>{"token":"SSO토큰", "answer":{"response":"LLM이 응답한 전체 텍스트"}}</code><br>
+    <strong style="color:var(--green)">→ 🎉 홍길동님, LLM Endpoint 연결 통과!</strong>
   </div>
 </div>
 </div>
@@ -1395,15 +1417,23 @@ SSL verify=False 필요</code></pre>
   <span class="badge day1 anim anim-d1">Structured Output 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: 뉴스 기사 분석</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em"><code>GET /challenges/structured/mission</code> 에서 뉴스 기사를 받아 구조화된 JSON으로 추출하세요.</p>
-  <div class="grid grid-5 anim anim-d4" style="margin-top:.8em;grid-template-columns:repeat(5,1fr)">
+  <div class="box blue anim anim-d3" style="margin-top:.6em;font-size:.95em;padding:20px 28px">
+    <div class="box-title">문제</div>
+    아래 뉴스 기사를 LLM의 <strong>Structured Output</strong>(response_format)으로 분석하세요.<br>
+    <em style="color:var(--text3)">"[속보] 삼성전자, 차세대 AI 반도체 'Mach-1' 양산 개시 — Mach-1은 기존 대비 전력 효율 2배..."</em>
+  </div>
+  <div class="grid grid-5 anim anim-d4" style="margin-top:.6em;grid-template-columns:repeat(5,1fr)">
     <div class="card" style="padding:14px"><h4 style="font-size:.9em">title</h4><p style="font-size:.8em">기사 제목</p></div>
-    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--green)">category</h4><p style="font-size:.8em">기술/경제/...</p></div>
+    <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--green)">category</h4><p style="font-size:.8em">기술/경제/정치/사회/스포츠</p></div>
     <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--purple)">sentiment</h4><p style="font-size:.8em">긍정/부정/중립</p></div>
     <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--yellow)">keywords</h4><p style="font-size:.8em">3~5개 배열</p></div>
     <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--cyan)">summary</h4><p style="font-size:.8em">2문장 요약</p></div>
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+  <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/structured/submit</code><br>
+    <code>{"token":"SSO토큰", "answer":{"title":"...","category":"기술","sentiment":"긍정","keywords":[...],"summary":"..."}}</code>
+  </div>
+  <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
     <strong>성공:</strong> 🎉 홍길동님, Structured Output 통과! <strong>5/5 필드 검증 통과</strong>
   </div>
 </div>
@@ -1570,13 +1600,21 @@ POST /challenges/structured/submit 에 제출
   <span class="badge day1 anim anim-d1">MCP 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: MCP Tool 호출</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em">MCP 서버를 실행하고, 클라이언트 + LLM을 연동하여 3개 도구를 호출하세요.</p>
-  <div class="grid grid-3 anim anim-d4" style="margin-top:.8em">
+  <div class="box blue anim anim-d3" style="margin-top:.6em;font-size:.95em;padding:18px 28px">
+    <div class="box-title">문제</div>
+    <code>python day1/01_mcp/mcp_server.py</code>로 MCP 서버를 실행하고,<br>
+    클라이언트 + LLM을 연동하여 아래 3개 도구를 호출하세요.
+  </div>
+  <div class="grid grid-3 anim anim-d4" style="margin-top:.6em">
     <div class="card" style="border-top:3px solid var(--blue);padding:20px"><h4>add(157, 289)</h4><p style="font-size:.9em">→ 446</p></div>
     <div class="card" style="border-top:3px solid var(--green);padding:20px"><h4 style="color:var(--green)">get_weather("서울")</h4><p style="font-size:.9em">→ 맑음, 15°C</p></div>
     <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">search_employee("김")</h4><p style="font-size:.9em">→ 김OO 정보</p></div>
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.8em;font-size:1em;text-align:center">
+  <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/mcp/submit</code><br>
+    <code>{"token":"SSO토큰", "answer":{"results":["446","맑음, 15°C","김OO..."]}}</code>
+  </div>
+  <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
     <strong>성공:</strong> 🎉 홍길동님, MCP Tool 호출 통과! <strong>3/3 도구 호출 성공</strong>
   </div>
 </div>
@@ -1753,12 +1791,20 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   <span class="badge day1 anim anim-d1">브라우저 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: CDP로 데이터 추출</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em">타겟 페이지는 <strong class="red">JavaScript로 렌더링</strong>됩니다. <code>requests.get()</code>으로는 빈 페이지입니다.</p>
-  <div class="box blue anim anim-d4" style="margin-top:.8em;font-size:1em">
-    <strong>타겟:</strong> <code>a2g.samsungds.net:70777/browser-target</code><br>
-    <strong>추출:</strong> 상품명 + 가격 (5개) → <code>POST /challenges/browser/submit</code>
+  <div class="box red anim anim-d3" style="margin-top:.6em;font-size:1em;padding:18px 28px">
+    <strong>주의:</strong> 이 페이지는 <strong>JavaScript로 렌더링</strong>됩니다. <code>requests.get()</code>으로는 "데이터 로드 중..."만 보입니다.<br>
+    Chrome을 <code>--remote-debugging-port=9222</code>로 실행하고 CDP로 접근해야 합니다.
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
+  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px">
+    <div class="box-title">문제</div>
+    <code>https://a2g.samsungds.net:70777/browser-target</code> 페이지에서<br>
+    상품 5개의 <strong>이름과 가격</strong>을 추출하세요.
+  </div>
+  <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/browser/submit</code><br>
+    <code>{"token":"SSO토큰", "answer":{"products":[{"name":"AI 가속기 Mach-1","price":1250000},...]}} </code>
+  </div>
+  <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
     <strong>성공:</strong> 🎉 홍길동님, 브라우저 자동화 통과! <strong>5/5 상품 데이터 일치</strong>
   </div>
 </div>
@@ -2162,13 +2208,18 @@ CDP: Page.navigate, Runtime.evaluate 사용
   <span class="badge day2 anim anim-d1">Agentic Loop 실습</span>
   <h2 class="anim anim-d1">바이브 코딩: Agent Loop 구현</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.1em"><strong>requests만</strong> 사용하여 Agent Loop를 구현하고, 복합 질문에 답하세요. <strong class="red">프레임워크 사용 금지.</strong></p>
-  <div class="box blue anim anim-d4" style="margin-top:.8em;font-size:1em">
-    <strong>미션:</strong> <code>GET /challenges/agent_loop/mission</code> → 복합 질문 확인<br>
-    <strong>도구:</strong> get_weather(city), calculate(expression) — LLM tool_calls로 처리<br>
-    <strong>제출:</strong> 최종 답변을 <code>POST /challenges/agent_loop/submit</code>
+  <div class="box blue anim anim-d3" style="margin-top:.6em;font-size:.95em;padding:20px 28px">
+    <div class="box-title">문제</div>
+    <strong>requests만</strong> 사용하여 Agent Loop를 구현하세요. <strong class="red">프레임워크 사용 금지.</strong><br><br>
+    <strong>질문:</strong> "서울의 현재 기온은 섭씨 몇 도이며, 이를 화씨로 변환하면 몇 도인가요?"<br>
+    <strong>도구:</strong> <code>get_weather(city)</code>, <code>calculate(expression)</code> — LLM tool_calls로 정의
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;text-align:center">
+  <div class="box yellow anim anim-d4" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
+    <strong>성공 조건:</strong> 응답에 <strong>섭씨 값(°C)</strong>과 <strong>화씨 값(°F)</strong>이 모두 포함되어야 합니다.<br>
+    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:70777/challenges/agent_loop/submit</code><br>
+    <code>{"token":"SSO토큰", "answer":{"response":"섭씨: 22°C, 화씨: 71.6°F"}}</code>
+  </div>
+  <div class="box green anim anim-d5" style="margin-top:.4em;font-size:1em;text-align:center">
     <strong>성공:</strong> 🎉 홍길동님, Agentic Loop 통과!
   </div>
 </div>
