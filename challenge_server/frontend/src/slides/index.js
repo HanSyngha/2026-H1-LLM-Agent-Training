@@ -1,5 +1,6 @@
 import Slide01_Title from './Slide01_Title';
 import Slide02_Agenda from './Slide02_Agenda';
+import Slide03a_WhatToLearn from './Slide03a_WhatToLearn';
 import Slide03_Day1Header from './Slide03_Day1Header';
 import SectionSSO from './SectionSSO';
 import Slide04_SSO from './Slide04_SSO';
@@ -95,8 +96,9 @@ const SLIDES = [
   // Intro
   { id: 1, component: Slide01_Title, title: 'LLM Agent 개발 실습', day: 0 },
   { id: 2, component: Slide02_Agenda, title: '전체 과정 구성', day: 0 },
+  { id: 3, component: Slide03a_WhatToLearn, title: '무엇을 배우고 싶으세요?', day: 0 },
   // Day 1
-  { id: 3, component: Slide03_Day1Header, title: 'Day 1', day: 1 },
+  { id: 4, component: Slide03_Day1Header, title: 'Day 1', day: 1 },
   { id: 4, component: SectionSSO, title: '#0 SSO', day: 1 },
   { id: 5, component: Slide04_SSO, title: 'SSO란?', day: 1 },
   { id: 6, component: Slide06_SSOStructure, title: '사내 SSO 구조', day: 1 },
@@ -193,6 +195,6 @@ const SLIDES = [
   { id: 89, component: Slide75_Summary, title: '학습 정리', day: 2 },
   { id: 90, component: Slide76_Message, title: '핵심 메시지', day: 2 },
   { id: 91, component: Slide77_ThankYou, title: '감사합니다', day: 2 },
-];
+].map((slide, index) => ({ ...slide, id: index + 1 }));
 
 export default SLIDES;

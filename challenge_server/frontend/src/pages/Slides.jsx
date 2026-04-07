@@ -33,24 +33,31 @@ function FloatingEmoji({ emoji, id, onDone }) {
   );
 }
 
-// 떠다니는 질문 — 슬라이드 영역 내에서만, 천천히
-function FloatingQuestion({ text, user, id, onDone, slideAreaRef }) {
-  const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706'];
+// 떠다니는 질문 — 니코니코/빌리빌리 스타일 (랜덤 높이, 랜덤 속도, 랜덤 스타일)
+function FloatingQuestion({ text, user, id, onDone }) {
+  const y = (id * 37 + 13) % 75 + 5; // 5~80% 높이 (의사 랜덤, 겹침 최소화)
+  const duration = 12 + (id % 5) * 2; // 12~20초 (랜덤 속도)
+  const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706', '#0891b2', '#be185d'];
   const color = colors[id % colors.length];
+  const styles = [
+    { background: color, color: '#fff', borderRadius: 24, padding: '8px 22px' },
+    { background: 'transparent', color, border: `2px solid ${color}`, borderRadius: 24, padding: '6px 20px' },
+    { background: `${color}15`, color, borderRadius: 8, padding: '8px 20px', backdropFilter: 'blur(4px)' },
+  ];
+  const style = styles[id % styles.length];
 
   return (
     <motion.div
       key={id}
-      initial={{ x: '100%' }}
-      animate={{ x: '-100%' }}
-      transition={{ duration: 15, ease: 'linear' }}
+      initial={{ x: '110%' }}
+      animate={{ x: '-110%' }}
+      transition={{ duration, ease: 'linear' }}
       onAnimationComplete={onDone}
       style={{
-        position: 'absolute', bottom: 40, left: 0,
-        padding: '10px 24px', borderRadius: 24,
-        background: color, color: '#fff',
-        fontSize: '1.05em', fontWeight: 600,
-        boxShadow: '0 4px 16px rgba(0,0,0,.15)',
+        position: 'absolute', top: `${y}%`, left: 0,
+        ...style,
+        fontSize: '1em', fontWeight: 600,
+        boxShadow: '0 2px 12px rgba(0,0,0,.1)',
         pointerEvents: 'none', zIndex: 50,
         whiteSpace: 'nowrap',
       }}
