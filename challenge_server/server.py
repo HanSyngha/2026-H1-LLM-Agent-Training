@@ -147,13 +147,7 @@ def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
 # ============================================
 # LLM 설정 API
 # ============================================
-@app.get("/settings", response_class=HTMLResponse)
-async def settings_page():
-    """LLM 설정 페이지입니다."""
-    html_file = Path(__file__).parent / "settings_page.html"
-    if html_file.exists():
-        return HTMLResponse(html_file.read_text(encoding="utf-8"))
-    return HTMLResponse("<h1>settings_page.html not found</h1>")
+# /settings → React SPA에서 처리
 
 
 @app.post("/settings/update")
@@ -301,13 +295,7 @@ async def auth_logout():
 # ============================================
 # 대시보드 (메인 페이지)
 # ============================================
-@app.get("/", response_class=HTMLResponse)
-async def dashboard():
-    """성공자 대시보드 — 실시간 업데이트"""
-    dashboard_html = Path(__file__).parent / "dashboard.html"
-    if dashboard_html.exists():
-        return HTMLResponse(dashboard_html.read_text(encoding="utf-8"))
-    return HTMLResponse("<h1>dashboard.html not found</h1>")
+# / → React SPA에서 처리
 
 
 # ============================================
@@ -663,20 +651,7 @@ async def prompt_submit(request: Request):
 # ============================================
 # 프롬프트 과제 UI 페이지
 # ============================================
-@app.get("/challenges/prompt", response_class=HTMLResponse)
-async def prompt_page(request: Request):
-    """프롬프트 과제 전용 페이지. 로그인 안 되어있으면 자동 리다이렉트."""
-    if not DEV_MODE:
-        token = request.cookies.get("challenge_token", "")
-        if not token:
-            return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
-        user = get_user_from_token(token)
-        if not user:
-            return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
-    html_file = Path(__file__).parent / "prompt_page.html"
-    if html_file.exists():
-        return HTMLResponse(html_file.read_text(encoding="utf-8"))
-    return HTMLResponse("<h1>prompt_page.html not found</h1>")
+# /challenges/prompt → React SPA에서 처리 (로그인 체크는 React에서)
 
 
 # ============================================
@@ -782,27 +757,7 @@ async def get_questions(slide: int = 0):
 
 
 # ============================================
-# React 빌드 파일 서빙 (SPA fallback)
-# ============================================
-from fastapi.staticfiles import StaticFiles
-
-# React 빌드 디렉토리가 있으면 정적 파일 서빙
-_frontend_dist = Path(__file__).parent / "frontend" / "dist"
-if _frontend_dist.exists():
-    app.mount("/assets", StaticFiles(directory=str(_frontend_dist / "assets")), name="assets")
-
-    @app.get("/{path:path}", response_class=HTMLResponse)
-    async def spa_fallback(path: str, request: Request):
-        """React SPA fallback — 알려진 API 경로가 아니면 index.html 반환"""
-        # API 경로는 위에서 이미 처리됨
-        index = _frontend_dist / "index.html"
-        if index.exists():
-            return HTMLResponse(index.read_text(encoding="utf-8"))
-        return HTMLResponse("<h1>Build not found. Run: cd frontend && npm run build</h1>")
-
-
-# ============================================
-# 헬스체크
+# 헬스체크 (SPA fallback보다 먼저 등록)
 # ============================================
 @app.get("/health")
 async def health():
@@ -814,6 +769,43 @@ async def health():
         "challenges": len(CHALLENGES),
         "llm_endpoints": len(llm_endpoints),
     }
+
+
+# ============================================
+# React 빌드 파일 서빙 (SPA fallback — 맨 마지막)
+# ============================================
+from fastapi.staticfiles import StaticFiles
+
+_frontend_dist = Path(__file__).parent / "frontend" / "dist"
+if _frontend_dist.exists():
+    # 정적 파일 (JS, CSS, 이미지)
+    app.mount("/assets", StaticFiles(directory=str(_frontend_dist / "assets")), name="assets")
+
+    # favicon 등 public 파일
+    @app.get("/favicon.svg")
+    async def favicon():
+        f = _frontend_dist / "favicon.svg"
+        if f.exists():
+            from fastapi.responses import FileResponse
+            return FileResponse(str(f))
+
+    # SPA fallback — 모든 나머지 경로에서 index.html 반환
+    @app.get("/", response_class=HTMLResponse)
+    async def spa_root(request: Request):
+        return HTMLResponse((_frontend_dist / "index.html").read_text(encoding="utf-8"))
+
+    @app.get("/{path:path}", response_class=HTMLResponse)
+    async def spa_fallback(path: str, request: Request):
+        index = _frontend_dist / "index.html"
+        if index.exists():
+            return HTMLResponse(index.read_text(encoding="utf-8"))
+        return HTMLResponse("<h1>Build not found</h1>")
+else:
+    # React 빌드가 없으면 기존 HTML fallback
+    @app.get("/", response_class=HTMLResponse)
+    async def legacy_dashboard():
+        html = Path(__file__).parent / "dashboard.html"
+        return HTMLResponse(html.read_text(encoding="utf-8") if html.exists() else "<h1>No frontend build</h1>")
 
 
 if __name__ == "__main__":
