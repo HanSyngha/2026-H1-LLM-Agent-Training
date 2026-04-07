@@ -32,7 +32,7 @@ services:
       - "${CHALLENGE_PORT:-47777}:47777"
     environment:
       <<: *proxy-env
-      AUTH_SERVER: "${AUTH_SERVER:-https://a2g.samsungds.net:8090}"
+      AUTH_SERVER: "${AUTH_SERVER:-http://a2g.samsungds.net:8090}"
       CHALLENGE_PORT: "47777"
       LLM_GATEWAY_URL: "${LLM_GATEWAY_URL:-}"
       LLM_GATEWAY_API_KEY: "${LLM_GATEWAY_API_KEY:-}"

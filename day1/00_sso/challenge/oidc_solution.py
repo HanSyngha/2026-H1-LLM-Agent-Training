@@ -19,7 +19,7 @@ app = FastAPI()
 # ============================================
 # 설정
 # ============================================
-AUTH_SERVER = "https://a2g.samsungds.net:8090"
+AUTH_SERVER = "http://a2g.samsungds.net:8090"
 CLIENT_ID = "cli-default"
 CLIENT_SECRET = ""
 REDIRECT_URI = "http://localhost:3000/callback"

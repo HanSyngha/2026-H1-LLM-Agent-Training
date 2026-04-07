@@ -19,7 +19,7 @@ app = FastAPI()
 # ============================================
 # 설정 — 수강생에게 제공되는 정보
 # ============================================
-AUTH_SERVER = "https://a2g.samsungds.net:8090"
+AUTH_SERVER = "http://a2g.samsungds.net:8090"
 CLIENT_ID = "cli-default"
 CLIENT_SECRET = ""  # cli-default는 secret 없음
 REDIRECT_URI = "http://localhost:3000/callback"

@@ -16,13 +16,13 @@ http://localhost:3000 에 접속하면 로그인 버튼만 있는 빈 앱이 뜹
 
 | 항목 | 값 |
 |------|---|
-| 인증 서버 | `https://a2g.samsungds.net:8090` |
-| Authorize | `GET https://a2g.samsungds.net:8090/oidc/authorize` |
-| Token | `POST https://a2g.samsungds.net:8090/oidc/token` |
-| UserInfo | `GET https://a2g.samsungds.net:8090/oidc/userinfo` |
+| 인증 서버 | `http://a2g.samsungds.net:8090` |
+| Authorize | `GET http://a2g.samsungds.net:8090/oidc/authorize` |
+| Token | `POST http://a2g.samsungds.net:8090/oidc/token` |
+| UserInfo | `GET http://a2g.samsungds.net:8090/oidc/userinfo` |
 | Client ID | `cli-default` |
 | Client Secret | `""` (빈 문자열) |
-| SSL | `verify=False` (사내 인증서) |
+| 프로토콜 | HTTP (nginx가 내부에서 HTTPS 처리) |
 
 ---
 
@@ -68,7 +68,7 @@ POST https://a2g.samsungds.net:47777/challenges/sso_oidc/submit
 ```
 이 Streamlit 앱(app.py)에 OAuth2 로그인을 연동해줘.
 
-인증 서버: https://a2g.samsungds.net:8090
+인증 서버: http://a2g.samsungds.net:8090
 Authorize: GET /oidc/authorize
 Token: POST /oidc/token
 UserInfo: GET /oidc/userinfo

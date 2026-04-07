@@ -7,7 +7,7 @@
 | 항목 | 값 |
 |------|---|
 | Challenge 서버 | `https://a2g.samsungds.net:47777` |
-| 인증 서버 | `https://a2g.samsungds.net:8090` |
+| 인증 서버 | `http://a2g.samsungds.net:8090` |
 | 미션 조회 | `GET https://a2g.samsungds.net:47777/challenges/prompt/mission` |
 | 정답 제출 | `POST https://a2g.samsungds.net:47777/challenges/prompt/submit` |
 
