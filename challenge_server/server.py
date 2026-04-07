@@ -18,8 +18,10 @@ from pathlib import Path
 
 import requests
 import urllib3
+import uuid
+from urllib.parse import urlencode
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from challenges import CHALLENGES, validate_answer
@@ -40,6 +42,8 @@ app.add_middleware(
 # 설정
 # ============================================
 AUTH_SERVER = os.getenv("AUTH_SERVER", "https://12.81.222.45:9050")
+AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "http://a2g.samsungds.net:8090")  # 브라우저가 접근하는 주소
+CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://a2g.samsungds.net:47777")  # 콜백 URL용
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
 # LLM 설정 — 여러 개 등록 가능, 과제별로 선택
@@ -203,6 +207,85 @@ def get_user_from_token(token: str) -> dict | None:
     except Exception as e:
         print(f"[AUTH] 에러: {type(e).__name__}: {e}")
         return None
+
+
+# ============================================
+# SSO 로그인 (Challenge 서버 자체 로그인)
+# ============================================
+@app.get("/auth/login")
+async def auth_login(request: Request, redirect: str = "/"):
+    """SSO 로그인 시작 — OIDC authorize로 리다이렉트합니다."""
+    state = uuid.uuid4().hex
+    params = urlencode({
+        "client_id": "cli-default",
+        "redirect_uri": f"{CHALLENGE_HOST}/auth/callback",
+        "response_type": "code",
+        "scope": "openid profile email",
+        "state": state,
+        "nonce": uuid.uuid4().hex,
+    })
+    # state에 redirect 경로 저장 (쿠키)
+    response = RedirectResponse(url=f"{AUTH_PUBLIC}/oidc/authorize?{params}")
+    response.set_cookie("auth_redirect", redirect, max_age=600, httponly=True)
+    response.set_cookie("auth_state", state, max_age=600, httponly=True)
+    return response
+
+
+@app.get("/auth/callback")
+async def auth_callback(request: Request, code: str = "", state: str = ""):
+    """SSO 콜백 — code를 token으로 교환하고 쿠키에 저장합니다."""
+    if not code:
+        return HTMLResponse("<h1>code가 없습니다</h1>", status_code=400)
+
+    # token 교환
+    try:
+        resp = requests.post(
+            f"{AUTH_SERVER}/oidc/token",
+            auth=("cli-default", ""),
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": f"{CHALLENGE_HOST}/auth/callback",
+            },
+            verify=False,
+            timeout=10,
+            proxies={"http": None, "https": None},
+        )
+        if resp.status_code != 200:
+            return HTMLResponse(f"<h1>토큰 교환 실패: {resp.status_code}</h1><pre>{resp.text}</pre>", status_code=400)
+
+        token_data = resp.json()
+        access_token = token_data.get("access_token", "")
+    except Exception as e:
+        return HTMLResponse(f"<h1>토큰 교환 에러: {e}</h1>", status_code=500)
+
+    # 원래 페이지로 리다이렉트 + 토큰 쿠키 설정
+    redirect = request.cookies.get("auth_redirect", "/")
+    response = RedirectResponse(url=redirect)
+    response.set_cookie("challenge_token", access_token, max_age=43200, httponly=True)  # 12시간
+    response.delete_cookie("auth_redirect")
+    response.delete_cookie("auth_state")
+    return response
+
+
+@app.get("/auth/me")
+async def auth_me(request: Request):
+    """현재 로그인한 사용자 정보를 반환합니다."""
+    token = request.cookies.get("challenge_token", "")
+    if not token:
+        return JSONResponse({"logged_in": False}, status_code=401)
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"logged_in": False, "error": "토큰 만료"}, status_code=401)
+    return {"logged_in": True, "user": user, "token": token}
+
+
+@app.get("/auth/logout")
+async def auth_logout():
+    """로그아웃 — 쿠키 삭제"""
+    response = RedirectResponse(url="/")
+    response.delete_cookie("challenge_token")
+    return response
 
 
 # ============================================
@@ -497,11 +580,11 @@ async def prompt_test(request: Request):
 async def prompt_submit(request: Request):
     """수강생 프롬프트로 10개 전체 테스트. 모두 통과 시 성공 등록."""
     body = await request.json()
-    token = body.get("token", "")
+    token = body.get("token", "") or request.cookies.get("challenge_token", "")
     prompt = body.get("prompt", "")
 
     if not token:
-        return JSONResponse({"status": "FAIL", "message": "token이 없습니다."}, status_code=401)
+        return JSONResponse({"status": "FAIL", "message": "로그인이 필요합니다."}, status_code=401)
     if not prompt:
         return JSONResponse({"status": "FAIL", "message": "prompt가 없습니다."}, status_code=400)
 
@@ -571,8 +654,15 @@ async def prompt_submit(request: Request):
 # 프롬프트 과제 UI 페이지
 # ============================================
 @app.get("/challenges/prompt", response_class=HTMLResponse)
-async def prompt_page():
-    """프롬프트 과제 전용 페이지입니다."""
+async def prompt_page(request: Request):
+    """프롬프트 과제 전용 페이지. 로그인 안 되어있으면 자동 리다이렉트."""
+    token = request.cookies.get("challenge_token", "")
+    if not token:
+        return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
+    # 토큰 유효성 확인
+    user = get_user_from_token(token)
+    if not user:
+        return RedirectResponse(url="/auth/login?redirect=/challenges/prompt")
     html_file = Path(__file__).parent / "prompt_page.html"
     if html_file.exists():
         return HTMLResponse(html_file.read_text(encoding="utf-8"))

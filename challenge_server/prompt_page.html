@@ -98,10 +98,9 @@ textarea::placeholder{color:#475569}
     <h2>System Prompt 작성</h2>
     <textarea id="prompt" placeholder="바이오 데이터에서 구조화된 JSON을 추출하는 system prompt를 작성하세요.&#10;&#10;이 프롬프트 하나로 10개의 서로 다른 바이오 데이터를 처리해야 합니다.&#10;각 테스트 케이스마다 다른 스키마(키)가 요구됩니다."></textarea>
 
-    <div class="token-row">
-      <label>SSO Token:</label>
-      <input id="token" type="text" placeholder="SSO access_token (OIDC 과제에서 획득한 토큰)">
-      <span style="color:#64748b;font-size:.75em">제출 시 필요</span>
+    <div class="token-row" id="loginStatus" style="justify-content:space-between">
+      <span id="userInfo" style="color:#64748b;font-size:.88em">로그인 확인 중...</span>
+      <button class="btn btn-test" style="padding:8px 16px;font-size:.82em" onclick="location.href='/auth/logout'" id="logoutBtn" hidden>로그아웃</button>
     </div>
 
     <div class="btn-group">
@@ -233,9 +232,9 @@ async function testAll() {
 
 async function submitAll() {
   const prompt = document.getElementById('prompt').value.trim();
-  const token = document.getElementById('token').value.trim();
-  if (!token) { alert('SSO 토큰을 입력하세요.'); return; }
   if (!prompt) { alert('프롬프트를 입력하세요.'); return; }
+  if (!currentToken) { alert('로그인이 필요합니다.'); location.href = '/auth/login?redirect=/challenges/prompt'; return; }
+  const token = currentToken;
 
   document.getElementById('submitBtn').disabled = true;
   document.getElementById('submitBtn').textContent = '⏳ 제출 중...';
@@ -270,6 +269,28 @@ async function submitAll() {
   document.getElementById('submitBtn').textContent = '🎯 제출 (전체 통과 시)';
 }
 
+let currentToken = null;
+
+async function checkLogin() {
+  try {
+    const resp = await fetch(API + '/auth/me');
+    if (resp.ok) {
+      const data = await resp.json();
+      currentToken = data.token;
+      document.getElementById('userInfo').innerHTML =
+        `<span style="color:#34d399">✅ ${data.user.name} (${data.user.dept})</span>`;
+      document.getElementById('logoutBtn').hidden = false;
+    } else {
+      document.getElementById('userInfo').innerHTML =
+        '<span style="color:#f59e0b">⚠️ 로그인 필요 — 제출 시 자동으로 SSO 로그인 페이지로 이동합니다</span>';
+    }
+  } catch (e) {
+    document.getElementById('userInfo').innerHTML =
+      '<span style="color:#64748b">로그인 상태 확인 실패</span>';
+  }
+}
+
+checkLogin();
 loadCases();
 </script>
 </body>

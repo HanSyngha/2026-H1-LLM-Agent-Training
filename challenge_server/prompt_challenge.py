@@ -226,12 +226,14 @@ def validate_result(actual: dict, expected: dict) -> dict:
         if isinstance(exp_val, bool):
             ok = isinstance(act_val, bool) and act_val == exp_val
         elif isinstance(exp_val, (int, float)):
-            # LLM이 {"value": 1.26, "unit": ""} 형태로 줄 수 있음
+            # LLM이 {"value": 1.26, "unit": ""} 형태나 "65%" 문자열로 줄 수 있음
             num_val = act_val
             if isinstance(act_val, dict) and "value" in act_val:
                 num_val = act_val["value"]
+            elif isinstance(act_val, str):
+                num_val = act_val.replace("%", "").replace(",", "").strip()
             try:
-                ok = abs(float(num_val) - float(exp_val)) < 0.1
+                ok = abs(float(num_val) - float(exp_val)) < 0.5
             except (ValueError, TypeError):
                 ok = False
         elif isinstance(exp_val, str):
