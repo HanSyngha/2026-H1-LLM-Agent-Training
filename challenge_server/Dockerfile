@@ -3,11 +3,14 @@ FROM node:24-alpine AS frontend
 
 ARG HTTP_PROXY=""
 ARG HTTPS_PROXY=""
-ENV HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY}
+ARG NO_PROXY="localhost,127.0.0.1,.samsungds.net"
+ENV HTTP_PROXY=${HTTP_PROXY} \
+    HTTPS_PROXY=${HTTPS_PROXY} \
+    NO_PROXY=${NO_PROXY} \
+    NODE_TLS_REJECT_UNAUTHORIZED=0
 
 WORKDIR /app/frontend
 
-# npm 프록시 + SSL 설정 (사내망)
 RUN npm config set strict-ssl false
 
 COPY frontend/package*.json ./
@@ -19,6 +22,8 @@ RUN npm run build
 # Stage 2: Python FastAPI 서버
 FROM python:3.11-slim
 
+ARG HTTP_PROXY=""
+ARG HTTPS_PROXY=""
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     TZ=Asia/Seoul
