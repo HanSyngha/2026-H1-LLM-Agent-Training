@@ -19,7 +19,7 @@ export default function Slide67_WhatIsHarness() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Quote borderColor="#7c3aed" author="모델의 성능을 실제 가치로 변환하는 모든 시스템">
-            "모델은 엔진이고, 하네스는 자동차다."
+            "모델은 엔진이고, 하네스는 자동차입니다."
           </Quote>
         </motion.div>
 

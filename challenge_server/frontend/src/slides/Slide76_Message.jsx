@@ -26,7 +26,7 @@ export default function Slide76_Message() {
             </Card>
             <Card borderColor="#10b981">
               <h4 style={{ color: '#10b981' }}>추출</h4>
-              <p style={{ fontSize: '.92em' }}>통째로 도입하지 말고<br /><strong>핵심 아이디어만</strong><br />경량화로 가져와라</p>
+              <p style={{ fontSize: '.92em' }}>통째로 도입하지 말고<br /><strong>핵심 아이디어만</strong><br />경량화로 가져오세요</p>
             </Card>
             <Card borderColor="#8b5cf6">
               <h4 style={{ color: '#8b5cf6' }}>단순화</h4>
