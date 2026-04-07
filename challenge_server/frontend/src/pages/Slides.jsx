@@ -65,6 +65,8 @@ export default function Slides({ user }) {
   const [reactions, setReactions] = useState({});
   const [questionText, setQuestionText] = useState('');
   const [questionSent, setQuestionSent] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [allQuestions, setAllQuestions] = useState([]);
 
   // 떠오르는 이모지 목록
   const [floatingEmojis, setFloatingEmojis] = useState([]);
@@ -98,6 +100,15 @@ export default function Slides({ user }) {
     const interval = setInterval(load, 3000);
     return () => clearInterval(interval);
   }, [currentSlide]);
+
+  // 강사: 전체 질문 히스토리 로드
+  useEffect(() => {
+    if (!isPresenter) return;
+    const load = () => fetchJSON('/questions?slide=0').then(setAllQuestions).catch(() => {});
+    load();
+    const interval = setInterval(load, 5000);
+    return () => clearInterval(interval);
+  }, [isPresenter]);
 
   // 새 질문 감지 → 떠다니게 표시
   useEffect(() => {
@@ -206,7 +217,44 @@ export default function Slides({ user }) {
             <span style={{ fontSize: '.8em', color: '#64748b', fontFamily: 'monospace' }}>{currentSlide}</span>
             <button onClick={() => goTo(currentSlide + 1)} className="btn btn-blue" style={{ padding: '4px 12px', fontSize: '.8em' }}>→</button>
             <span style={{ fontSize: '.7em', color: '#d97706', background: '#fef3c7', padding: '2px 8px', borderRadius: 8 }}>강사 모드</span>
+            <button
+              onClick={() => setShowHistory(prev => !prev)}
+              style={{ fontSize: '.7em', color: '#2563eb', background: '#dbeafe', padding: '2px 8px', borderRadius: 8, border: 'none', cursor: 'pointer' }}
+            >
+              💬 질문 {allQuestions.length}
+            </button>
           </div>
+        )}
+
+        {/* 강사 전용 질문 히스토리 */}
+        {isPresenter && showHistory && (
+          <motion.div
+            initial={{ opacity: 0, x: 300 }} animate={{ opacity: 1, x: 0 }}
+            style={{
+              position: 'absolute', top: 0, right: 0, bottom: 0, width: 360,
+              background: '#fff', borderLeft: '1px solid #e2e8f0',
+              boxShadow: '-4px 0 20px rgba(0,0,0,.08)',
+              overflowY: 'auto', padding: 20, zIndex: 50,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ fontSize: '1em', color: '#1e293b' }}>💬 질문 히스토리</h3>
+              <button onClick={() => setShowHistory(false)} style={{ border: 'none', background: 'none', fontSize: '1.2em', cursor: 'pointer', color: '#94a3b8' }}>✕</button>
+            </div>
+            {allQuestions.length === 0 ? (
+              <p style={{ color: '#94a3b8', textAlign: 'center', padding: 20 }}>아직 질문이 없습니다</p>
+            ) : (
+              allQuestions.map((q, i) => (
+                <div key={i} style={{ padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.8em' }}>
+                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{q.user}</span>
+                    <span style={{ color: '#94a3b8' }}>슬라이드 {q.slide} · {new Date(q.timestamp).toLocaleTimeString('ko-KR')}</span>
+                  </div>
+                  <p style={{ color: '#475569', marginTop: 4, fontSize: '.92em' }}>{q.text}</p>
+                </div>
+              ))
+            )}
+          </motion.div>
         )}
       </div>
 
