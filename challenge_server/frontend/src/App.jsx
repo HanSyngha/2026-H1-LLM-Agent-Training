@@ -21,6 +21,12 @@ export default function App() {
 
   if (loading) return <div className="loading">로딩 중...</div>;
 
+  // 미로그인 시 자동 SSO 리다이렉트 (설정 페이지 제외)
+  if (!user && window.location.pathname !== '/settings') {
+    window.location.href = `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    return <div className="loading">SSO 로그인으로 이동 중...</div>;
+  }
+
   return (
     <BrowserRouter>
       <Navbar user={user} />

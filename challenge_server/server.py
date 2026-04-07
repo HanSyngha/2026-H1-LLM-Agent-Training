@@ -60,6 +60,9 @@ llm_config = {
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
 challenge_llm_map: dict[str, str] = {}
 
+# 슬라이드 동기화 (강사가 넘기면 수강생도 따라감)
+current_slide = {"slide": 1}
+
 # 반응/질문 저장 (동시성 고려 — Lock 사용)
 from threading import Lock
 reactions_lock = Lock()
@@ -700,6 +703,26 @@ async def set_challenge_llm(request: Request):
     llm_id = body.get("llm_id", "")
     challenge_llm_map[challenge_id] = llm_id
     return {"status": "ok", "message": f"과제 '{challenge_id}'에 LLM '{llm_id}' 연결됨"}
+
+
+# ============================================
+# 슬라이드 동기화 API
+# ============================================
+@app.get("/slides/current")
+async def get_current_slide():
+    return current_slide
+
+@app.post("/slides/current")
+async def set_current_slide(request: Request):
+    body = await request.json()
+    # 강사만 변경 가능 (syngha.han)
+    token = request.cookies.get("challenge_token", "")
+    if not DEV_MODE:
+        user = get_user_from_token(token) if token else None
+        if not user or user.get("sub") != "syngha.han":
+            return JSONResponse({"error": "강사만 슬라이드를 변경할 수 있습니다."}, status_code=403)
+    current_slide["slide"] = body.get("slide", 1)
+    return current_slide
 
 
 # ============================================
