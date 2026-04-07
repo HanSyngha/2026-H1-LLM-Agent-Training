@@ -377,9 +377,83 @@ def validate_final(answer: dict) -> dict:
 
 
 # ============================================
+# 과제 0-1: SSO OAuth2
+# ============================================
+SSO_OAUTH2_MISSION = {
+    "description": "OAuth2 Authorization Code Flow로 로그인하여 본인의 이름과 부서를 제출하세요.",
+}
+
+
+def validate_sso_oauth2(answer: dict) -> dict:
+    name = str(answer.get("name", "")).strip()
+    dept = str(answer.get("dept", "")).strip()
+
+    details = []
+    if not name or len(name) < 2:
+        details.append({"field": "name", "passed": False, "message": "이름이 없거나 너무 짧습니다"})
+    else:
+        details.append({"field": "name", "passed": True, "message": f"이름: {name}"})
+
+    if not dept or len(dept) < 2:
+        details.append({"field": "dept", "passed": False, "message": "부서명이 없거나 너무 짧습니다"})
+    else:
+        details.append({"field": "dept", "passed": True, "message": f"부서: {dept}"})
+
+    passed = all(d["passed"] for d in details)
+    return {"passed": passed, "message": f"OAuth2 로그인 {'성공' if passed else '실패'} — {name}, {dept}", "details": details}
+
+
+# ============================================
+# 과제 0-2: SSO OIDC
+# ============================================
+SSO_OIDC_MISSION = {
+    "description": "OIDC로 로그인하여 id_token에서 직접 이름과 부서를 추출하여 제출하세요. /userinfo를 호출하지 마세요.",
+}
+
+
+def validate_sso_oidc(answer: dict) -> dict:
+    name = str(answer.get("name", "")).strip()
+    dept = str(answer.get("dept", "")).strip()
+    method = str(answer.get("method", "")).strip().lower()
+
+    details = []
+    if not name or len(name) < 2:
+        details.append({"field": "name", "passed": False, "message": "이름이 없거나 너무 짧습니다"})
+    else:
+        details.append({"field": "name", "passed": True, "message": f"이름: {name}"})
+
+    if not dept or len(dept) < 2:
+        details.append({"field": "dept", "passed": False, "message": "부서명이 없거나 너무 짧습니다"})
+    else:
+        details.append({"field": "dept", "passed": True, "message": f"부서: {dept}"})
+
+    if method != "oidc":
+        details.append({"field": "method", "passed": False, "message": f"method가 'oidc'여야 합니다 (현재: '{method}')"})
+    else:
+        details.append({"field": "method", "passed": True, "message": "OIDC 방식 확인"})
+
+    passed = all(d["passed"] for d in details)
+    return {"passed": passed, "message": f"OIDC 로그인 {'성공' if passed else '실패'} — {name}, {dept}", "details": details}
+
+
+# ============================================
 # 과제 정의 레지스트리
 # ============================================
 CHALLENGES = {
+    "sso_oauth2": {
+        "name": "SSO OAuth2 로그인",
+        "description": "OAuth2 Authorization Code Flow로 로그인하여 이름/부서를 제출하세요.",
+        "mission": SSO_OAUTH2_MISSION,
+        "submit_schema": '{"name": "한글 이름", "dept": "한글 부서명"}',
+        "validate": validate_sso_oauth2,
+    },
+    "sso_oidc": {
+        "name": "SSO OIDC 로그인",
+        "description": "OIDC로 로그인, id_token에서 이름/부서를 추출하여 제출하세요.",
+        "mission": SSO_OIDC_MISSION,
+        "submit_schema": '{"name": "한글 이름", "dept": "한글 부서명", "method": "oidc"}',
+        "validate": validate_sso_oidc,
+    },
     "prompt": {
         "name": "프롬프트 엔지니어링",
         "description": "LLM에게 올바른 프롬프트를 작성하여 3가지 미션을 해결하세요.",
