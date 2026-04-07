@@ -40,7 +40,7 @@ else
 fi
 
 CHALLENGE_PORT="${CHALLENGE_PORT:-47777}"
-AUTH_SERVER="${AUTH_SERVER:-http://a2g.samsungds.net:8090}"
+AUTH_SERVER="${AUTH_SERVER:-http://12.81.222.45:8090}"
 
 case "${1:-start}" in
     start|up|"")
