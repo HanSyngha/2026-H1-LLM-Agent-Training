@@ -720,6 +720,47 @@ async def set_challenge_llm(request: Request):
 
 
 # ============================================
+# 실습 코드 다운로드
+# ============================================
+@app.get("/downloads/{challenge_id}")
+async def download_challenge(challenge_id: str):
+    """과제별 실습 코드를 zip으로 다운로드합니다."""
+    import zipfile
+    import io
+
+    # 과제별 디렉토리 매핑
+    dirs = {
+        "sso": "day1/00_sso/challenge",
+        "prompt": "day1/03_prompt/challenge",
+        "endpoint": "day1/04_endpoint/challenge",
+        "structured": "day1/05_structured_output",
+        "mcp": "day1/01_mcp",
+        "browser": "day1/07_browser_control",
+        "agent_loop": "day2/01_agent_loop",
+        "final": "day2/06_final_exercise",
+    }
+
+    target = dirs.get(challenge_id)
+    if not target:
+        raise HTTPException(404, f"과제 '{challenge_id}' 코드를 찾을 수 없습니다")
+
+    base = Path(__file__).parent.parent / target
+    if not base.exists():
+        raise HTTPException(404, f"디렉토리 없음: {target}")
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for f in base.rglob('*'):
+            if f.is_file() and '__pycache__' not in str(f):
+                zf.write(f, f.relative_to(base.parent))
+
+    buf.seek(0)
+    from fastapi.responses import StreamingResponse
+    return StreamingResponse(buf, media_type='application/zip',
+        headers={'Content-Disposition': f'attachment; filename={challenge_id}_code.zip'})
+
+
+# ============================================
 # 슬라이드 동기화 API
 # ============================================
 @app.get("/slides/current")

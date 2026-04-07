@@ -11,9 +11,13 @@ export default function Slide12_SSOTask1() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Box color="blue">
-            <BoxTitle>1단계: 앱 실행</BoxTitle>
+            <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
+            <a href="/downloads/sso" download
+              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
+                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 8 }}>
+              📦 실습 코드 다운로드 (sso_code.zip)
+            </a>
             <code style={{ display: 'block', fontSize: '1.05em', lineHeight: 1.8 }}>
-              cd day1/00_sso/challenge<br />
               pip install streamlit requests PyJWT<br />
               streamlit run app.py --server.port 3000
             </code>

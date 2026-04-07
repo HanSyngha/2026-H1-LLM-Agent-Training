@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { getPromptCases, testPrompt, submitPrompt } from '../api';
@@ -70,26 +70,35 @@ function LabMode() {
   const [testing, setTesting] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [finalMsg, setFinalMsg] = useState(null);
+  const abortRef = useRef(false);
 
   useState(() => { getPromptCases().then(setCases); }, []);
 
   const runTest = async () => {
     if (!prompt.trim()) return alert('프롬프트를 입력하세요.');
     setTesting(true); setResults({}); setFinalMsg(null);
+    abortRef.current = false;
     let passed = 0;
     for (let i = 0; i < cases.length; i++) {
+      if (abortRef.current) break;
       setProgress({ current: i + 1, total: cases.length });
       try {
         const r = await testPrompt(prompt, cases[i].id);
+        if (abortRef.current) break;
         setResults(prev => ({ ...prev, [cases[i].id]: r }));
         if (r.pass) passed++;
       } catch (e) {
+        if (abortRef.current) break;
         setResults(prev => ({ ...prev, [cases[i].id]: { pass: false, error: e.message } }));
       }
     }
-    setFinalMsg(passed === cases.length ? `🎉 ${passed}/${cases.length} 전체 통과!` : `${passed}/${cases.length} 통과`);
+    const total = abortRef.current ? Object.keys(results).length + 1 : cases.length;
+    setFinalMsg(abortRef.current ? `⏹ 중지됨 (${passed}개 통과)` :
+      passed === cases.length ? `🎉 ${passed}/${cases.length} 전체 통과!` : `${passed}/${cases.length} 통과`);
     setTesting(false);
   };
+
+  const stopTest = () => { abortRef.current = true; };
 
   const runSubmit = async () => {
     const r = await submitPrompt(prompt);
@@ -113,6 +122,12 @@ function LabMode() {
           style={{ padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '.88em' }}>
           {testing ? `⏳ ${progress.current}/${progress.total}` : '🧪 전체 테스트'}
         </button>
+        {testing && (
+          <button onClick={stopTest}
+            style={{ padding: '8px 20px', borderRadius: 8, background: '#dc2626', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '.88em' }}>
+            ⏹ 중지
+          </button>
+        )}
         <button onClick={runSubmit} disabled={!allPass}
           style={{ padding: '8px 20px', borderRadius: 8, background: allPass ? '#059669' : '#e2e8f0',
             color: allPass ? '#fff' : '#94a3b8', border: 'none', fontWeight: 600, cursor: allPass ? 'pointer' : 'default', fontSize: '.88em' }}>
