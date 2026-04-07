@@ -194,7 +194,7 @@ def get_user_from_token(token: str) -> dict | None:
     DEV_MODE=true이면 토큰 검증 없이 더미 사용자 반환.
     """
     if DEV_MODE:
-        return {"sub": "dev.user", "name": "개발자", "dept": "개발팀", "email": "dev@test.com"}
+        return {"sub": "syngha.han", "name": "한승하", "dept": "S/W혁신팀", "email": "syngha.han@samsung.com"}
     url = f"{AUTH_SERVER}/oidc/userinfo"
     print(f"[AUTH] 토큰 검증 요청: {url}")
     print(f"[AUTH] 토큰 앞 30자: {token[:30]}...")
@@ -279,7 +279,7 @@ async def auth_callback(request: Request, code: str = "", state: str = ""):
 async def auth_me(request: Request):
     """현재 로그인한 사용자 정보를 반환합니다. DEV_MODE면 로그인 없이 더미 사용자."""
     if DEV_MODE:
-        return {"logged_in": True, "user": {"sub": "dev.user", "name": "개발자", "dept": "개발팀", "email": "dev@test.com"}, "token": "dev-token"}
+        return {"logged_in": True, "user": {"sub": "syngha.han", "name": "한승하", "dept": "S/W혁신팀", "email": "syngha.han@samsung.com"}, "token": "dev-token"}
     token = request.cookies.get("challenge_token", "")
     if not token:
         return JSONResponse({"logged_in": False}, status_code=401)

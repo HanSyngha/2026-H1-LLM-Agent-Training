@@ -14,19 +14,18 @@ const REACTIONS = [
   { type: 'slow', emoji: '⏪' },
 ];
 
-// 떠오르는 이모지
+// 떠오르는 이모지 — 우측에서 위로, 여운 있게
 function FloatingEmoji({ emoji, id, onDone }) {
-  const x = Math.random() * 80 + 10; // 10~90%
   return (
     <motion.div
       key={id}
-      initial={{ opacity: 1, y: 0, x: `${x}vw`, scale: 1 }}
-      animate={{ opacity: 0, y: -400, scale: 1.5 }}
-      transition={{ duration: 2, ease: 'easeOut' }}
+      initial={{ opacity: 1, y: 0, scale: 0.8 }}
+      animate={{ opacity: [1, 1, 0.8, 0], y: -350, scale: [0.8, 1.4, 1.2, 1] }}
+      transition={{ duration: 2.5, ease: 'easeOut', times: [0, 0.2, 0.7, 1] }}
       onAnimationComplete={onDone}
       style={{
-        position: 'fixed', bottom: 80, left: 0,
-        fontSize: '2em', pointerEvents: 'none', zIndex: 1000,
+        position: 'fixed', bottom: 80, right: 30,
+        fontSize: '2.2em', pointerEvents: 'none', zIndex: 1000,
       }}
     >
       {emoji}
@@ -34,21 +33,20 @@ function FloatingEmoji({ emoji, id, onDone }) {
   );
 }
 
-// 떠다니는 질문
+// 떠다니는 질문 — 하단 고정 위치에서 좌로 빠르게 흐름
 function FloatingQuestion({ text, user, id, onDone }) {
-  const y = Math.random() * 60 + 15; // 15~75% from top
   const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706'];
   const color = colors[id % colors.length];
 
   return (
     <motion.div
       key={id}
-      initial={{ opacity: 0, x: '110%' }}
-      animate={{ opacity: 1, x: '-110%' }}
-      transition={{ duration: 12, ease: 'linear' }}
+      initial={{ x: '100vw' }}
+      animate={{ x: '-100vw' }}
+      transition={{ duration: 6, ease: 'linear' }}
       onAnimationComplete={onDone}
       style={{
-        position: 'fixed', top: `${y}%`, right: 0,
+        position: 'fixed', bottom: 60, left: 0,
         padding: '8px 20px', borderRadius: 24,
         background: color, color: '#fff',
         fontSize: '1em', fontWeight: 600,
@@ -171,7 +169,7 @@ export default function Slides({ user }) {
   const SlideComponent = slideData?.component;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 49px)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 49px)' }}>
       {/* 떠오르는 이모지 */}
       <AnimatePresence>
         {floatingEmojis.map(e => (
@@ -186,8 +184,8 @@ export default function Slides({ user }) {
         ))}
       </AnimatePresence>
 
-      {/* 슬라이드 영역 */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      {/* 슬라이드 영역 — 반응바와 독립, 스크롤 가능 */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'auto', minHeight: 0 }}>
         <AnimatePresence mode="wait">
           {SlideComponent && <SlideComponent key={currentSlide} />}
         </AnimatePresence>
@@ -212,42 +210,81 @@ export default function Slides({ user }) {
         )}
       </div>
 
-      {/* 하단 바 */}
+      {/* 하단 반응/질문 바 */}
       <div style={{
-        borderTop: '1px solid #e2e8f0', background: '#fff', padding: '10px 24px',
-        display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
+        borderTop: '1px solid #e2e8f0',
+        background: 'linear-gradient(180deg, #f8fafc, #fff)',
+        padding: '16px 32px',
+        display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0,
+        boxShadow: '0 -2px 12px rgba(0,0,0,.04)',
       }}>
-        {REACTIONS.map(r => (
-          <button
-            key={r.type}
-            onClick={() => sendReaction(r.type, r.emoji)}
+        <div style={{ display: 'flex', gap: 8 }}>
+          {REACTIONS.map(r => (
+            <button
+              key={r.type}
+              onClick={() => sendReaction(r.type, r.emoji)}
+              style={{
+                width: 48, height: 48,
+                border: '1px solid #e2e8f0', borderRadius: 14,
+                background: '#fff', fontSize: '1.3em',
+                cursor: 'pointer', transition: 'all .15s',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 1px 3px rgba(0,0,0,.04)',
+                position: 'relative',
+              }}
+              onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = '#f1f5f9'; }}
+              onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = '#fff'; }}
+            >
+              {r.emoji}
+              {reactions[r.type] > 0 && (
+                <span style={{
+                  position: 'absolute', top: -6, right: -6,
+                  fontSize: '.5em', fontWeight: 700, color: '#fff',
+                  background: '#2563eb', borderRadius: 10,
+                  padding: '1px 5px', minWidth: 16, textAlign: 'center',
+                }}>{reactions[r.type]}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ width: 1, height: 32, background: '#e2e8f0', flexShrink: 0 }} />
+
+        <div style={{ flex: 1, display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input
+            value={questionText}
+            onChange={e => setQuestionText(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && sendQuestion()}
+            placeholder="💬 질문을 입력하세요..."
             style={{
-              padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 20, background: '#fff',
-              fontSize: '1.1em', cursor: 'pointer', transition: 'transform .1s',
+              flex: 1, padding: '12px 18px',
+              border: '1px solid #e2e8f0', borderRadius: 12,
+              fontSize: '.92em', background: '#f8fafc',
+              outline: 'none', transition: 'border-color .2s',
             }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+            onFocus={e => e.target.style.borderColor = '#2563eb'}
+            onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+          />
+          <button
+            onClick={sendQuestion}
+            style={{
+              padding: '12px 20px', borderRadius: 12,
+              background: '#2563eb', color: '#fff', border: 'none',
+              fontSize: '.88em', fontWeight: 600, cursor: 'pointer',
+              transition: 'all .15s', whiteSpace: 'nowrap',
+            }}
+            onMouseDown={e => e.currentTarget.style.background = '#1d4ed8'}
+            onMouseUp={e => e.currentTarget.style.background = '#2563eb'}
           >
-            {r.emoji}
-            {reactions[r.type] > 0 && (
-              <span style={{ fontSize: '.6em', color: '#94a3b8', marginLeft: 2 }}>{reactions[r.type]}</span>
-            )}
+            전송
           </button>
-        ))}
-
-        <div style={{ width: 1, height: 24, background: '#e2e8f0' }} />
-
-        <input
-          value={questionText}
-          onChange={e => setQuestionText(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && sendQuestion()}
-          placeholder="질문을 입력하세요..."
-          style={{ flex: 1, padding: '8px 14px', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: '.88em', minWidth: 150 }}
-        />
-        <button className="btn btn-blue" style={{ padding: '8px 16px', fontSize: '.85em' }} onClick={sendQuestion}>
-          전송
-        </button>
-        {questionSent && <span style={{ fontSize: '.75em', color: '#059669' }}>✅</span>}
+          {questionSent && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
+              style={{ fontSize: '1.2em' }}
+            >✅</motion.span>
+          )}
+        </div>
       </div>
     </div>
   );
