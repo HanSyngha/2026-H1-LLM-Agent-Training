@@ -33,25 +33,25 @@ function FloatingEmoji({ emoji, id, onDone }) {
   );
 }
 
-// 떠다니는 질문 — 하단 고정 위치에서 좌로 빠르게 흐름
-function FloatingQuestion({ text, user, id, onDone }) {
+// 떠다니는 질문 — 슬라이드 영역 내에서만, 천천히
+function FloatingQuestion({ text, user, id, onDone, slideAreaRef }) {
   const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706'];
   const color = colors[id % colors.length];
 
   return (
     <motion.div
       key={id}
-      initial={{ x: '100vw' }}
-      animate={{ x: '-100vw' }}
-      transition={{ duration: 6, ease: 'linear' }}
+      initial={{ x: '100%' }}
+      animate={{ x: '-100%' }}
+      transition={{ duration: 15, ease: 'linear' }}
       onAnimationComplete={onDone}
       style={{
-        position: 'fixed', bottom: 60, left: 0,
-        padding: '8px 20px', borderRadius: 24,
+        position: 'absolute', bottom: 40, left: 0,
+        padding: '10px 24px', borderRadius: 24,
         background: color, color: '#fff',
-        fontSize: '1em', fontWeight: 600,
+        fontSize: '1.05em', fontWeight: 600,
         boxShadow: '0 4px 16px rgba(0,0,0,.15)',
-        pointerEvents: 'none', zIndex: 999,
+        pointerEvents: 'none', zIndex: 50,
         whiteSpace: 'nowrap',
       }}
     >
@@ -188,15 +188,14 @@ export default function Slides({ user }) {
         ))}
       </AnimatePresence>
 
-      {/* 떠다니는 질문 */}
-      <AnimatePresence>
-        {floatingQuestions.map(q => (
-          <FloatingQuestion key={q.id} text={q.text} user={q.user} id={q.id} onDone={() => removeQuestion(q.id)} />
-        ))}
-      </AnimatePresence>
-
-      {/* 슬라이드 영역 — 반응바와 독립, 스크롤 가능 */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'auto', minHeight: 0 }}>
+      {/* 슬라이드 영역 — 반응바와 독립, 질문은 이 안에서만 흐름 */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', minHeight: 0 }}>
+        {/* 떠다니는 질문 (슬라이드 영역 내) */}
+        <AnimatePresence>
+          {floatingQuestions.map(q => (
+            <FloatingQuestion key={q.id} text={q.text} user={q.user} id={q.id} onDone={() => removeQuestion(q.id)} />
+          ))}
+        </AnimatePresence>
         <AnimatePresence mode="wait">
           {SlideComponent && <SlideComponent key={currentSlide} />}
         </AnimatePresence>
