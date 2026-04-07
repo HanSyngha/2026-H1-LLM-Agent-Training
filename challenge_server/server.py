@@ -744,7 +744,7 @@ async def download_challenge(challenge_id: str):
     if not target:
         raise HTTPException(404, f"과제 '{challenge_id}' 코드를 찾을 수 없습니다")
 
-    base = Path(__file__).parent.parent / target
+    base = Path(__file__).parent / target
     if not base.exists():
         raise HTTPException(404, f"디렉토리 없음: {target}")
 

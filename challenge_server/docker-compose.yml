@@ -29,6 +29,9 @@ services:
     container_name: challenge-server
     restart: unless-stopped
     network_mode: host
+    volumes:
+      - ../day1:/app/day1:ro
+      - ../day2:/app/day2:ro
     environment:
       <<: *proxy-env
       AUTH_SERVER: "${AUTH_SERVER:-https://12.81.222.45:9050}"
