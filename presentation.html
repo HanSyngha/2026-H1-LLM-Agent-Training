@@ -856,48 +856,17 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
       <tr><th style="padding:6px 10px">UserInfo</th><td style="padding:6px 10px"><code>GET http://a2g.samsungds.net:8090/oidc/userinfo</code></td></tr>
     </table>
     <div style="margin-top:.5em">
-      client_id: <code>cli-default</code> &nbsp; secret: <code>""</code> (빈 문자열) &nbsp; SSL: <code>verify=False</code> &nbsp; redirect_uri: <code>http://localhost:3000</code>
     </div>
   </div>
-  <div class="grid grid-2 anim anim-d4" style="margin-top:.6em">
-    <div class="box green" style="font-size:.92em;padding:16px 22px">
-      <div class="box-title" style="color:var(--green)">과제 1: OAuth2</div>
-      <code>/userinfo</code> API 호출로 이름/부서 가져오기<br>
-      <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 클릭<br>
-      → <code>/challenges/sso_oauth2/submit</code>
-    </div>
-    <div class="box purple" style="font-size:.92em;padding:16px 22px">
-      <div class="box-title" style="color:var(--purple)">과제 2: OIDC</div>
-      <code>id_token</code> JWT 디코딩으로 이름/부서 (userinfo 호출 X)<br>
-      <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 클릭<br>
-      → <code>/challenges/sso_oidc/submit</code>
-    </div>
+  <div class="box purple anim anim-d4" style="margin-top:.6em;font-size:.92em;padding:18px 28px;text-align:left">
+    <div class="box-title" style="color:var(--purple)">과제: OIDC 로그인</div>
+    <code>id_token</code> JWT 디코딩으로 이름/부서를 표시하세요 (<code>/userinfo</code> 호출 X)<br><br>
+    <strong>필수 파라미터:</strong> scope=<code>openid profile email</code>, <code>nonce</code>=UUID (없으면 id_token 안 옴)<br>
+    <strong>JWT 디코딩:</strong> <code>jwt.decode(id_token, options={"verify_signature": False})</code> → claims의 <code>name</code>, <code>dept</code><br>
+    <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 → <code>/challenges/sso_oidc/submit</code>
   </div>
   <div class="box green anim anim-d5" style="margin-top:.5em;font-size:1.05em;text-align:center;padding:16px">
-    🎉 <strong>홍길동님 통과!</strong> — 대시보드에 이름이 표시됩니다
-  </div>
-</div>
-</div>
-
-<!-- ==================== SLIDE: SSO 과제 2 — OIDC 차이점 ==================== -->
-<div class="slide" data-day="1">
-<div class="slide-inner">
-  <span class="badge day1 anim anim-d1">SSO 실습</span>
-  <h2 class="anim anim-d1">과제 2: OIDC — OAuth2와 무엇이 다른가</h2>
-  <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.05em">같은 앱에서 <code>/userinfo</code> 호출 없이, <code>id_token</code> JWT 디코딩만으로 이름/부서를 표시하세요.</p>
-  <div class="box purple anim anim-d4" style="font-size:.92em;padding:20px 28px;text-align:left">
-    <div class="box-title" style="color:var(--purple)">OAuth2에서 바꿀 것</div>
-    <table style="font-size:.92em;margin:0;max-width:100%">
-      <tr><th style="width:30%;padding:8px 12px">항목</th><th style="padding:8px 12px">변경</th></tr>
-      <tr><td>scope</td><td><code>openid</code> → <code>openid profile email</code></td></tr>
-      <tr><td>authorize</td><td><code>nonce</code> 파라미터 추가 (UUID, <strong class="red">필수</strong>)</td></tr>
-      <tr><td>token 응답</td><td><code>access_token</code> + <strong><code>id_token</code></strong> (JWT)</td></tr>
-      <tr><td>사용자 정보</td><td><code>/userinfo</code> <strong class="red">안 함</strong> → <code>jwt.decode(id_token)</code></td></tr>
-    </table>
-  </div>
-  <div class="box green anim anim-d5" style="margin-top:.5em;font-size:.95em;padding:14px 24px;text-align:center">
-    🎉 <strong>홍길동님, SSO OIDC 로그인 통과!</strong> — <code>/userinfo</code> 호출 없이 이름/부서 표시 성공
+    🎉 <strong>홍길동님, OIDC 로그인 통과!</strong> — 대시보드에 이름이 표시됩니다
   </div>
 </div>
 </div>
@@ -907,43 +876,33 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">SSO 실습</span>
   <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
-  <div class="grid grid-2 anim anim-d2" style="margin-top:.6em">
-    <div class="box blue" style="padding:18px 22px">
-      <div class="box-title">과제 1 — OAuth2</div>
-      <pre style="font-size:.72em;max-width:100%;margin:0"><code>이 Streamlit 앱(app.py)에 OAuth2 로그인을 연동해줘.
+  <div class="divider anim anim-d2"></div>
+  <pre class="anim anim-d3" style="font-size:.8em"><code>이 Streamlit 앱(app.py)에 OIDC 로그인을 연동해줘.
 
 인증 서버: http://a2g.samsungds.net:8090
-Authorize: GET /oidc/authorize
-Token: POST /oidc/token
-UserInfo: GET /oidc/userinfo
+Authorize: GET http://a2g.samsungds.net:8090/oidc/authorize
+Token: POST http://a2g.samsungds.net:8090/oidc/token
 client_id: cli-default
-client_secret: 빈 문자열
+client_secret: 빈 문자열 (Basic Auth에서 password 비움)
 redirect_uri: http://localhost:3000
-scope: openid, response_type: code
-SSL: verify=False
+scope: openid profile email
+response_type: code
+nonce: UUID로 생성 (필수! 없으면 id_token 안 옴)
 
-로그인 성공하면 이름/부서를 화면에 표시하고
-POST a2g.samsungds.net:47777/challenges/sso_oauth2/submit
-에 {"token":"토큰","answer":{"name":"...","dept":"..."}}
-형태로 제출해줘.</code></pre>
-    </div>
-    <div class="box purple" style="padding:18px 22px">
-      <div class="box-title" style="color:var(--purple)">과제 2 — OIDC</div>
-      <pre style="font-size:.72em;max-width:100%;margin:0"><code>이 Streamlit 앱에 OIDC 로그인을 연동해줘.
+token 응답에서 id_token을 PyJWT로 디코딩해서 이름/부서 추출.
+jwt.decode(id_token, options={"verify_signature": False})
+claims의 name이 한글 이름, dept가 한글 부서명.
+/userinfo 호출 하지 마.
 
-OAuth2와 같은 서버인데 다른 점:
-- scope를 "openid profile email"로 변경
-- authorize에 nonce 파라미터 추가 (UUID)
-  (필수! 없으면 id_token 안 옴)
-- token 응답에서 id_token을 PyJWT로 디코딩
-  jwt.decode(token,options={"verify_signature":False})
-- /userinfo 호출 하지 마. claims의 name,dept 사용
+로그인 성공하면:
+- st.session_state.user = {"name":"...","dept":"...","email":"...","sub":"..."}
+- st.session_state.access_token = access_token
+- st.session_state.method = "oidc"
 
-POST a2g.samsungds.net:47777/challenges/sso_oidc/submit
-에 {"token":"토큰","answer":{"name":"...","dept":"...",
-"method":"oidc"}} 형태로 제출해줘.</code></pre>
-    </div>
-  </div>
+앱 내 "Challenge 서버에 제출" 버튼으로
+POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit
+에 {"token":"access_token","answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}
+형태로 제출되게 해줘.</code></pre>
 </div>
 </div>
 
@@ -1108,7 +1067,7 @@ POST a2g.samsungds.net:47777/challenges/sso_oidc/submit
     &bull; 정보 추출: date에 <strong>"4월 15일"</strong>, time에 <strong>"오후 2시"</strong>, location에 <strong>"대회의실"</strong>, attendees가 <strong>배열</strong>
   </div>
   <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.88em;padding:18px 28px">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/prompt/submit</code>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/prompt/submit</code>
     <pre style="margin:.5em 0 0;padding:10px;font-size:.9em;background:rgba(0,0,0,.03);border-radius:6px;border:none;box-shadow:none"><code>{
   "token": "SSO access_token",
   "answer": {
@@ -1134,7 +1093,7 @@ POST a2g.samsungds.net:47777/challenges/sso_oidc/submit
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트 실습</span>
   <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
-  <pre class="anim anim-d2" style="font-size:.82em"><code>GET https://a2g.samsungds.net:47777/challenges/prompt/mission
+  <pre class="anim anim-d2" style="font-size:.82em"><code>GET http://a2g.samsungds.net:47777/challenges/prompt/mission
 으로 미션 3개를 받아서 각각 LLM에게 보내줘.
 
 1. classify: 리뷰 감정 분류 (긍정/부정/중립/혼합)
@@ -1144,7 +1103,6 @@ POST a2g.samsungds.net:47777/challenges/sso_oidc/submit
 결과를 POST /challenges/prompt/submit 에 제출
 형식: {"token":"SSO토큰","answer":{"classify":"혼합","summarize":"...","extract":{...}}}
 
-LLM Gateway는 .env 참고, SSL verify=False</code></pre>
 </div>
 </div>
 
@@ -1344,7 +1302,7 @@ LLM Gateway는 .env 참고, SSL verify=False</code></pre>
     <strong>성공 조건:</strong> 응답에 <code>"서울"</code>과 <code>"Seoul"</code>이 모두 포함되어야 합니다.
   </div>
   <div class="box green anim anim-d5" style="margin-top:.6em;font-size:.92em;padding:20px 28px">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/endpoint/submit</code><br>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/endpoint/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"response":"LLM이 응답한 전체 텍스트"}}</code><br>
     <strong style="color:var(--green)">→ 🎉 홍길동님, LLM Endpoint 연결 통과!</strong>
   </div>
@@ -1364,7 +1322,6 @@ LLM Gateway는 .env 참고, SSL verify=False</code></pre>
 - POST /challenges/endpoint/submit 에 제출
   {"token":"SSO토큰","answer":{"response":"LLM 응답 텍스트"}}
 
-SSL verify=False 필요</code></pre>
 </div>
 </div>
 
@@ -1523,7 +1480,7 @@ SSL verify=False 필요</code></pre>
     <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--cyan)">summary</h4><p style="font-size:.8em">2문장 요약</p></div>
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/structured/submit</code><br>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/structured/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"title":"...","category":"기술","sentiment":"긍정","keywords":[...],"summary":"..."}}</code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1704,7 +1661,7 @@ POST /challenges/structured/submit 에 제출
     <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">search_employee("김")</h4><p style="font-size:.9em">→ 김OO 정보</p></div>
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/mcp/submit</code><br>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/mcp/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"results":["446","맑음, 15°C","김OO..."]}}</code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1890,11 +1847,11 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   </div>
   <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px">
     <div class="box-title">문제</div>
-    <code>https://a2g.samsungds.net:47777/browser-target</code> 페이지에서<br>
+    <code>http://a2g.samsungds.net:47777/browser-target</code> 페이지에서<br>
     상품 5개의 <strong>이름과 가격</strong>을 추출하세요.
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/browser/submit</code><br>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/browser/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"products":[{"name":"AI 가속기 Mach-1","price":1250000},...]}} </code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1913,7 +1870,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 1. Chrome을 --remote-debugging-port=9222로 실행
    (Windows: chrome.exe --remote-debugging-port=9222)
 2. CDP WebSocket으로 연결
-3. https://a2g.samsungds.net:47777/browser-target 로 이동
+3. http://a2g.samsungds.net:47777/browser-target 로 이동
 4. JS 렌더링 대기 후 테이블에서 제품명/가격 추출
 5. POST /challenges/browser/submit 에 제출
    {"token":"SSO토큰","answer":{"products":[{"name":"...","price":123000}]}}
@@ -2308,7 +2265,7 @@ CDP: Page.navigate, Runtime.evaluate 사용
   </div>
   <div class="box yellow anim anim-d4" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
     <strong>성공 조건:</strong> 응답에 <strong>섭씨 값(°C)</strong>과 <strong>화씨 값(°F)</strong>이 모두 포함되어야 합니다.<br>
-    <strong>제출:</strong> <code>POST https://a2g.samsungds.net:47777/challenges/agent_loop/submit</code><br>
+    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/agent_loop/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"response":"섭씨: 22°C, 화씨: 71.6°F"}}</code>
   </div>
   <div class="box green anim anim-d5" style="margin-top:.4em;font-size:1em;text-align:center">

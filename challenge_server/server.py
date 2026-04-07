@@ -103,7 +103,6 @@ def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
                 "temperature": 0.1,
                 "response_format": {"type": "json_object"},
             },
-            verify=False,
             timeout=30,
         )
 
@@ -232,7 +231,6 @@ async def update_settings(request: Request):
             f"{new_url}/chat/completions",
             headers={"Authorization": f"Bearer {new_key}", "Content-Type": "application/json"},
             json={"model": new_model, "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
-            verify=False, timeout=15,
         )
         if resp.status_code == 200:
             llm_config["base_url"] = new_url
@@ -257,7 +255,6 @@ def get_user_from_token(token: str) -> dict | None:
         resp = requests.get(
             f"{AUTH_SERVER}/oidc/userinfo",
             headers={"Authorization": f"Bearer {token}"},
-            verify=False,
             timeout=10,
         )
         if resp.status_code == 200:

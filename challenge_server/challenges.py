@@ -254,7 +254,7 @@ def validate_mcp(answer: dict) -> dict:
 # 과제 5: 브라우저 자동화
 # ============================================
 BROWSER_MISSION = {
-    "target_url": "https://a2g.samsungds.net:47777/browser-target",
+    "target_url": "http://a2g.samsungds.net:47777/browser-target",
     "description": "위 URL의 페이지에서 상품 목록(이름, 가격)을 추출하세요.",
 }
 
@@ -440,13 +440,6 @@ def validate_sso_oidc(answer: dict) -> dict:
 # 과제 정의 레지스트리
 # ============================================
 CHALLENGES = {
-    "sso_oauth2": {
-        "name": "SSO OAuth2 로그인",
-        "description": "OAuth2 Authorization Code Flow로 로그인하여 이름/부서를 제출하세요.",
-        "mission": SSO_OAUTH2_MISSION,
-        "submit_schema": '{"name": "한글 이름", "dept": "한글 부서명"}',
-        "validate": validate_sso_oauth2,
-    },
     "sso_oidc": {
         "name": "SSO OIDC 로그인",
         "description": "OIDC로 로그인, id_token에서 이름/부서를 추출하여 제출하세요.",

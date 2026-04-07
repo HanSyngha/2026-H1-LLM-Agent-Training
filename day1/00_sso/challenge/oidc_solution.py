@@ -98,7 +98,6 @@ async def callback(code: str = "", state: str = ""):
             "code": code,
             "redirect_uri": REDIRECT_URI,
         },
-        verify=False,
     )
 
     if token_response.status_code != 200:

@@ -6,10 +6,10 @@
 
 | 항목 | 값 |
 |------|---|
-| Challenge 서버 | `https://a2g.samsungds.net:47777` |
+| Challenge 서버 | `http://a2g.samsungds.net:47777` |
 | MCP 서버 | 수강생이 직접 실행: `python day1/01_mcp/mcp_server.py` |
-| 미션 조회 | `GET https://a2g.samsungds.net:47777/challenges/mcp/mission` |
-| 정답 제출 | `POST https://a2g.samsungds.net:47777/challenges/mcp/submit` |
+| 미션 조회 | `GET http://a2g.samsungds.net:47777/challenges/mcp/mission` |
+| 정답 제출 | `POST http://a2g.samsungds.net:47777/challenges/mcp/submit` |
 
 ## 과제
 
@@ -46,7 +46,7 @@ FastMCP 클라이언트로 MCP 서버에 연결하는 Python 코드를 만들어
    - add(a=157, b=289)
    - get_weather(city="서울")
    - search_employee(name="김")
-4. 결과를 POST https://a2g.samsungds.net:47777/challenges/mcp/submit 에 제출
+4. 결과를 POST http://a2g.samsungds.net:47777/challenges/mcp/submit 에 제출
    형식: {"token": "SSO토큰", "answer": {"results": ["결과1", "결과2", "결과3"]}}
 
 FastMCP 사용법: from fastmcp import Client
