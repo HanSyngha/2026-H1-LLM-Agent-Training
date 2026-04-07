@@ -33,28 +33,49 @@ function FloatingEmoji({ emoji, id, onDone }) {
   );
 }
 
-// 떠다니는 질문 — 니코니코/빌리빌리 스타일 (랜덤 높이, 랜덤 속도, 랜덤 스타일)
-function FloatingQuestion({ text, user, id, onDone }) {
-  const y = (id * 37 + 13) % 75 + 5; // 5~80% 높이 (의사 랜덤, 겹침 최소화)
-  const duration = 12 + (id % 5) * 2; // 12~20초 (랜덤 속도)
+// 사용 중인 줄(높이) 추적 — 겹침 방지
+const usedLanes = new Set();
+const LANE_HEIGHT = 8; // 줄 간격 (% 단위)
+const TOTAL_LANES = Math.floor(85 / LANE_HEIGHT); // 약 10줄
+
+function getFreeLane() {
+  // 빈 줄 찾기
+  for (let i = 0; i < TOTAL_LANES; i++) {
+    if (!usedLanes.has(i)) {
+      usedLanes.add(i);
+      return i;
+    }
+  }
+  // 다 차면 랜덤
+  return Math.floor(Math.random() * TOTAL_LANES);
+}
+
+function releaseLane(lane) {
+  usedLanes.delete(lane);
+}
+
+// 떠다니는 질문 — 니코니코 스타일 (겹침 방지, 높이만 랜덤)
+function FloatingQuestion({ text, user, id, lane, onDone }) {
+  const y = 5 + lane * LANE_HEIGHT; // 줄 번호 → % 높이
+  const duration = 13 + Math.random() * 5; // 13~18초
   const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706', '#0891b2', '#be185d'];
   const color = colors[id % colors.length];
-  const styles = [
+  const styleVariants = [
     { background: color, color: '#fff', borderRadius: 24, padding: '8px 22px' },
     { background: 'transparent', color, border: `2px solid ${color}`, borderRadius: 24, padding: '6px 20px' },
-    { background: `${color}15`, color, borderRadius: 8, padding: '8px 20px', backdropFilter: 'blur(4px)' },
+    { background: `${color}15`, color, borderRadius: 8, padding: '8px 20px' },
   ];
-  const style = styles[id % styles.length];
+  const style = styleVariants[id % styleVariants.length];
 
   return (
     <motion.div
       key={id}
-      initial={{ x: '110%' }}
-      animate={{ x: '-110%' }}
+      initial={{ right: '-50%' }}
+      animate={{ right: '150%' }}
       transition={{ duration, ease: 'linear' }}
-      onAnimationComplete={onDone}
+      onAnimationComplete={() => { releaseLane(lane); onDone(); }}
       style={{
-        position: 'absolute', top: `${y}%`, left: 0,
+        position: 'absolute', top: `${y}%`,
         ...style,
         fontSize: '1em', fontWeight: 600,
         boxShadow: '0 2px 12px rgba(0,0,0,.1)',
@@ -125,7 +146,8 @@ export default function Slides({ user }) {
           if (!seenQuestionTimestamps.current.has(q.timestamp)) {
             seenQuestionTimestamps.current.add(q.timestamp);
             const id = questionIdRef.current++;
-            setFloatingQuestions(prev => [...prev, { ...q, id }]);
+            const lane = getFreeLane();
+            setFloatingQuestions(prev => [...prev, { ...q, id, lane }]);
           }
         });
       }).catch(() => {});
@@ -200,7 +222,7 @@ export default function Slides({ user }) {
         {/* 떠다니는 질문 (슬라이드 영역 내) */}
         <AnimatePresence>
           {floatingQuestions.map(q => (
-            <FloatingQuestion key={q.id} text={q.text} user={q.user} id={q.id} onDone={() => removeQuestion(q.id)} />
+            <FloatingQuestion key={q.id} text={q.text} user={q.user} id={q.id} lane={q.lane} onDone={() => removeQuestion(q.id)} />
           ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
