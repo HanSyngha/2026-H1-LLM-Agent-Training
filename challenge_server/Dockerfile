@@ -34,7 +34,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     -i http://repo.samsungds.net/artifactory/api/pypi/pypi-remote/simple \
-    --trusted-host repo.samsungds.net
+    --trusted-host repo.samsungds.net \
+    || pip install --no-cache-dir -r requirements.txt
 
 COPY server.py challenges.py prompt_challenge.py ./
 COPY dashboard.html prompt_page.html settings_page.html ./
