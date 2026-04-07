@@ -1032,77 +1032,52 @@ POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit
 </div>
 </div>
 
-<!-- ==================== SLIDE: 프롬프트 과제 (1/2) ==================== -->
+<!-- ==================== SLIDE: 프롬프트 과제 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트 실습</span>
-  <h2 class="anim anim-d1">바이브 코딩: 프롬프트 엔지니어링</h2>
+  <h2 class="anim anim-d1">과제: 바이오 데이터 JSON 추출</h2>
   <div class="divider anim anim-d2"></div>
-  <p class="anim anim-d3" style="font-size:1.05em">아래 3가지 텍스트를 LLM에게 보내서 <strong>정확한 결과</strong>를 받아 제출하세요.</p>
-  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px;text-align:left">
-    <div class="box-title">1. 감정 분류 → <strong>긍정/부정/중립/혼합</strong> 중 하나</div>
-    <p style="color:var(--text2);line-height:1.6;font-style:italic">"이 제품 정말 괜찮은데 배송이 너무 느려서 다시는 안 살 것 같아요. 품질은 좋은데 서비스가 별로네요."</p>
+  <div class="box blue anim anim-d3" style="font-size:1em;padding:22px 28px">
+    <div class="box-title">문제</div>
+    <strong>하나의 System Prompt</strong>로 10개의 서로 다른 바이오 데이터(CBC, NGS, PK, Flow Cytometry 등)를<br>
+    각각 정확한 JSON 스키마로 추출하세요. <strong>10개 전부 통과</strong>해야 성공입니다.
   </div>
-  <div class="box green anim anim-d5" style="margin-top:.4em;font-size:.95em;padding:18px 28px;text-align:left">
-    <div class="box-title" style="color:var(--green)">2. 요약 → <strong>3문장 이내</strong>, 핵심 키워드(반도체, AI, 불량 등) 포함</div>
-    <p style="color:var(--text2);line-height:1.6;font-style:italic">"인공지능(AI) 기술이 제조업에 미치는 영향이 날로 커지고 있습니다. 특히 반도체 공정에서는 불량 검출, 수율 예측, 설비 예지보전 등에 AI가 활발히 적용되고 있습니다. 기존에 엔지니어가 수동으로 분석하던 공정 데이터를 AI가 자동으로 분석하여 이상 징후를 조기에 감지할 수 있게 되었습니다. 이에 따라 불량률이 평균 30% 감소하고, 설비 가동률은 15% 향상되었다는 보고가 있습니다..."</p>
+  <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px">
+    <strong>핵심 난이도:</strong> 같은 프롬프트로 10가지 다른 데이터를 처리해야 합니다.<br>
+    &bull; Boolean은 <code>true/false</code> (문자열 아님) &nbsp; &bull; 숫자는 단위 없이 &nbsp; &bull; 배열은 <code>[...]</code><br>
+    &bull; <strong>타입을 정확히 지정하지 않으면 6~8개만 통과합니다</strong>
   </div>
-  <div class="box purple anim anim-d6" style="margin-top:.4em;font-size:.95em;padding:18px 28px;text-align:left">
-    <div class="box-title" style="color:var(--purple)">3. 정보 추출 → <strong>{date, time, location, attendees}</strong> JSON</div>
-    <p style="color:var(--text2);line-height:1.6;font-style:italic">"안녕하세요, 다음 주 화요일 (4월 15일) 오후 2시에 본관 3층 대회의실에서 AI 전략 회의를 진행할 예정입니다. 참석자는 김부장, 이과장, 박대리입니다. 회의 자료는 전날까지 공유 부탁드립니다."</p>
+  <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;padding:16px 28px;text-align:center">
+    <strong>접속:</strong> <code>http://a2g.samsungds.net:47777/challenges/prompt</code> → 프롬프트 입력 → 테스트 → 제출<br>
+    🎉 <strong>10/10 통과 시 대시보드에 이름 표시</strong>
   </div>
 </div>
 </div>
 
-<!-- ==================== SLIDE: 프롬프트 과제 (2/2) 제출 ==================== -->
-<div class="slide" data-day="1">
-<div class="slide-inner">
-  <span class="badge day1 anim anim-d1">프롬프트 실습</span>
-  <h2 class="anim anim-d1">제출 방법 및 성공 조건</h2>
-  <div class="divider anim anim-d2"></div>
-  <div class="box yellow anim anim-d3" style="margin-top:.8em;font-size:.95em;padding:20px 28px">
-    <strong>성공 조건:</strong><br>
-    &bull; 감정 분류: <strong>"혼합"</strong> (긍정+부정이 섞인 리뷰)<br>
-    &bull; 요약: <strong>3문장 이내</strong> + 핵심 키워드(반도체, AI, 불량, 수율, 데이터 중 하나 이상) 포함<br>
-    &bull; 정보 추출: date에 <strong>"4월 15일"</strong>, time에 <strong>"오후 2시"</strong>, location에 <strong>"대회의실"</strong>, attendees가 <strong>배열</strong>
-  </div>
-  <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.88em;padding:18px 28px">
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/prompt/submit</code>
-    <pre style="margin:.5em 0 0;padding:10px;font-size:.9em;background:rgba(0,0,0,.03);border-radius:6px;border:none;box-shadow:none"><code>{
-  "token": "SSO access_token",
-  "answer": {
-    "classify": "혼합",
-    "summarize": "AI 기술이 반도체 공정에 적용되어...",
-    "extract": {
-      "date": "4월 15일",
-      "time": "오후 2시",
-      "location": "본관 3층 대회의실",
-      "attendees": ["김부장", "이과장", "박대리"]
-    }
-  }
-}</code></pre>
-  </div>
-  <div class="box green anim anim-d5" style="margin-top:.4em;font-size:1.05em;text-align:center">
-    🎉 <strong>홍길동님, 프롬프트 엔지니어링 통과! 3/3 미션 통과</strong>
-  </div>
-</div>
-</div>
-
-<!-- ==================== SLIDE: 프롬프트 예시 프롬프트 ==================== -->
+<!-- ==================== SLIDE: 프롬프트 예시 답안 ==================== -->
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">프롬프트 실습</span>
   <h2 class="anim anim-d1">막히면? 예시 답안 프롬프트</h2>
-  <pre class="anim anim-d2" style="font-size:.82em"><code>GET http://a2g.samsungds.net:47777/challenges/prompt/mission
-으로 미션 3개를 받아서 각각 LLM에게 보내줘.
+  <pre class="anim anim-d2" style="font-size:.72em"><code>You are a biomedical data extraction expert.
+Extract structured information as a JSON object.
 
-1. classify: 리뷰 감정 분류 (긍정/부정/중립/혼합)
-2. summarize: 기술 문서 3문장 요약
-3. extract: 이메일에서 날짜/시간/장소/참석자를 JSON으로 추출
-
-결과를 POST /challenges/prompt/submit 에 제출
-형식: {"token":"SSO토큰","answer":{"classify":"혼합","summarize":"...","extract":{...}}}
-
+STRICT RULES:
+1. Return ONLY valid JSON. No markdown, no code blocks.
+2. Boolean: true/false. Numbers: without units. Strings: with context.
+3. morphology_findings: array of strings.
+   abnormal_values: array of objects {name, value, unit, status}.
+4. variants: only detected ones (skip "not detected").
+5. interpretation: concise lowercase phrase.
+6. diversity_status: "low"/"normal"/"high" vs reference.
+7. Counts (num_clusters etc.): count actual items.
+8. Simple numbers (fb_ratio, clearance_rate, hazard_ratio,
+   half_life_days, accumulation_ratio, auc, etc.):
+   plain numbers, NOT nested objects.
+9. For cmax, clearance with units:
+   use {"value": 83.4, "unit": "μg/mL"} format.
+10. dose: string with full context ("200mg IV q3w").</code></pre>
 </div>
 </div>
 

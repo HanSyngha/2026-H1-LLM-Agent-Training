@@ -138,84 +138,10 @@ def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
 @app.get("/settings", response_class=HTMLResponse)
 async def settings_page():
     """LLM 설정 페이지입니다."""
-    return HTMLResponse(f"""
-    <!DOCTYPE html>
-    <html><head><meta charset="UTF-8"><title>Challenge Server 설정</title>
-    <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0;
-               display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2em; }}
-        .card {{ background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 2.5em;
-                 max-width: 550px; width: 100%; }}
-        h1 {{ font-size: 1.5em; margin-bottom: .5em; color: #f1f5f9; }}
-        p {{ color: #64748b; margin-bottom: 1.5em; font-size: .9em; }}
-        label {{ display: block; font-size: .85em; color: #94a3b8; margin-bottom: .3em; margin-top: 1em; }}
-        input {{ width: 100%; padding: 10px 14px; background: #0f172a; border: 1px solid #334155;
-                 border-radius: 8px; color: #e2e8f0; font-size: .95em; font-family: monospace; }}
-        input:focus {{ border-color: #6366f1; outline: none; }}
-        .btn {{ width: 100%; padding: 12px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600;
-                cursor: pointer; margin-top: 1.5em; }}
-        .btn:hover {{ filter: brightness(1.1); }}
-        .status {{ margin-top: 1em; padding: 10px; border-radius: 8px; font-size: .85em; display: none; }}
-        .ok {{ background: rgba(16,185,129,.15); color: #34d399; border: 1px solid rgba(16,185,129,.3); }}
-        .err {{ background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }}
-        .current {{ margin-top: 1em; padding: 10px; background: #0f172a; border-radius: 8px; font-size: .8em;
-                    color: #64748b; font-family: monospace; }}
-    </style></head>
-    <body>
-    <div class="card">
-        <h1>Challenge Server 설정</h1>
-        <p>채점에 사용할 LLM (OpenAI Compatible) 엔드포인트를 설정하세요.</p>
-
-        <label>LLM Base URL</label>
-        <input id="url" type="text" placeholder="http://your-gateway:port/v1" value="{llm_config['base_url']}">
-
-        <label>API Key</label>
-        <input id="key" type="password" placeholder="sk-..." value="{llm_config['api_key']}">
-
-        <label>Model</label>
-        <input id="model" type="text" placeholder="gpt-4o" value="{llm_config['model']}">
-
-        <button class="btn" onclick="save()">저장 및 테스트</button>
-
-        <div class="status" id="status"></div>
-        <div class="current">
-            현재 상태: LLM {'연결됨 ✅' if llm_config['base_url'] else '미설정 ⚠️ (하드코딩 검증 모드)'}
-        </div>
-    </div>
-    <script>
-    async function save() {{
-        const s = document.getElementById('status');
-        s.style.display = 'block';
-        s.className = 'status';
-        s.textContent = '저장 중...';
-
-        try {{
-            const resp = await fetch('/settings/update', {{
-                method: 'POST',
-                headers: {{ 'Content-Type': 'application/json' }},
-                body: JSON.stringify({{
-                    base_url: document.getElementById('url').value,
-                    api_key: document.getElementById('key').value,
-                    model: document.getElementById('model').value,
-                }})
-            }});
-            const data = await resp.json();
-            if (data.status === 'ok') {{
-                s.className = 'status ok';
-                s.textContent = '✅ ' + data.message;
-            }} else {{
-                s.className = 'status err';
-                s.textContent = '❌ ' + data.message;
-            }}
-        }} catch (e) {{
-            s.className = 'status err';
-            s.textContent = '❌ 요청 실패: ' + e.message;
-        }}
-    }}
-    </script>
-    </body></html>
-    """)
+    html_file = Path(__file__).parent / "settings_page.html"
+    if html_file.exists():
+        return HTMLResponse(html_file.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>settings_page.html not found</h1>")
 
 
 @app.post("/settings/update")

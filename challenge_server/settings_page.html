@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Challenge Server 설정</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:#06080f;color:#e2e8f0;min-height:100vh}
+
+.header{padding:2em 2em 1em;text-align:center}
+.header h1{font-size:1.8em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#64748b;margin-top:.3em;font-size:.9em}
+.nav{display:flex;gap:12px;justify-content:center;margin-top:1em}
+.nav a{padding:8px 20px;border-radius:20px;font-size:.85em;font-weight:600;text-decoration:none;transition:all .2s;
+  border:1px solid #334155;color:#94a3b8;background:rgba(30,41,59,.5)}
+.nav a:hover{border-color:#6366f1;color:#a5b4fc}
+.nav a.active{border-color:#6366f1;color:#fff;background:rgba(99,102,241,.15)}
+
+.container{max-width:900px;margin:0 auto;padding:1.5em}
+
+.section{background:linear-gradient(135deg,rgba(30,41,59,.6),rgba(30,41,59,.3));border:1px solid #334155;
+  border-radius:16px;padding:1.5em 2em;margin-bottom:1.5em}
+.section h2{font-size:1.1em;font-weight:700;color:#f1f5f9;margin-bottom:1em;display:flex;align-items:center;gap:.5em}
+
+label{display:block;font-size:.82em;color:#94a3b8;margin-bottom:.3em;margin-top:.8em}
+input,select{width:100%;padding:10px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;
+  color:#e2e8f0;font-size:.9em;font-family:monospace;outline:none}
+input:focus,select:focus{border-color:#6366f1}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:.9em;font-weight:600;cursor:pointer;
+  transition:all .2s;font-family:inherit}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.btn-sm{padding:6px 16px;font-size:.82em}
+.btn-danger{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+
+.status{margin-top:.8em;padding:10px 14px;border-radius:8px;font-size:.85em;display:none}
+.status.ok{background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2);display:block}
+.status.err{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);display:block}
+
+/* LLM 카드 */
+.llm-list{display:flex;flex-direction:column;gap:10px;margin-top:1em}
+.llm-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:14px 18px;
+  display:flex;justify-content:space-between;align-items:center}
+.llm-card .name{font-weight:600;color:#f1f5f9;font-size:.95em}
+.llm-card .url{font-size:.78em;color:#64748b;font-family:monospace}
+.llm-card .model{font-size:.78em;color:#a78bfa}
+.llm-card .actions{display:flex;gap:8px;align-items:center}
+
+/* 과제 매핑 */
+.mapping-table{width:100%;border-collapse:collapse;margin-top:1em;font-size:.88em}
+.mapping-table th{text-align:left;padding:8px 12px;color:#94a3b8;border-bottom:1px solid #334155;font-weight:600}
+.mapping-table td{padding:8px 12px;border-bottom:1px solid rgba(51,65,85,.3)}
+.mapping-table select{width:auto;min-width:150px;padding:6px 10px;font-size:.85em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Challenge Server 설정</h1>
+  <p>LLM 엔드포인트 관리 및 과제 매핑</p>
+  <div class="nav">
+    <a href="/">대시보드</a>
+    <a href="/challenges/prompt">프롬프트 과제</a>
+    <a href="/settings" class="active">설정</a>
+  </div>
+</div>
+
+<div class="container">
+  <!-- LLM 엔드포인트 등록 -->
+  <div class="section">
+    <h2>🤖 LLM 엔드포인트 등록</h2>
+    <p style="color:#64748b;font-size:.85em;margin-bottom:1em">여러 LLM을 등록하고, 각 과제에 할당할 수 있습니다.</p>
+
+    <div class="row">
+      <div><label>이름</label><input id="llm-name" placeholder="예: Samsung A2G"></div>
+      <div><label>모델</label><input id="llm-model" placeholder="예: gpt-4o"></div>
+    </div>
+    <label>Base URL</label>
+    <input id="llm-url" placeholder="http://your-gateway:port/v1">
+    <label>API Key (없으면 비워두세요)</label>
+    <input id="llm-key" type="password" placeholder="sk-...">
+
+    <div style="margin-top:1em">
+      <button class="btn btn-primary" onclick="addLLM()">+ LLM 추가 및 테스트</button>
+    </div>
+    <div class="status" id="addStatus"></div>
+
+    <div class="llm-list" id="llmList"></div>
+  </div>
+
+  <!-- 과제별 LLM 매핑 -->
+  <div class="section">
+    <h2>🔗 과제별 LLM 매핑</h2>
+    <p style="color:#64748b;font-size:.85em">각 과제에서 사용할 LLM을 선택하세요. 프롬프트 과제는 필수입니다.</p>
+    <table class="mapping-table" id="mappingTable">
+      <tr><th>과제</th><th>LLM</th><th></th></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let endpoints = {};
+let challengeMap = {};
+
+async function loadData() {
+  const resp = await fetch(API + '/settings/llm-endpoints');
+  const data = await resp.json();
+  endpoints = data.endpoints || {};
+  challengeMap = data.challenge_map || {};
+  renderLLMs();
+  renderMapping();
+}
+
+function renderLLMs() {
+  const list = document.getElementById('llmList');
+  const ids = Object.keys(endpoints);
+  if (!ids.length) {
+    list.innerHTML = '<div style="color:#475569;font-size:.85em;padding:1em;text-align:center">등록된 LLM이 없습니다</div>';
+    return;
+  }
+  list.innerHTML = ids.map(id => {
+    const e = endpoints[id];
+    return `<div class="llm-card">
+      <div>
+        <div class="name">${esc(e.name || id)}</div>
+        <div class="url">${esc(e.base_url)}</div>
+        <div class="model">모델: ${esc(e.model)}</div>
+      </div>
+      <div class="actions">
+        <span style="color:#64748b;font-size:.75em;font-family:monospace">${id}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMapping() {
+  const table = document.getElementById('mappingTable');
+  // 과제 목록 가져오기
+  fetch(API + '/challenges').then(r => r.json()).then(challenges => {
+    // 프롬프트 과제 추가
+    const allChallenges = [{id: 'prompt', name: '프롬프트 엔지니어링'}, ...challenges];
+
+    const opts = '<option value="">선택 안 함</option>' +
+      Object.entries(endpoints).map(([id, e]) => `<option value="${id}">${esc(e.name)} (${esc(e.model)})</option>`).join('');
+
+    let rows = '<tr><th>과제</th><th>LLM</th><th></th></tr>';
+    allChallenges.forEach(c => {
+      const selected = challengeMap[c.id] || '';
+      const selectHtml = opts.replace(`value="${selected}"`, `value="${selected}" selected`);
+      rows += `<tr>
+        <td style="font-weight:600">${esc(c.name)}</td>
+        <td><select onchange="setMapping('${c.id}', this.value)">${selectHtml}</select></td>
+        <td>${selected ? '✅' : ''}</td>
+      </tr>`;
+    });
+    table.innerHTML = rows;
+  });
+}
+
+async function addLLM() {
+  const name = document.getElementById('llm-name').value.trim();
+  const url = document.getElementById('llm-url').value.trim();
+  const key = document.getElementById('llm-key').value.trim();
+  const model = document.getElementById('llm-model').value.trim();
+
+  if (!url || !model) { showStatus('addStatus', 'err', 'Base URL과 모델은 필수입니다.'); return; }
+
+  showStatus('addStatus', '', '테스트 중...');
+
+  const resp = await fetch(API + '/settings/llm-endpoints', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name: name || model, base_url: url, api_key: key, model}),
+  });
+  const result = await resp.json();
+  showStatus('addStatus', result.status === 'ok' ? 'ok' : 'err', result.message);
+
+  if (result.status === 'ok') {
+    document.getElementById('llm-name').value = '';
+    document.getElementById('llm-url').value = '';
+    document.getElementById('llm-key').value = '';
+    document.getElementById('llm-model').value = '';
+    loadData();
+  }
+}
+
+async function setMapping(challengeId, llmId) {
+  await fetch(API + '/settings/challenge-llm', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({challenge_id: challengeId, llm_id: llmId}),
+  });
+  challengeMap[challengeId] = llmId;
+  renderMapping();
+}
+
+function showStatus(id, cls, msg) {
+  const el = document.getElementById(id);
+  el.className = 'status' + (cls ? ' ' + cls : '');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+loadData();
+</script>
+</body>
+</html>

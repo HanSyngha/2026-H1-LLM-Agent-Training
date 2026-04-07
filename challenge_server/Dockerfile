@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     --trusted-host repo.samsungds.net
 
 # 애플리케이션 복사
-COPY server.py challenges.py dashboard.html ./
+COPY server.py challenges.py prompt_challenge.py dashboard.html prompt_page.html settings_page.html ./
 
 EXPOSE 47777
 
