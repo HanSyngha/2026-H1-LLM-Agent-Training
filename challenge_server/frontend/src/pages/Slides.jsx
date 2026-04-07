@@ -143,8 +143,10 @@ export default function Slides({ user }) {
     const load = () => {
       fetchJSON(`/questions?slide=${currentSlide}`).then(qs => {
         qs.forEach(q => {
-          if (!seenQuestionTimestamps.current.has(q.timestamp)) {
-            seenQuestionTimestamps.current.add(q.timestamp);
+          // timestamp + text 조합으로 중복 체크 (본인 질문 + 서버 질문 모두)
+          const key = q.timestamp + '|' + q.text;
+          if (!seenQuestionTimestamps.current.has(key) && !seenQuestionTimestamps.current.has(q.text)) {
+            seenQuestionTimestamps.current.add(key);
             const id = questionIdRef.current++;
             const lane = getFreeLane();
             setFloatingQuestions(prev => [...prev, { ...q, id, lane }]);
@@ -208,8 +210,10 @@ export default function Slides({ user }) {
     const id = questionIdRef.current++;
     const lane = getFreeLane();
     const userName = user?.name || '익명';
-    setFloatingQuestions(prev => [...prev, { text, user: userName, id, lane, timestamp: new Date().toISOString() }]);
-    seenQuestionTimestamps.current.add(new Date().toISOString());
+    const now = new Date().toISOString();
+    setFloatingQuestions(prev => [...prev, { text, user: userName, id, lane, timestamp: now }]);
+    // 본인 질문은 미리 seen 처리 (polling에서 중복 방지)
+    seenQuestionTimestamps.current.add(text);
 
     await postJSON('/questions', { slide: currentSlide, text });
   };
