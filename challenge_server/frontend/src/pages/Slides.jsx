@@ -196,13 +196,22 @@ export default function Slides({ user }) {
     setFloatingQuestions(prev => prev.filter(q => q.id !== id));
   };
 
-  // 질문 전송
+  // 질문 전송 — 보내자마자 바로 화면에 표시
   const sendQuestion = async () => {
     if (!questionText.trim()) return;
-    await postJSON('/questions', { slide: currentSlide, text: questionText });
+    const text = questionText;
     setQuestionText('');
     setQuestionSent(true);
     setTimeout(() => setQuestionSent(false), 2000);
+
+    // 서버에 보내기 전에 바로 화면에 띄우기
+    const id = questionIdRef.current++;
+    const lane = getFreeLane();
+    const userName = user?.name || '익명';
+    setFloatingQuestions(prev => [...prev, { text, user: userName, id, lane, timestamp: new Date().toISOString() }]);
+    seenQuestionTimestamps.current.add(new Date().toISOString());
+
+    await postJSON('/questions', { slide: currentSlide, text });
   };
 
   const slideData = SLIDES[currentSlide - 1];
