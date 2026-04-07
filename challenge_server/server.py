@@ -586,7 +586,7 @@ async def prompt_submit(request: Request):
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     prompt = body.get("prompt", "")
 
-    if not token:
+    if not token and not DEV_MODE:
         return JSONResponse({"status": "FAIL", "message": "로그인이 필요합니다."}, status_code=401)
     if not prompt:
         return JSONResponse({"status": "FAIL", "message": "prompt가 없습니다."}, status_code=400)
