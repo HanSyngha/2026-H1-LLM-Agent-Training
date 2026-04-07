@@ -28,3 +28,5 @@ playwright-report/
 # Logs
 *.log
 agent_log*.jsonl
+challenge_server/frontend/node_modules/
+challenge_server/frontend/dist/

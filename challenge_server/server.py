@@ -60,6 +60,13 @@ llm_config = {
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
 challenge_llm_map: dict[str, str] = {}
 
+# 반응/질문 저장 (동시성 고려 — Lock 사용)
+from threading import Lock
+reactions_lock = Lock()
+reactions_data: dict[int, dict[str, int]] = {}  # {slide_num: {type: count}}
+questions_lock = Lock()
+questions_data: list[dict] = []  # [{slide, user, text, timestamp}]
+
 # 성공자 저장 (메모리 — 서버 재시작 시 초기화)
 # {challenge_id: [{name, dept, email, timestamp}, ...]}
 completions: dict[str, list[dict]] = {cid: [] for cid in CHALLENGES}
@@ -718,6 +725,80 @@ async def set_challenge_llm(request: Request):
     llm_id = body.get("llm_id", "")
     challenge_llm_map[challenge_id] = llm_id
     return {"status": "ok", "message": f"과제 '{challenge_id}'에 LLM '{llm_id}' 연결됨"}
+
+
+# ============================================
+# 반응 API (동시성 — Lock 사용)
+# ============================================
+@app.post("/reactions")
+async def add_reaction(request: Request):
+    body = await request.json()
+    slide = body.get("slide", 0)
+    rtype = body.get("type", "")
+    if not rtype:
+        return JSONResponse({"error": "type 필요"}, status_code=400)
+    with reactions_lock:
+        if slide not in reactions_data:
+            reactions_data[slide] = {}
+        reactions_data[slide][rtype] = reactions_data[slide].get(rtype, 0) + 1
+    return {"ok": True}
+
+
+@app.get("/reactions")
+async def get_reactions(slide: int = 0):
+    with reactions_lock:
+        return reactions_data.get(slide, {})
+
+
+# ============================================
+# 질문 API
+# ============================================
+@app.post("/questions")
+async def add_question(request: Request):
+    body = await request.json()
+    slide = body.get("slide", 0)
+    text = body.get("text", "").strip()
+    if not text:
+        return JSONResponse({"error": "text 필요"}, status_code=400)
+    # 사용자 정보 (쿠키에서)
+    token = request.cookies.get("challenge_token", "")
+    user = get_user_from_token(token) if token else None
+    with questions_lock:
+        questions_data.append({
+            "slide": slide,
+            "user": user.get("name", "익명") if user else "익명",
+            "text": text,
+            "timestamp": datetime.now().isoformat(),
+        })
+    return {"ok": True}
+
+
+@app.get("/questions")
+async def get_questions(slide: int = 0):
+    with questions_lock:
+        if slide == 0:
+            return questions_data[-50:]  # 최근 50개
+        return [q for q in questions_data if q["slide"] == slide][-20:]
+
+
+# ============================================
+# React 빌드 파일 서빙 (SPA fallback)
+# ============================================
+from fastapi.staticfiles import StaticFiles
+
+# React 빌드 디렉토리가 있으면 정적 파일 서빙
+_frontend_dist = Path(__file__).parent / "frontend" / "dist"
+if _frontend_dist.exists():
+    app.mount("/assets", StaticFiles(directory=str(_frontend_dist / "assets")), name="assets")
+
+    @app.get("/{path:path}", response_class=HTMLResponse)
+    async def spa_fallback(path: str, request: Request):
+        """React SPA fallback — 알려진 API 경로가 아니면 index.html 반환"""
+        # API 경로는 위에서 이미 처리됨
+        index = _frontend_dist / "index.html"
+        if index.exists():
+            return HTMLResponse(index.read_text(encoding="utf-8"))
+        return HTMLResponse("<h1>Build not found. Run: cd frontend && npm run build</h1>")
 
 
 # ============================================
