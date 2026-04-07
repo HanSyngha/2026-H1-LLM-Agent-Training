@@ -88,6 +88,37 @@ function FloatingQuestion({ text, user, id, lane, onDone }) {
   );
 }
 
+// 슬라이드 내용이 넘치면 자동 축소
+function AutoFitSlide({ children }) {
+  const containerRef = useRef(null);
+  const innerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const fit = () => {
+      if (!containerRef.current || !innerRef.current) return;
+      const containerH = containerRef.current.offsetHeight;
+      const innerH = innerRef.current.scrollHeight;
+      if (innerH > containerH) {
+        setScale(Math.max(0.55, containerH / innerH));
+      } else {
+        setScale(1);
+      }
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [children]);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+      <div ref={innerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'top center', width: '100%' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function Slides({ user }) {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [reactions, setReactions] = useState({});
@@ -239,7 +270,7 @@ export default function Slides({ user }) {
           ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
-          {SlideComponent && <SlideComponent key={currentSlide} />}
+          {SlideComponent && <AutoFitSlide key={currentSlide}><SlideComponent /></AutoFitSlide>}
         </AnimatePresence>
 
         {/* 슬라이드 카운터 */}
