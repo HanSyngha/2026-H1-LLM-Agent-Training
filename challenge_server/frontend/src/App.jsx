@@ -8,6 +8,29 @@ import Settings from './pages/Settings';
 import Navbar from './components/Navbar';
 import './App.css';
 
+function HoverNavbar({ user }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <>
+      <div
+        onMouseEnter={() => setVisible(true)}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 8, zIndex: 200 }}
+      />
+      <div
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 199,
+          transform: visible ? 'translateY(0)' : 'translateY(-100%)',
+          transition: 'transform .25s ease',
+        }}
+      >
+        <Navbar user={user} />
+      </div>
+    </>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,11 +50,9 @@ export default function App() {
     return <div className="loading">SSO 로그인으로 이동 중...</div>;
   }
 
-  const isSlides = window.location.pathname === '/slides';
-
   return (
     <BrowserRouter>
-      {!isSlides && <Navbar user={user} />}
+      <HoverNavbar user={user} />
       <Routes>
         <Route path="/" element={<Dashboard user={user} />} />
         <Route path="/slides" element={<Slides user={user} />} />

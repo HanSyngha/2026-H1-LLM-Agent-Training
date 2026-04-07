@@ -244,20 +244,22 @@ export default function Slides({ user }) {
           {SlideComponent && <SlideComponent key={currentSlide} />}
         </AnimatePresence>
 
-        {/* 사이드바 토글 버튼 */}
-        <button
-          onClick={() => setShowSidebar(prev => !prev)}
-          style={{
-            position: 'absolute', top: 12, left: 12,
-            width: 36, height: 36, borderRadius: 8,
-            border: '1px solid #e2e8f0', background: '#fff',
-            cursor: 'pointer', fontSize: '1em', zIndex: 60,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,.06)',
-          }}
-        >
-          ☰
-        </button>
+        {/* 사이드바 토글 버튼 (강사만) */}
+        {isPresenter && (
+          <button
+            onClick={() => setShowSidebar(prev => !prev)}
+            style={{
+              position: 'absolute', top: 12, left: 12,
+              width: 36, height: 36, borderRadius: 8,
+              border: '1px solid #e2e8f0', background: '#fff',
+              cursor: 'pointer', fontSize: '1em', zIndex: 60,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,.06)',
+            }}
+          >
+            ☰
+          </button>
+        )}
 
         {/* 슬라이드 카운터 */}
         <div style={{
@@ -266,8 +268,8 @@ export default function Slides({ user }) {
           {currentSlide} / {totalSlides}
         </div>
 
-        {/* 사이드바 */}
-        {showSidebar && (
+        {/* 사이드바 (강사만) */}
+        {isPresenter && showSidebar && (
           <motion.div
             initial={{ opacity: 0, x: -280 }} animate={{ opacity: 1, x: 0 }}
             style={{

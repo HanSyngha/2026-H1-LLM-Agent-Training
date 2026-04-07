@@ -7,7 +7,7 @@ export default function Navbar({ user }) {
       <nav>
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>대시보드</NavLink>
         <NavLink to="/slides" className={({ isActive }) => isActive ? 'active' : ''}>강의</NavLink>
-        <NavLink to="/challenges/prompt" className={({ isActive }) => isActive ? 'active' : ''}>프롬프트 과제</NavLink>
+{/* 프롬프트 과제는 슬라이드에서 직접 진행 */}
         {/* 설정은 네비에 노출하지 않음 — /settings 직접 입력만 */}
       </nav>
       <div className="user">
