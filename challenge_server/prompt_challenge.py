@@ -226,8 +226,12 @@ def validate_result(actual: dict, expected: dict) -> dict:
         if isinstance(exp_val, bool):
             ok = isinstance(act_val, bool) and act_val == exp_val
         elif isinstance(exp_val, (int, float)):
+            # LLM이 {"value": 1.26, "unit": ""} 형태로 줄 수 있음
+            num_val = act_val
+            if isinstance(act_val, dict) and "value" in act_val:
+                num_val = act_val["value"]
             try:
-                ok = abs(float(act_val) - float(exp_val)) < 0.1
+                ok = abs(float(num_val) - float(exp_val)) < 0.1
             except (ValueError, TypeError):
                 ok = False
         elif isinstance(exp_val, str):
@@ -246,6 +250,12 @@ def validate_result(actual: dict, expected: dict) -> dict:
             # nested dict: 키 존재 + 값 비교
             if isinstance(act_val, dict):
                 ok = all(k in act_val for k in exp_val)
+            elif "value" in exp_val:
+                # expected가 {"value": 83.4, "unit": "μg/mL"}인데 actual이 83.4인 경우
+                try:
+                    ok = abs(float(act_val) - float(exp_val["value"])) < 0.1
+                except (ValueError, TypeError):
+                    ok = False
             else:
                 ok = False
         else:

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프롬프트 엔지니어링 Challenge</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:#06080f;color:#e2e8f0;min-height:100vh}
+.header{text-align:center;padding:2em 1em 1em;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05))}
+.header h1{font-size:1.8em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#64748b;margin-top:.3em;font-size:.9em}
+.container{max-width:1200px;margin:0 auto;padding:1.5em}
+
+/* 프롬프트 입력 */
+.prompt-section{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:1.5em;margin-bottom:1.5em}
+.prompt-section h2{font-size:1.1em;color:#f1f5f9;margin-bottom:.8em;display:flex;align-items:center;gap:.5em}
+.prompt-section h2::before{content:'✍️';font-size:1.2em}
+textarea{width:100%;min-height:180px;background:#0f172a;border:1px solid #334155;border-radius:10px;color:#e2e8f0;
+  font-family:'Cascadia Code','Fira Code',monospace;font-size:.88em;padding:16px;line-height:1.6;resize:vertical;outline:none}
+textarea:focus{border-color:#6366f1}
+textarea::placeholder{color:#475569}
+
+/* 토큰 입력 */
+.token-row{display:flex;gap:10px;margin-top:.8em;align-items:center}
+.token-row input{flex:1;padding:10px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0;font-family:monospace;font-size:.85em}
+.token-row input:focus{border-color:#6366f1;outline:none}
+.token-row label{color:#94a3b8;font-size:.82em;white-space:nowrap}
+
+/* 버튼 */
+.btn-group{display:flex;gap:10px;margin-top:1em}
+.btn{padding:12px 28px;border:none;border-radius:10px;font-size:.95em;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-test{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+.btn-submit{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.btn-submit:disabled{background:#334155;color:#64748b}
+
+/* 진행 상태 */
+.progress{margin-top:1em;display:none}
+.progress-bar{height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);transition:width .3s;border-radius:3px}
+.progress-text{font-size:.8em;color:#94a3b8;margin-top:.3em;text-align:center}
+
+/* 테스트 케이스 그리드 */
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-top:1em}
+.case-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;transition:border-color .3s}
+.case-card.pass{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.03)}
+.case-card.fail{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.03)}
+.case-card.testing{border-color:rgba(99,102,241,.5);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.case-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5em}
+.case-title{font-weight:600;color:#f1f5f9;font-size:.95em}
+.case-status{font-size:.8em;font-weight:700;padding:2px 10px;border-radius:12px}
+.case-status.pass{background:rgba(16,185,129,.15);color:#34d399}
+.case-status.fail{background:rgba(239,68,68,.15);color:#f87171}
+.case-status.pending{background:rgba(148,163,184,.1);color:#64748b}
+.case-status.testing{background:rgba(99,102,241,.15);color:#818cf8}
+.case-input{font-size:.75em;color:#64748b;line-height:1.4;max-height:60px;overflow:hidden;margin-bottom:.5em;
+  background:#0f172a;padding:8px 10px;border-radius:6px;font-family:monospace}
+.case-expected{font-size:.75em;color:#94a3b8;margin-top:.5em}
+.case-expected strong{color:#a78bfa}
+
+/* 결과 상세 */
+.detail-table{width:100%;font-size:.78em;margin-top:.5em;border-collapse:collapse}
+.detail-table th{text-align:left;padding:4px 8px;color:#94a3b8;border-bottom:1px solid #334155}
+.detail-table td{padding:4px 8px;border-bottom:1px solid rgba(51,65,85,.5)}
+.detail-table .pass-cell{color:#34d399}
+.detail-table .fail-cell{color:#f87171}
+
+/* 최종 결과 */
+.final-result{text-align:center;padding:2em;margin-top:1em;border-radius:16px;display:none}
+.final-result.success{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(6,182,212,.05));border:1px solid rgba(16,185,129,.3)}
+.final-result.failure{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(245,158,11,.05));border:1px solid rgba(239,68,68,.3)}
+.final-result h2{font-size:1.5em;margin-bottom:.3em}
+.final-result p{color:#94a3b8;font-size:.95em}
+
+/* 반응형 */
+@media(max-width:768px){.cases-grid{grid-template-columns:1fr}.container{padding:1em}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>프롬프트 엔지니어링 Challenge</h1>
+  <p>하나의 프롬프트로 10개 바이오 데이터를 정확한 JSON으로 추출하세요</p>
+</div>
+
+<div class="container">
+  <!-- 프롬프트 입력 -->
+  <div class="prompt-section">
+    <h2>System Prompt 작성</h2>
+    <textarea id="prompt" placeholder="바이오 데이터에서 구조화된 JSON을 추출하는 system prompt를 작성하세요.&#10;&#10;이 프롬프트 하나로 10개의 서로 다른 바이오 데이터를 처리해야 합니다.&#10;각 테스트 케이스마다 다른 스키마(키)가 요구됩니다."></textarea>
+
+    <div class="token-row">
+      <label>SSO Token:</label>
+      <input id="token" type="password" placeholder="SSO access_token을 입력하세요 (제출 시 필요)">
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-test" onclick="testAll()">🧪 전체 테스트 (10개)</button>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitAll()" disabled>🎯 제출 (전체 통과 시)</button>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">0 / 10</div>
+    </div>
+  </div>
+
+  <!-- 테스트 케이스 -->
+  <div class="cases-grid" id="casesGrid"></div>
+
+  <!-- 최종 결과 -->
+  <div class="final-result" id="finalResult"></div>
+</div>
+
+<script>
+const API = window.location.origin;
+let testCases = [];
+let testResults = {};
+
+async function loadCases() {
+  const resp = await fetch(API + '/challenges/prompt/cases');
+  testCases = await resp.json();
+  renderCases();
+}
+
+function renderCases() {
+  const grid = document.getElementById('casesGrid');
+  grid.innerHTML = testCases.map(tc => {
+    const r = testResults[tc.id];
+    const status = r ? (r.pass ? 'pass' : 'fail') : 'pending';
+    const statusLabel = r ? (r.pass ? 'PASS' : 'FAIL') : '대기';
+
+    let detailHtml = '';
+    if (r && r.details) {
+      detailHtml = '<table class="detail-table"><tr><th>필드</th><th>결과</th><th>예상</th><th>실제</th></tr>';
+      r.details.forEach(d => {
+        const cls = d.pass ? 'pass-cell' : 'fail-cell';
+        const icon = d.pass ? '✓' : '✗';
+        detailHtml += `<tr><td>${d.key}</td><td class="${cls}">${icon}</td><td>${fmt(d.expected)}</td><td>${fmt(d.actual)}</td></tr>`;
+      });
+      detailHtml += '</table>';
+    }
+
+    return `
+      <div class="case-card ${status}" id="case-${tc.id}">
+        <div class="case-header">
+          <span class="case-title">#${tc.id} ${tc.title}</span>
+          <span class="case-status ${status}">${statusLabel}</span>
+        </div>
+        <div class="case-input">${esc(tc.input.substring(0, 150))}...</div>
+        <div class="case-expected"><strong>Expected keys:</strong> ${tc.expected_keys.join(', ')}</div>
+        ${detailHtml}
+      </div>`;
+  }).join('');
+}
+
+function fmt(v) {
+  if (v === null || v === undefined) return '-';
+  if (typeof v === 'object') return JSON.stringify(v).substring(0, 40);
+  return String(v).substring(0, 40);
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+async function testAll() {
+  const prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) { alert('프롬프트를 입력하세요.'); return; }
+
+  const progress = document.getElementById('progress');
+  const fill = document.getElementById('progressFill');
+  const text = document.getElementById('progressText');
+  progress.style.display = 'block';
+  document.getElementById('finalResult').style.display = 'none';
+  testResults = {};
+
+  let passed = 0;
+  for (let i = 0; i < testCases.length; i++) {
+    const tc = testCases[i];
+    const card = document.getElementById('case-' + tc.id);
+    card.className = 'case-card testing';
+    card.querySelector('.case-status').textContent = '실행 중...';
+    card.querySelector('.case-status').className = 'case-status testing';
+
+    fill.style.width = ((i) / testCases.length * 100) + '%';
+    text.textContent = `${i} / ${testCases.length} (실행 중: #${tc.id})`;
+
+    try {
+      const resp = await fetch(API + '/challenges/prompt/test', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({prompt, case_id: tc.id}),
+      });
+      const result = await resp.json();
+      testResults[tc.id] = result;
+      if (result.pass) passed++;
+    } catch (e) {
+      testResults[tc.id] = {pass: false, error: e.message, details: []};
+    }
+
+    renderCases();
+  }
+
+  fill.style.width = '100%';
+  text.textContent = `${passed} / ${testCases.length} 통과`;
+
+  // 최종 결과
+  const final = document.getElementById('finalResult');
+  if (passed === testCases.length) {
+    final.className = 'final-result success';
+    final.innerHTML = '<h2>🎉 전체 통과!</h2><p>제출 버튼을 눌러 성공을 등록하세요.</p>';
+    document.getElementById('submitBtn').disabled = false;
+  } else {
+    final.className = 'final-result failure';
+    final.innerHTML = `<h2>❌ ${passed}/${testCases.length} 통과</h2><p>실패한 케이스의 Expected vs Actual을 확인하고 프롬프트를 수정하세요.</p>`;
+    document.getElementById('submitBtn').disabled = true;
+  }
+  final.style.display = 'block';
+}
+
+async function submitAll() {
+  const prompt = document.getElementById('prompt').value.trim();
+  const token = document.getElementById('token').value.trim();
+  if (!token) { alert('SSO 토큰을 입력하세요.'); return; }
+  if (!prompt) { alert('프롬프트를 입력하세요.'); return; }
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '⏳ 제출 중...';
+
+  try {
+    const resp = await fetch(API + '/challenges/prompt/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({token, prompt}),
+    });
+    const result = await resp.json();
+
+    const final = document.getElementById('finalResult');
+    if (result.status === 'SUCCESS') {
+      final.className = 'final-result success';
+      final.innerHTML = `<h2>🎉 ${result.message}</h2><p>대시보드에서 확인하세요!</p>`;
+    } else {
+      final.className = 'final-result failure';
+      final.innerHTML = `<h2>❌ ${result.message}</h2><p>${result.passed}/${result.total} 통과</p>`;
+      // 결과 업데이트
+      if (result.results) {
+        result.results.forEach(r => { testResults[r.case_id] = r; });
+        renderCases();
+      }
+    }
+    final.style.display = 'block';
+  } catch (e) {
+    alert('제출 실패: ' + e.message);
+  }
+
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').textContent = '🎯 제출 (전체 통과 시)';
+}
+
+loadCases();
+</script>
+</body>
+</html>

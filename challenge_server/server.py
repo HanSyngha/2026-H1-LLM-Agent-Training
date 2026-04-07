@@ -23,6 +23,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from challenges import CHALLENGES, validate_answer
+from prompt_challenge import PROMPT_TEST_CASES, call_llm, validate_result
 
 urllib3.disable_warnings()
 
@@ -41,12 +42,18 @@ app.add_middleware(
 AUTH_SERVER = os.getenv("AUTH_SERVER", "https://12.81.222.45:9050")
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
-# LLM 설정 (설정 페이지에서 변경 가능)
+# LLM 설정 — 여러 개 등록 가능, 과제별로 선택
+llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
+
+# 채점용 LLM (기존 호환)
 llm_config = {
     "base_url": os.getenv("LLM_GATEWAY_URL", ""),
     "api_key": os.getenv("LLM_GATEWAY_API_KEY", ""),
     "model": os.getenv("LLM_MODEL", "gpt-4o"),
 }
+
+# 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
+challenge_llm_map: dict[str, str] = {}
 
 # 성공자 저장 (메모리 — 서버 재시작 시 초기화)
 # {challenge_id: [{name, dept, email, timestamp}, ...]}
@@ -499,6 +506,202 @@ async def browser_target():
 
 
 # ============================================
+# 프롬프트 과제 — 테스트 케이스 목록
+# ============================================
+@app.get("/challenges/prompt/cases")
+async def prompt_cases():
+    """프롬프트 과제의 테스트 케이스 목록을 반환합니다."""
+    return [{
+        "id": tc["id"],
+        "title": tc["title"],
+        "input": tc["input"],
+        "expected_keys": list(tc["expected"].keys()),
+        "expected": tc["expected"],
+    } for tc in PROMPT_TEST_CASES]
+
+
+# ============================================
+# 프롬프트 과제 — 단일 테스트 실행
+# ============================================
+@app.post("/challenges/prompt/test")
+async def prompt_test(request: Request):
+    """수강생 프롬프트로 단일 테스트 케이스를 실행합니다."""
+    body = await request.json()
+    prompt = body.get("prompt", "")
+    case_id = body.get("case_id")
+
+    if not prompt:
+        return JSONResponse({"error": "prompt가 없습니다."}, status_code=400)
+
+    # 과제에 연결된 LLM 찾기
+    llm_id = challenge_llm_map.get("prompt")
+    llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
+
+    if not llm.get("base_url"):
+        return JSONResponse({"error": "LLM이 설정되지 않았습니다. /settings에서 프롬프트 과제용 LLM을 등록해주세요."}, status_code=400)
+
+    # 테스트 케이스 찾기
+    tc = next((t for t in PROMPT_TEST_CASES if t["id"] == case_id), None)
+    if not tc:
+        return JSONResponse({"error": f"테스트 케이스 {case_id}를 찾을 수 없습니다."}, status_code=404)
+
+    # LLM 호출
+    result = call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
+
+    if "error" in result:
+        return {"case_id": case_id, "pass": False, "error": result["error"], "raw": result.get("raw", "")}
+
+    # 검증
+    validation = validate_result(result["parsed"], tc["expected"])
+
+    return {
+        "case_id": case_id,
+        "title": tc["title"],
+        "pass": validation["pass"],
+        "details": validation["details"],
+        "actual": result["parsed"],
+        "expected": tc["expected"],
+    }
+
+
+# ============================================
+# 프롬프트 과제 — 전체 제출 (10개 모두 실행)
+# ============================================
+@app.post("/challenges/prompt/submit")
+async def prompt_submit(request: Request):
+    """수강생 프롬프트로 10개 전체 테스트. 모두 통과 시 성공 등록."""
+    body = await request.json()
+    token = body.get("token", "")
+    prompt = body.get("prompt", "")
+
+    if not token:
+        return JSONResponse({"status": "FAIL", "message": "token이 없습니다."}, status_code=401)
+    if not prompt:
+        return JSONResponse({"status": "FAIL", "message": "prompt가 없습니다."}, status_code=400)
+
+    # 사용자 확인
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"status": "FAIL", "message": "토큰이 유효하지 않습니다."}, status_code=401)
+
+    # LLM 설정
+    llm_id = challenge_llm_map.get("prompt")
+    llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
+
+    if not llm.get("base_url"):
+        return JSONResponse({"status": "FAIL", "message": "LLM이 설정되지 않았습니다."}, status_code=400)
+
+    # 10개 전부 실행
+    results = []
+    all_pass = True
+    for tc in PROMPT_TEST_CASES:
+        llm_result = call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
+
+        if "error" in llm_result:
+            results.append({"case_id": tc["id"], "title": tc["title"], "pass": False, "error": llm_result["error"]})
+            all_pass = False
+            continue
+
+        validation = validate_result(llm_result["parsed"], tc["expected"])
+        results.append({
+            "case_id": tc["id"],
+            "title": tc["title"],
+            "pass": validation["pass"],
+            "details": validation["details"],
+        })
+        if not validation["pass"]:
+            all_pass = False
+
+    passed_count = sum(1 for r in results if r["pass"])
+    user_name = user.get("name", "?")
+    user_dept = user.get("dept", "?")
+    user_sub = user.get("sub", "?")
+
+    if all_pass:
+        # 성공자 등록
+        already = any(c["sub"] == user_sub for c in completions.get("prompt", []))
+        if not already:
+            if "prompt" not in completions:
+                completions["prompt"] = []
+            completions["prompt"].append({
+                "sub": user_sub,
+                "name": user_name,
+                "dept": user_dept,
+                "email": user.get("email", ""),
+                "timestamp": datetime.now().isoformat(),
+            })
+
+    return {
+        "status": "SUCCESS" if all_pass else "FAIL",
+        "user": user_name,
+        "message": f"🎉 {user_name}님, 프롬프트 엔지니어링 통과! {passed_count}/10" if all_pass else f"{passed_count}/10 통과 — 실패한 케이스를 확인하세요.",
+        "passed": passed_count,
+        "total": 10,
+        "results": results,
+    }
+
+
+# ============================================
+# 프롬프트 과제 UI 페이지
+# ============================================
+@app.get("/challenges/prompt", response_class=HTMLResponse)
+async def prompt_page():
+    """프롬프트 과제 전용 페이지입니다."""
+    html_file = Path(__file__).parent / "prompt_page.html"
+    if html_file.exists():
+        return HTMLResponse(html_file.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>prompt_page.html not found</h1>")
+
+
+# ============================================
+# LLM Endpoint 관리 API
+# ============================================
+@app.get("/settings/llm-endpoints")
+async def list_llm_endpoints():
+    return {"endpoints": llm_endpoints, "challenge_map": challenge_llm_map}
+
+
+@app.post("/settings/llm-endpoints")
+async def add_llm_endpoint(request: Request):
+    body = await request.json()
+    eid = body.get("id", "").strip()
+    if not eid:
+        import uuid
+        eid = str(uuid.uuid4())[:8]
+
+    llm_endpoints[eid] = {
+        "name": body.get("name", eid),
+        "base_url": body.get("base_url", ""),
+        "api_key": body.get("api_key", ""),
+        "model": body.get("model", ""),
+    }
+
+    # 연결 테스트
+    try:
+        resp = requests.post(
+            f"{llm_endpoints[eid]['base_url']}/chat/completions",
+            headers={"Authorization": f"Bearer {llm_endpoints[eid]['api_key']}", "Content-Type": "application/json"},
+            json={"model": llm_endpoints[eid]["model"], "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
+            verify=False, timeout=15, proxies={"http": None, "https": None},
+        )
+        ok = resp.status_code == 200
+    except Exception:
+        ok = False
+
+    return {"status": "ok" if ok else "error", "id": eid, "message": f"{'연결 성공' if ok else '연결 실패'}: {llm_endpoints[eid]['name']}"}
+
+
+@app.post("/settings/challenge-llm")
+async def set_challenge_llm(request: Request):
+    """과제에 LLM 연결"""
+    body = await request.json()
+    challenge_id = body.get("challenge_id", "")
+    llm_id = body.get("llm_id", "")
+    challenge_llm_map[challenge_id] = llm_id
+    return {"status": "ok", "message": f"과제 '{challenge_id}'에 LLM '{llm_id}' 연결됨"}
+
+
+# ============================================
 # 헬스체크
 # ============================================
 @app.get("/health")
@@ -509,6 +712,7 @@ async def health():
         "port": PORT,
         "auth_server": AUTH_SERVER,
         "challenges": len(CHALLENGES),
+        "llm_endpoints": len(llm_endpoints),
     }
 
 
