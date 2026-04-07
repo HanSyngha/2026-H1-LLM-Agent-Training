@@ -95,6 +95,7 @@ export default function Slides({ user }) {
   const [questionText, setQuestionText] = useState('');
   const [questionSent, setQuestionSent] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [allQuestions, setAllQuestions] = useState([]);
 
   // 떠오르는 이모지 목록
@@ -243,6 +244,21 @@ export default function Slides({ user }) {
           {SlideComponent && <SlideComponent key={currentSlide} />}
         </AnimatePresence>
 
+        {/* 사이드바 토글 버튼 */}
+        <button
+          onClick={() => setShowSidebar(prev => !prev)}
+          style={{
+            position: 'absolute', top: 12, left: 12,
+            width: 36, height: 36, borderRadius: 8,
+            border: '1px solid #e2e8f0', background: '#fff',
+            cursor: 'pointer', fontSize: '1em', zIndex: 60,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,.06)',
+          }}
+        >
+          ☰
+        </button>
+
         {/* 슬라이드 카운터 */}
         <div style={{
           position: 'absolute', bottom: 8, right: 16, fontSize: '.8em', color: '#94a3b8', fontFamily: 'monospace',
@@ -250,7 +266,54 @@ export default function Slides({ user }) {
           {currentSlide} / {totalSlides}
         </div>
 
-        {/* 슬라이드 카운터만 (강사 컨트롤은 하단 반응바로 이동) */}
+        {/* 사이드바 */}
+        {showSidebar && (
+          <motion.div
+            initial={{ opacity: 0, x: -280 }} animate={{ opacity: 1, x: 0 }}
+            style={{
+              position: 'absolute', top: 0, left: 0, bottom: 0, width: 280,
+              background: '#fff', borderRight: '1px solid #e2e8f0',
+              boxShadow: '4px 0 20px rgba(0,0,0,.06)',
+              overflowY: 'auto', zIndex: 55, padding: '12px 0',
+            }}
+          >
+            <div style={{ padding: '8px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9' }}>
+              <span style={{ fontWeight: 700, fontSize: '.9em', color: '#1e293b' }}>슬라이드 목록</span>
+              <button onClick={() => setShowSidebar(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1em' }}>✕</button>
+            </div>
+            {SLIDES.map((s, i) => {
+              const num = i + 1;
+              const isCurrent = num === currentSlide;
+              const isSection = s.title.startsWith('#') || s.title === 'Day 1' || s.title === 'Day 2' || s.title === '종합 실습' || s.title === 'Day 1 실습' || s.title === '마무리';
+              return (
+                <div
+                  key={num}
+                  onClick={() => { if (isPresenter) goTo(num); setShowSidebar(false); }}
+                  style={{
+                    padding: isSection ? '8px 16px 4px' : '6px 16px 6px 28px',
+                    cursor: isPresenter ? 'pointer' : 'default',
+                    background: isCurrent ? '#eff6ff' : 'transparent',
+                    borderLeft: isCurrent ? '3px solid #2563eb' : '3px solid transparent',
+                    transition: 'background .15s',
+                    fontSize: isSection ? '.78em' : '.82em',
+                    fontWeight: isSection ? 700 : 400,
+                    color: isSection ? '#2563eb' : isCurrent ? '#1e293b' : '#64748b',
+                    textTransform: isSection ? 'uppercase' : 'none',
+                    letterSpacing: isSection ? '.5px' : 0,
+                    marginTop: isSection ? 8 : 0,
+                  }}
+                  onMouseEnter={e => { if (!isCurrent) e.currentTarget.style.background = '#f8fafc'; }}
+                  onMouseLeave={e => { if (!isCurrent) e.currentTarget.style.background = 'transparent'; }}
+                >
+                  {!isSection && <span style={{ color: '#94a3b8', marginRight: 8, fontFamily: 'monospace', fontSize: '.85em' }}>{num}</span>}
+                  {s.title}
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+
+        {/* 강사 전용: 슬라이드 넘기기는 반응바에 있음 */}
 
         {/* 강사 전용 질문 히스토리 */}
         {isPresenter && showHistory && (
