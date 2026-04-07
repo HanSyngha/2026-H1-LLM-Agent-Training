@@ -707,6 +707,38 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
 </div>
 </div>
 
+<!-- ==================== SLIDE: SSO 실습 과제 ==================== -->
+<div class="slide" data-day="1">
+<div class="slide-inner">
+  <span class="badge day1 anim anim-d1">SSO 실습</span>
+  <h2 class="anim anim-d1">바이브 코딩: OAuth2 / OIDC 로그인</h2>
+  <div class="divider anim anim-d2"></div>
+  <div class="grid grid-2 anim anim-d3" style="margin-top:.8em">
+    <div class="box blue" style="padding:24px 28px">
+      <div class="box-title">과제 1: OAuth2</div>
+      <p style="font-size:1em;line-height:1.7">SSO 로그인 후 <code>/userinfo</code> API를 호출하여<br>본인의 <strong>이름과 부서</strong>를 표시하세요.</p>
+      <div style="margin-top:.8em;padding:8px 12px;background:rgba(59,130,246,.06);border-radius:8px;font-size:.9em">
+        <code>✅ OAuth2 로그인 성공!</code><br>
+        <code>이름: 홍길동 | 부서: 개발팀</code>
+      </div>
+    </div>
+    <div class="box purple" style="padding:24px 28px">
+      <div class="box-title" style="color:var(--purple)">과제 2: OIDC</div>
+      <p style="font-size:1em;line-height:1.7"><code>/userinfo</code> 호출 <strong>없이</strong>,<br><code>id_token</code> JWT 디코딩만으로 같은 결과를 달성하세요.</p>
+      <div style="margin-top:.8em;padding:8px 12px;background:rgba(124,58,237,.06);border-radius:8px;font-size:.9em">
+        <code>✅ OIDC 로그인 성공!</code><br>
+        <code>방식: id_token 디코딩 — /userinfo 호출 없음</code>
+      </div>
+    </div>
+  </div>
+  <div class="box green anim anim-d4" style="margin-top:.6em;font-size:.95em;text-align:center">
+    <strong>인증 서버:</strong> <code>a2g.samsungds.net:8090</code> &nbsp;|&nbsp;
+    <strong>Client ID:</strong> <code>cli-default</code> &nbsp;|&nbsp;
+    <strong>Discovery:</strong> <code>/.well-known/openid-configuration</code>
+  </div>
+</div>
+</div>
+
 <!-- ==================== SECTION: #2 AI 학습 ==================== -->
 <div class="slide section-header-slide" data-day="1" data-slide-type="section-header" style="--section-color:#f59e0b">
   <div class="section-inner">
