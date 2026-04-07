@@ -277,7 +277,9 @@ async def auth_callback(request: Request, code: str = "", state: str = ""):
 
 @app.get("/auth/me")
 async def auth_me(request: Request):
-    """현재 로그인한 사용자 정보를 반환합니다."""
+    """현재 로그인한 사용자 정보를 반환합니다. DEV_MODE면 로그인 없이 더미 사용자."""
+    if DEV_MODE:
+        return {"logged_in": True, "user": {"sub": "dev.user", "name": "개발자", "dept": "개발팀", "email": "dev@test.com"}, "token": "dev-token"}
     token = request.cookies.get("challenge_token", "")
     if not token:
         return JSONResponse({"logged_in": False}, status_code=401)
