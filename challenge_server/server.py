@@ -38,7 +38,7 @@ app.add_middleware(
 # ============================================
 # 설정
 # ============================================
-AUTH_SERVER = os.getenv("AUTH_SERVER", "http://a2g.samsungds.net:8090")
+AUTH_SERVER = os.getenv("AUTH_SERVER", "http://12.81.222.45:8090")
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
 # LLM 설정 (설정 페이지에서 변경 가능)
@@ -255,7 +255,9 @@ def get_user_from_token(token: str) -> dict | None:
         resp = requests.get(
             f"{AUTH_SERVER}/oidc/userinfo",
             headers={"Authorization": f"Bearer {token}"},
+            verify=False,
             timeout=10,
+            proxies={"http": None, "https": None},  # 프록시 우회
         )
         if resp.status_code == 200:
             return resp.json()
