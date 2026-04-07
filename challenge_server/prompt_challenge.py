@@ -108,7 +108,7 @@ def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config: dict
                 "max_tokens": 500,
             },
             verify=False,
-            timeout=60,
+            timeout=180,
             proxies={"http": None, "https": None},
         )
 
@@ -127,7 +127,7 @@ def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config: dict
     except json.JSONDecodeError:
         return {"error": "LLM 응답이 유효한 JSON이 아닙니다", "raw": content[:200]}
     except requests.Timeout:
-        return {"error": "LLM 응답 시간 초과 (60초)"}
+        return {"error": "LLM 응답 시간 초과 (3분)"}
     except Exception as e:
         return {"error": str(e)}
 
