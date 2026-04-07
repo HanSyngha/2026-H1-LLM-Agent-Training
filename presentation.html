@@ -1448,19 +1448,32 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 <div class="slide" data-day="1">
 <div class="slide-inner">
   <span class="badge day1 anim anim-d1">DAY 1 실습</span>
-  <h2 class="anim anim-d1">Day 1 실습 과제</h2>
+  <h2 class="anim anim-d1">바이브 코딩 실습</h2>
   <div class="divider anim anim-d2"></div>
-  <div class="glass glow-blue anim anim-d3" style="margin-top:1em;text-align:left;max-width:800px;margin-left:auto;margin-right:auto;padding:28px 32px">
-    <div style="color:var(--blue2);font-weight:700;font-size:1.1em;margin-bottom:.7em">실습 목표</div>
-    <div style="display:flex;flex-direction:column;gap:.6em">
-      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">01</span><span style="color:var(--text2);font-size:.95em">OpenAI Compatible API로 사내 Gateway 연결 확인</span></div>
-      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">02</span><span style="color:var(--text2);font-size:.95em">Tool Schema 작성 &#8594; LLM이 tool_calls 생성하도록 유도</span></div>
-      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">03</span><span style="color:var(--text2);font-size:.95em">Structured Output으로 정형 데이터 추출</span></div>
-      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">04</span><span style="color:var(--text2);font-size:.95em">FastMCP 서버 만들기 (간단한 Tool 1~2개)</span></div>
-      <div style="display:flex;align-items:baseline;gap:.8em"><span style="color:var(--blue2);font-weight:700;font-family:var(--mono);font-size:.85em;min-width:2em">05</span><span style="color:var(--text2);font-size:.95em">Playwright로 웹 페이지 데이터 추출</span></div>
+  <div class="grid grid-2 anim anim-d3" style="margin-top:.8em">
+    <div class="box blue" style="padding:24px 28px">
+      <div class="box-title">진행 방법</div>
+      <ol style="font-size:1em;line-height:1.8">
+        <li>Challenge 서버에서 <strong>미션 조회</strong></li>
+        <li>AI를 활용하여 <strong>바이브 코딩</strong></li>
+        <li>SSO 토큰 + 정답을 <strong>서버에 제출</strong></li>
+        <li>대시보드에 <strong>본인 이름</strong> 뜨면 성공!</li>
+      </ol>
+    </div>
+    <div class="box green" style="padding:24px 28px">
+      <div class="box-title" style="color:var(--green)">서버 정보</div>
+      <div style="font-size:.95em;line-height:2">
+        <div><strong>Challenge:</strong> <code style="color:var(--blue)">a2g.samsungds.net:70777</code></div>
+        <div><strong>인증(SSO):</strong> <code style="color:var(--blue)">a2g.samsungds.net:8090</code></div>
+        <div><strong>대시보드:</strong> <code style="color:var(--blue)">a2g.samsungds.net:70777</code></div>
+        <div><strong>미션 조회:</strong> <code>GET /challenges/{id}/mission</code></div>
+        <div><strong>정답 제출:</strong> <code>POST /challenges/{id}/submit</code></div>
+      </div>
     </div>
   </div>
-  <p class="anim anim-d4" style="margin-top:1em;color:var(--text3);font-size:.88em">각 실습 자료는 코드 파일로 제공됩니다</p>
+  <div class="box yellow anim anim-d4" style="margin-top:.6em;font-size:1em;text-align:center">
+    <strong>제출 형식:</strong> <code>{"token": "&lt;SSO 토큰&gt;", "answer": { ... }}</code> &nbsp;→&nbsp; 🎉 <strong>홍길동님 통과!</strong>
+  </div>
 </div>
 </div>
 
@@ -2262,20 +2275,20 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   </div>
   <div class="grid grid-2 anim anim-d5" style="margin-top:.6em">
     <div class="box blue">
-      <div class="box-title">구현할 Tool들</div>
-      <ul style="font-size:.88em">
-        <li><code>web_search(query)</code> - Playwright 검색</li>
-        <li><code>extract_data(url)</code> - 페이지 데이터 추출</li>
-        <li><code>save_excel(data, path)</code> - openpyxl 저장</li>
+      <div class="box-title">바이브 코딩으로 구현</div>
+      <ul style="font-size:.95em">
+        <li><code>web_search(query)</code> — Playwright 검색</li>
+        <li><code>extract_data(url)</code> — 데이터 추출</li>
+        <li><code>save_excel(data, path)</code> — 저장</li>
       </ul>
     </div>
     <div class="box green">
-      <div class="box-title" style="color:var(--green2)">목표</div>
-      <ul style="font-size:.88em">
-        <li>Agentic Loop 직접 구현</li>
-        <li>Tool 3개 이상 연쇄 호출</li>
-        <li>에러 핸들링 포함</li>
-      </ul>
+      <div class="box-title" style="color:var(--green)">제출</div>
+      <div style="font-size:.95em;line-height:1.8">
+        <code>POST /challenges/final/submit</code><br>
+        <code>{"token": "...", "answer": {"items": [...]}}</code><br>
+        <strong style="color:var(--green)">→ 🎉 홍길동님, 종합 실습 통과!</strong>
+      </div>
     </div>
   </div>
 </div>

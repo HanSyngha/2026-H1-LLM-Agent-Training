@@ -275,11 +275,15 @@ def validate_browser(answer: dict) -> dict:
 
     details = []
     for expected in BROWSER_TARGET_DATA:
-        found = any(
-            expected["name"] in str(p.get("name", "")) and
-            abs(int(p.get("price", 0)) - expected["price"]) < 100
-            for p in products
-        )
+        def match_product(p, exp):
+            try:
+                name_ok = exp["name"] in str(p.get("name", ""))
+                price_raw = str(p.get("price", "0")).replace(",", "").replace("원", "").strip()
+                price_ok = abs(int(price_raw) - exp["price"]) < 100
+                return name_ok and price_ok
+            except (ValueError, TypeError):
+                return False
+        found = any(match_product(p, expected) for p in products)
         details.append({
             "product": expected["name"],
             "passed": found,
