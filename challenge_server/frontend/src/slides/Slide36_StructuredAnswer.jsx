@@ -23,19 +23,19 @@ Tool 2 - submit_secret_key:
   파라미터: secret_key (string, 필수)
 
 == TODO 2: execute_tool(tool_name, arguments) 함수 구현 ==
+코드 상단에 token 변수(SSO access_token)와
+CHALLENGE_SERVER 변수(http://a2g.samsungds.net:47777)가 이미 있음.
 
 get_secret_key 호출 시:
-  GET http://a2g.samsungds.net:47777/challenges/tool_use/secret
-  query param: token (코드 상단의 token 변수 사용)
-  응답: {"secret_key": "KEY-...", "message": "..."}
+  requests.get(f"{CHALLENGE_SERVER}/challenges/tool_use/secret", params={"token": token})
+  resp.json()을 return
 
 submit_secret_key 호출 시:
-  POST http://a2g.samsungds.net:47777/challenges/tool_use/submit
-  headers: Content-Type: application/json
-  body: {"token": token변수, "answer": {"secret_key": arguments["secret_key"]}}
-  응답: {"status": "SUCCESS", "message": "🎉 통과!"}
+  requests.post(f"{CHALLENGE_SERVER}/challenges/tool_use/submit",
+    json={"token": token, "answer": {"secret_key": arguments["secret_key"]}})
+  resp.json()을 return
 
-두 경우 모두 resp.json()을 dict로 return해줘.
+tool_name이 위 두 개 중 하나가 아니면 {"error": "unknown tool"}을 return.
 Agentic Loop는 이미 구현되어 있으니 tool만 연결하면 됨.`}</CodeBlock>
         </motion.div>
       </div>

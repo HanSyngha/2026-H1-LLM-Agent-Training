@@ -12,26 +12,23 @@ export default function Slide30_EndpointAnswer() {
           <CodeBlock lang="prompt">{`app.py의 TODO를 채워줘. resp = None을 requests.post(...)로 바꿔야 해.
 
 사내 LLM Gateway 정보:
-- base URL: http://a2g.samsungds.net:8090/v1
-- 모델 목록 확인: GET http://a2g.samsungds.net:8090/v1/models
-  (헤더 x-service-id: test-service, x-user-id: 실제 로그인한 ID 필수)
-- chat API: POST http://a2g.samsungds.net:8090/v1/chat/completions
+- URL: http://a2g.samsungds.net:8090/v1/chat/completions
+- 모델명: testmodel
 
 필수 헤더:
   Content-Type: application/json
-  x-service-id: test-service   (코드의 SERVICE_ID 변수)
-  x-user-id: <user ID>         (코드의 user_id 변수)
+  x-service-id: test-service   (코드에 SERVICE_ID 변수로 있음)
+  x-user-id: <값>              (코드에 user_id 변수로 있음, SSO 로그인한 ID)
 
 요청 body (JSON):
 {
-  "model": "<위 /v1/models에서 확인한 모델명>",
+  "model": "testmodel",
   "messages": st.session_state.messages,
   "max_tokens": 1024
 }
 
-먼저 /v1/models를 호출해서 사용 가능한 모델명을 확인한 뒤,
-그 모델명으로 /v1/chat/completions에 POST 요청을 보내줘.
-timeout은 60초로 설정해.`}</CodeBlock>
+코드에 이미 SERVICE_ID, user_id, st.session_state.messages 변수가 있으니
+그대로 사용하면 됨. timeout은 60초로 설정해.`}</CodeBlock>
         </motion.div>
       </div>
     </div>
