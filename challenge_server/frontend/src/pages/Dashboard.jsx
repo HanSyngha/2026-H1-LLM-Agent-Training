@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCompletions } from '../api';
+import { getCompletions, resetCompletions, getMe } from '../api';
 
 /* ── helpers ───────────────────────────────────────── */
 
@@ -404,6 +404,12 @@ function ChallengeCard({ name, completions }) {
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
+  const [user, setUser] = useState(null);
+  const [resetting, setResetting] = useState(false);
+
+  useEffect(() => {
+    getMe().then(u => { if (u && u.logged_in) setUser(u.user); });
+  }, []);
 
   useEffect(() => {
     const load = () => getCompletions().then(setData).catch(() => {});
@@ -411,6 +417,21 @@ export default function Dashboard() {
     const interval = setInterval(load, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  const isAdmin = user?.sub === 'syngha.han';
+
+  const handleReset = async () => {
+    if (!confirm('정말 모든 과제 기록을 초기화하시겠습니까?')) return;
+    setResetting(true);
+    try {
+      await resetCompletions();
+      const fresh = await getCompletions();
+      setData(fresh);
+    } catch (e) {
+      alert('초기화 실패: ' + e.message);
+    }
+    setResetting(false);
+  };
 
   const { challenges, ids, totalCompletions, allUsers, leaderboard } = useMemo(() => {
     if (!data) return { challenges: {}, ids: [], totalCompletions: 0, allUsers: new Set(), leaderboard: [] };
@@ -460,6 +481,23 @@ export default function Dashboard() {
           <span style={S.refreshDot} />
           5초마다 자동으로 갱신됩니다
         </p>
+        {isAdmin && (
+          <button
+            onClick={handleReset}
+            disabled={resetting}
+            style={{
+              marginTop: 12, padding: '8px 20px', borderRadius: 8,
+              border: '1.5px solid #ef4444', background: resetting ? '#fecaca' : '#fff',
+              color: '#ef4444', fontWeight: 700, fontSize: '.85rem',
+              cursor: resetting ? 'not-allowed' : 'pointer',
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.target.style.background = '#fef2f2'; }}
+            onMouseLeave={e => { e.target.style.background = '#fff'; }}
+          >
+            {resetting ? '초기화 중...' : '🔄 전체 초기화'}
+          </button>
+        )}
       </div>
 
       {/* ── Stats Bar ── */}

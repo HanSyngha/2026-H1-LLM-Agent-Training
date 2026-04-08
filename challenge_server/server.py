@@ -469,6 +469,25 @@ async def get_completions():
     }
 
 
+@app.post("/completions/reset")
+async def reset_completions(request: Request):
+    """대시보드 초기화 — 강사(syngha.han)만 가능."""
+    body = await request.json()
+    token = body.get("token", "") or request.cookies.get("challenge_token", "")
+    user = get_user_from_token(token)
+    if not user or user.get("sub") != "syngha.han":
+        return JSONResponse({"error": "강사만 초기화할 수 있습니다."}, status_code=403)
+
+    for cid in completions:
+        completions[cid] = []
+
+    # tool_use 시크릿도 초기화
+    from challenges import _tool_use_secrets
+    _tool_use_secrets.clear()
+
+    return {"status": "OK", "message": "모든 과제 성공 기록이 초기화되었습니다."}
+
+
 # ============================================
 # 브라우저 과제: 데이터 API (JS에서 fetch)
 # ============================================
