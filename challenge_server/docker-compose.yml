@@ -24,6 +24,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
       args:
         <<: *proxy-env
     container_name: challenge-server
