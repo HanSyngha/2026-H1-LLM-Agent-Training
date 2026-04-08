@@ -8,41 +8,54 @@ export default function Slide12_SSOTask1() {
     <div className="slide-container">
       <div className="slide-inner">
         <Badge variant="day1">SSO 실습</Badge>
-        <SlideH2>과제: Streamlit 앱에 SSO 연동하기</SlideH2>
+        <SlideH2>과제: Streamlit 앱에 OIDC 로그인 연동</SlideH2>
         <Divider />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Box color="blue">
             <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
-            <a href="/downloads/sso" download
-              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
-                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 8 }}>
-              📦 실습 코드 다운로드 (sso_code.zip)
-            </a>
-            <code style={{ display: 'block', fontSize: '1.05em', lineHeight: 1.8 }}>
-              pip install streamlit requests PyJWT<br />
-              streamlit run app.py --server.port 3000
-            </code>
-          </Box>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Box color="yellow" style={{ marginTop: 8 }}>
-            <BoxTitle color="#d97706">2단계: 빈 화면 확인</BoxTitle>
-            <div><code>http://localhost:3000</code> 에 접속하면 이런 화면이 뜹니다:</div>
-            <div style={{ padding: '12px 16px', background: '#f8fafc', borderRadius: 8, fontSize: '.95em', lineHeight: 1.8, marginTop: 8 }}>
-              <span role="img" aria-label="lock">&#x1F510;</span> <strong>SSO 로그인 실습</strong><br />
-              <span role="img" aria-label="warning">&#x26A0;&#xFE0F;</span> 로그인이 필요합니다.<br />
-              <span role="img" aria-label="key">&#x1F511;</span> SSO 로그인 <span style={{ color: '#94a3b8' }}>(비활성)</span><br />
-              이름: <span style={{ color: '#94a3b8' }}>__________</span> &nbsp; 부서: <span style={{ color: '#94a3b8' }}>__________</span><br />
-              <span role="img" aria-label="target">&#x1F3AF;</span> Challenge 서버에 제출 <span style={{ color: '#94a3b8' }}>(비활성)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <a href="/downloads/sso" download
+                style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
+                  textDecoration: 'none', fontWeight: 600, fontSize: '.9em', flexShrink: 0 }}>
+                📦 다운로드
+              </a>
+              <code style={{ fontSize: '.95em' }}>
+                pip install streamlit requests PyJWT && streamlit run app.py --server.port 3000
+              </code>
             </div>
           </Box>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Box color="green" style={{ marginTop: 8, textAlign: 'center', fontSize: '1.05em' }}>
-            <strong>3단계:</strong> 바이브 코딩으로 로그인 버튼에 SSO를 연결하세요. 로그인 성공 -> 정보 표시 -> 제출 버튼 활성화!
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+          <Box color="purple" style={{ marginTop: 8, fontSize: '.88em', padding: '16px 24px' }}>
+            <strong>인증 서버 정보 (OIDC)</strong>
+            <table style={{ fontSize: '.92em', margin: '8px 0 0', width: '100%' }}>
+              <tbody>
+                <tr>
+                  <th style={{ width: '18%', padding: '4px 8px' }}>Authorize</th>
+                  <td style={{ padding: '4px 8px' }}><code>GET http://a2g.samsungds.net:8090/oidc/authorize</code></td>
+                </tr>
+                <tr>
+                  <th style={{ padding: '4px 8px' }}>Token</th>
+                  <td style={{ padding: '4px 8px' }}><code>POST http://a2g.samsungds.net:8090/oidc/token</code></td>
+                </tr>
+                <tr>
+                  <th style={{ padding: '4px 8px' }}>Client ID</th>
+                  <td style={{ padding: '4px 8px' }}><code>cli-default</code> (secret 없음)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style={{ marginTop: 8, lineHeight: 1.7 }}>
+              scope=<code>openid profile email</code>, <code>nonce</code>=필수 (없으면 id_token 안 옴)<br />
+              <code>id_token</code>을 JWT 디코딩 → <code>name</code>, <code>dept</code> 추출 → 제출
+            </div>
+          </Box>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Box color="green" style={{ marginTop: 8, textAlign: 'center', fontSize: '1em' }}>
+            <strong>2단계:</strong> 바이브 코딩으로 로그인 버튼에 OIDC를 연결하세요 → 로그인 성공 → 제출!
           </Box>
         </motion.div>
 

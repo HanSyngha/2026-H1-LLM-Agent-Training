@@ -112,7 +112,6 @@ const SLIDES = [
   { id: 10, component: Slide10_WhyTheory, title: '왜 이론을 알아야 하는가', day: 1 },
   { id: 11, component: Slide11_SSOLabIntro, title: '실습 안내', day: 1 },
   { id: 12, component: Slide12_SSOTask1, title: '과제: SSO 연동 (1/2)', day: 1 },
-  { id: 13, component: Slide13_SSOTask2, title: '서버 정보 & 제출', day: 1 },
   { id: 14, component: Slide14_SSOTaskOIDC, title: 'OIDC 차이점', day: 1 },
   // AI 학습
   { id: 16, component: SectionAI, title: '#2 AI 학습이란?', day: 1 },
