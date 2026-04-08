@@ -17,7 +17,7 @@ RUN npm config set strict-ssl false && \
     elif [ -n "$HTTP_PROXY" ]; then npm config set https-proxy $HTTP_PROXY; fi
 
 COPY frontend/package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install --include=dev
 
 COPY frontend/ ./
 RUN npm run build
