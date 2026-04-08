@@ -5,7 +5,8 @@ WORKDIR /app/frontend
 
 # SSL 인증서 검증 비활성화 (사내 네트워크)
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-RUN npm config set strict-ssl false
+RUN npm config set strict-ssl false && \
+    npm config set registry https://repo.samsungds.net/artifactory/api/npm/npm-remote/
 
 # Copy package files
 COPY frontend/package*.json ./
