@@ -1,4 +1,19 @@
-# Python FastAPI 서버 + 로컬 빌드된 React dist 복사
+# Stage 1: React 빌드 (Docker 내에서 npm install + build)
+FROM node:24-alpine AS frontend
+
+WORKDIR /app/frontend
+
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+RUN npm config set strict-ssl false && \
+    npm config set registry https://repo.samsungds.net/artifactory/api/npm/npm-remote/
+
+COPY frontend/package*.json ./
+RUN npm install --include=dev
+
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Python FastAPI 서버
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -17,8 +32,7 @@ COPY server.py challenges.py prompt_challenge.py ./
 COPY dashboard.html prompt_page.html settings_page.html ./
 COPY financial_articles.json ./
 
-# 로컬에서 빌드된 React dist를 직접 복사
-COPY frontend/dist ./frontend/dist
+COPY --from=frontend /app/frontend/dist ./frontend/dist
 
 EXPOSE 47777
 
