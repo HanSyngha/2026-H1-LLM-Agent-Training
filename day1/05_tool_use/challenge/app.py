@@ -159,13 +159,30 @@ def execute_tool(tool_name, arguments):
 
 
 # =============================================
+# System Prompt (구현 완료)
+# =============================================
+SYSTEM_PROMPT = """당신은 과제 제출을 도와주는 어시스턴트입니다.
+
+사용자가 과제 제출을 요청하면:
+1. 먼저 get_secret_key 도구를 호출하여 시크릿 키를 발급받으세요.
+2. 발급받은 키를 submit_secret_key 도구에 전달하여 제출하세요.
+
+반드시 두 도구를 순서대로 호출해야 합니다."""
+
+
+# =============================================
 # LLM 호출 함수 (구현 완료)
 # =============================================
 def call_llm(messages):
     """LLM Gateway에 요청을 보냅니다."""
+    # system prompt가 없으면 자동 추가
+    all_messages = messages
+    if not any(m.get("role") == "system" for m in messages):
+        all_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
+
     body = {
         "model": "testmodel",
-        "messages": messages,
+        "messages": all_messages,
         "max_tokens": 1024,
     }
     if tools:
