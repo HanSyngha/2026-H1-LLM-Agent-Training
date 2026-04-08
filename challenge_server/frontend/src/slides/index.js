@@ -86,9 +86,7 @@ import Slide69_ContextEng2 from './Slide69_ContextEng2';
 import Slide70_Security from './Slide70_Security';
 import Slide71_ConfigFiles from './Slide71_ConfigFiles';
 import Slide72_RAG from './Slide72_RAG';
-import SectionFinal from './SectionFinal';
-import Slide73_FinalTask from './Slide73_FinalTask';
-import Slide74_FinalAnswer from './Slide74_FinalAnswer';
+import Slide73_IndexExploreTask from './Slide73_IndexExploreTask';
 import SectionWrapup from './SectionWrapup';
 import Slide75_Summary from './Slide75_Summary';
 import Slide76_Message from './Slide76_Message';
@@ -186,9 +184,7 @@ const SLIDES = [
   { id: 82, component: Slide70_Security, title: '보안 5계층', day: 2 },
   { id: 83, component: Slide71_ConfigFiles, title: 'CLAUDE.md', day: 2 },
   { id: 84, component: Slide72_RAG, title: 'RAG 파이프라인', day: 2 },
-  { id: 85, component: SectionFinal, title: '종합 실습', day: 2 },
-  { id: 86, component: Slide73_FinalTask, title: '종합 과제', day: 2 },
-  { id: 87, component: Slide74_FinalAnswer, title: '예시 답안', day: 2 },
+  { id: 0, component: Slide73_IndexExploreTask, title: 'Index Explore 과제', day: 2 },
   { id: 88, component: SectionWrapup, title: '마무리', day: 2 },
   { id: 89, component: Slide75_Summary, title: '학습 정리', day: 2 },
   { id: 90, component: Slide76_Message, title: '핵심 메시지', day: 2 },

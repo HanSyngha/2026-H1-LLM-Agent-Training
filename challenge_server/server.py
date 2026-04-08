@@ -882,6 +882,7 @@ async def download_challenge(challenge_id: str):
         "structured": "day1/05_structured_output",
         "browser": "day1/07_browser_control",
         "agent_loop": "day2/01_agent_loop/challenge",
+        "index_explore": "day2/02_index_explore/challenge",
         "agent_loop": "day2/01_agent_loop",
         "final": "day2/06_final_exercise",
     }

@@ -1,0 +1,68 @@
+- generic [ref=e3]:
+  - banner [ref=e6]:
+    - generic [ref=e9]:
+      - button "Deploy" [ref=e11] [cursor=pointer]:
+        - generic [ref=e13]: Deploy
+      - button "Main menu" [ref=e15] [cursor=pointer]:
+        - img [ref=e16]
+  - generic [ref=e19]:
+    - heading "📂 Index Explore — .md 계층 인덱스 만들기" [level=1] [ref=e24]:
+      - text: 📂 Index Explore — .md 계층 인덱스 만들기
+      - generic [ref=e25]:
+        - link "Link to heading":
+          - /url: "#index-explore-md"
+          - img
+    - separator [ref=e30]
+    - generic [ref=e32]:
+      - generic [ref=e34]:
+        - heading "📄 Raw 문서 (정리 안 됨)" [level=3] [ref=e40]:
+          - text: 📄 Raw 문서 (정리 안 됨)
+          - generic [ref=e41]:
+            - link "Link to heading":
+              - /url: "#raw"
+              - img
+        - generic [ref=e43]:
+          - paragraph [ref=e47]: 문서 선택
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: raw_01_제품스펙.txt
+              - combobox "Selected raw_01_제품스펙.txt. 문서 선택" [ref=e53]
+            - img "open" [ref=e55]
+        - code [ref=e61]: "HBM3E 메모리 사양서 (비공식 메모) 적층: 12단 TSV, 용량 36GB, 대역폭 1.18TB/s 전력소비: 8.4W (경쟁사 대비 15% 절감) 양산 시작: 2025년 3월, 첫 고객 납품: 2025년 5월 주요 고객: N사 AI 가속기, M사 GPU 가격: 개당 $120 (예상 ASP) DDR5-6400 DRAM 용량: 16GB/32GB, 속도: 6400MT/s 적용: 서버, PC, 워크스테이션 양산: 2024년 Q4부터 대량 출하 중 LPDDR5X (모바일용) 용량: 12GB/16GB, 속도: 8533MT/s 특징: 온디바이스 AI 최적화, 전력 20% 절감 주요 고객: S전자 갤럭시, A사 아이폰"
+      - generic [ref=e63]:
+        - heading "✏️ 인덱스 에디터" [level=3] [ref=e69]:
+          - text: ✏️ 인덱스 에디터
+          - generic [ref=e70]:
+            - link "Link to heading":
+              - /url: "#f46b3d43"
+              - img
+        - generic [ref=e72]:
+          - generic [ref=e76]:
+            - paragraph [ref=e80]: 파일
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - generic [ref=e84]: products.md
+                - combobox "Selected products.md. 파일" [ref=e164]
+              - img "open" [ref=e88]
+          - generic [ref=e93]:
+            - paragraph [ref=e97]: 새 파일
+            - textbox "새 파일" [ref=e100]:
+              - /placeholder: products.md
+              - text: meetings.md
+          - button "➕ 추가" [active] [ref=e109] [cursor=pointer]:
+            - paragraph [ref=e113]: ➕ 추가
+        - generic [ref=e166]:
+          - paragraph [ref=e170]: "편집: products.md"
+          - 'textbox "편집: products.md" [ref=e173]':
+            - /placeholder: ""
+            - text: "# 제품 스펙 ## HBM3E - 적층: 12단 TSV - 용량: 36GB - 대역폭: 1.18TB/s - 전력: 8.4W - 양산: 2025년 3월 - 가격: 개당 $120 ## DDR5-6400 - 용량: 16GB/32GB - 속도: 6400MT/s - 양산: 2024년 Q4 ## LPDDR5X - 용량: 12GB/16GB - 속도: 8533MT/s - 특징: 온디바이스 AI 최적화"
+        - paragraph [ref=e127]: "📁 파일 3개: MEMORY.md, products.md, meetings.md"
+    - separator [ref=e132]
+    - heading "🧪 AI 테스트 — 인덱스로 질문에 답할 수 있는지 확인" [level=3] [ref=e138]:
+      - text: 🧪 AI 테스트 — 인덱스로 질문에 답할 수 있는지 확인
+      - generic [ref=e139]:
+        - link "Link to heading":
+          - /url: "#ai"
+          - img
+    - button "🚀 AI 테스트 실행" [ref=e142] [cursor=pointer]:
+      - paragraph [ref=e146]: 🚀 AI 테스트 실행

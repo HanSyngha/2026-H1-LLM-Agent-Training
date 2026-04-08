@@ -440,6 +440,34 @@ def validate_final(answer: dict) -> dict:
 
 
 # ============================================
+# 과제 8: Index Explore
+# ============================================
+INDEX_EXPLORE_KEYWORDS = {
+    "q1": ["12단", "1.18TB/s"],
+    "q2": ["3.5조"],
+    "q3": ["오버레이", "38%"],
+}
+
+
+def validate_index_explore(answer: dict) -> dict:
+    details = []
+    for qid, keywords in INDEX_EXPLORE_KEYWORDS.items():
+        ans = str(answer.get(qid, "")).replace(" ", "")
+        passed = all(kw.replace(" ", "") in ans for kw in keywords)
+        details.append({
+            "question": qid,
+            "passed": passed,
+            "message": f"{'통과' if passed else '키워드 누락'}: {', '.join(keywords)}",
+        })
+    count = sum(1 for d in details if d["passed"])
+    return {
+        "passed": count == len(INDEX_EXPLORE_KEYWORDS),
+        "message": f"{count}/{len(INDEX_EXPLORE_KEYWORDS)} 질문 통과",
+        "details": details,
+    }
+
+
+# ============================================
 # 과제 0-1: SSO OAuth2
 # ============================================
 SSO_OAUTH2_MISSION = {
@@ -618,12 +646,12 @@ CHALLENGES = {
         "submit_schema": '{"completion_code": "스텝 코드들을 -로 연결한 문자열"}',
         "validate": validate_agent_loop,
     },
-    "final": {
-        "name": "종합 실습",
-        "description": "검색 → 추출 → Excel 저장 전체 파이프라인을 자동화하세요.",
-        "mission": FINAL_MISSION,
-        "submit_schema": '{"items": [{"title": "...", "link": "..."}, ...]}',
-        "validate": validate_final,
+    "index_explore": {
+        "name": "Index Explore (.md 인덱스)",
+        "description": "계층적 .md 인덱스를 만들어 AI가 문서를 탐색하게 하세요.",
+        "mission": {"description": "raw 문서 10개를 .md 계층 구조로 정리하고, AI가 3개 질문에 답하면 통과"},
+        "submit_schema": '{"q1": "답변1", "q2": "답변2", "q3": "답변3"}',
+        "validate": validate_index_explore,
     },
 }
 
