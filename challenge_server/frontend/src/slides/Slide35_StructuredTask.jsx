@@ -27,22 +27,37 @@ export default function Slide35_StructuredTask() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-          <Box color="yellow" style={{ marginTop: 8 }}>
+          <Box color="yellow" style={{ marginTop: 8, fontSize: '.85em', padding: '16px 24px' }}>
             <BoxTitle color="#d97706">2단계: TODO 2개 채우기</BoxTitle>
-            <div style={{ fontSize: '.9em', lineHeight: 1.8 }}>
-              <strong>TODO 1</strong> — <code>tools = []</code> 에 tool 스키마 2개 정의<br />
-              <strong>TODO 2</strong> — <code>execute_tool()</code> 함수 구현 (실제 API 호출)
+            <div style={{ lineHeight: 1.7 }}>
+              <strong>TODO 1 — tools 스키마</strong>: OpenAI Function Calling 형식<br />
+              <code style={{ fontSize: '.85em' }}>{'[{"type":"function","function":{"name":"...","description":"...","parameters":{"type":"object","properties":{...},"required":[...]}}}]'}</code><br />
+              <strong style={{ marginTop: 4, display: 'inline-block' }}>TODO 2 — execute_tool()</strong>: tool_name에 따라 API 호출 후 resp.json() 반환
             </div>
           </Box>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Box color="purple" style={{ marginTop: 8, fontSize: '.85em', padding: '16px 24px' }}>
-            <strong>제공되는 API 2개</strong>
-            <code style={{ display: 'block', marginTop: 8, lineHeight: 2, background: 'rgba(0,0,0,.03)', padding: '10px 14px', borderRadius: 6 }}>
-              GET /challenges/tool_use/secret?token=SSO토큰  → 시크릿 키 발급<br />
-              POST /challenges/tool_use/submit  → 시크릿 키 제출
-            </code>
+          <Box color="purple" style={{ marginTop: 8, fontSize: '.82em', padding: '16px 24px' }}>
+            <strong>Tool 정보</strong>
+            <table style={{ fontSize: '.9em', margin: '6px 0 0', width: '100%' }}>
+              <tbody>
+                <tr>
+                  <th style={{ width: '25%', padding: '3px 8px' }}>get_secret_key</th>
+                  <td style={{ padding: '3px 8px' }}>
+                    <code>GET {'{CHALLENGE_SERVER}'}/challenges/tool_use/secret?token={'{token}'}</code><br />
+                    파라미터 없음 / 응답: <code>{'{"secret_key":"KEY-..."}'}</code>
+                  </td>
+                </tr>
+                <tr>
+                  <th style={{ padding: '3px 8px' }}>submit_secret_key</th>
+                  <td style={{ padding: '3px 8px' }}>
+                    <code>POST {'{CHALLENGE_SERVER}'}/challenges/tool_use/submit</code><br />
+                    파라미터: <code>secret_key</code> (string) / body: <code>{'{"token":token,"answer":{"secret_key":"..."}}'}</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </Box>
         </motion.div>
 

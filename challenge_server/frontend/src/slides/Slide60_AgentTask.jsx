@@ -56,11 +56,17 @@ export default function Slide60_AgentTask() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Box color="yellow" style={{ marginTop: 8 }}>
-            <BoxTitle color="#d97706">TODO: run_agentic_loop() 구현</BoxTitle>
-            <div style={{ fontSize: '.88em', lineHeight: 1.7 }}>
-              <code>call_llm()</code> → <code>tool_calls</code> 있으면 → <code>execute_tool()</code> 실행<br />
-              → 결과를 messages에 추가 → 다시 <code>call_llm()</code> → 없을 때까지 반복
+          <Box color="yellow" style={{ marginTop: 8, fontSize: '.82em', padding: '16px 24px' }}>
+            <BoxTitle color="#d97706">TODO: run_agentic_loop() — while 루프</BoxTitle>
+            <div style={{ lineHeight: 1.8 }}>
+              1. <code>result, error = call_llm(messages)</code> 호출<br />
+              2. <code>msg = result["choices"][0]["message"]</code><br />
+              3. <code>msg["tool_calls"]</code> 없으면 → <code>msg["content"]</code> 반환 (종료)<br />
+              4. <code>tool_calls</code> 있으면:<br />
+              &nbsp;&nbsp;a. <code>messages.append(msg)</code> — assistant 메시지 추가<br />
+              &nbsp;&nbsp;b. 각 tool_call: <code>execute_tool(name, args)</code> 실행<br />
+              &nbsp;&nbsp;c. <code>{'messages.append({"role":"tool","tool_call_id":tc["id"],"content":json.dumps(result)})'}</code><br />
+              &nbsp;&nbsp;d. 루프 계속 (다시 1번으로)
             </div>
           </Box>
         </motion.div>

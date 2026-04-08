@@ -30,9 +30,12 @@ export default function Slide47_BrowserTask() {
         <Divider />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Box color="red" style={{ marginTop: 8, fontSize: '1em', padding: '18px 28px' }}>
-            <strong>주의:</strong> 이 페이지는 <strong>JavaScript로 렌더링</strong>됩니다.<br />
-            <code>requests.get()</code>이나 <code>curl</code>로는 "로딩 중..."만 보입니다!
+          <Box color="red" style={{ marginTop: 8, fontSize: '.92em', padding: '16px 24px' }}>
+            <strong>주의:</strong> 이 페이지는 <strong>JavaScript로 1초 후 렌더링</strong>됩니다.<br />
+            <code>requests.get()</code>이나 <code>curl</code>로는 "로딩 중..."만 보입니다!<br />
+            <code style={{ display: 'block', marginTop: 6, fontSize: '.9em', color: '#64748b' }}>
+              추천: pip install playwright && playwright install chromium
+            </code>
           </Box>
         </motion.div>
 

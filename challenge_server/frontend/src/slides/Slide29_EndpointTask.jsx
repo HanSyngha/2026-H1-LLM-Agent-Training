@@ -40,11 +40,24 @@ export default function Slide29_EndpointTask() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <Box color="purple" style={{ marginTop: 8, fontSize: '.85em', padding: '16px 24px' }}>
             <strong>사내 LLM Gateway 연결 정보</strong>
-            <code style={{ display: 'block', marginTop: 8, lineHeight: 1.9, background: 'rgba(0,0,0,.03)', padding: '10px 14px', borderRadius: 6 }}>
-              URL: http://a2g.samsungds.net:8090/v1/chat/completions<br />
-              Header: x-service-id: test-service  (세팅됨)<br />
-              Header: x-user-id: {'<'}user_id 변수{'>'}  (SSO에서 자동 세팅됨)
-            </code>
+            <table style={{ fontSize: '.9em', margin: '8px 0 0', width: '100%' }}>
+              <tbody>
+                {[
+                  ['URL', 'POST http://a2g.samsungds.net:8090/v1/chat/completions'],
+                  ['Header', 'Content-Type: application/json'],
+                  ['Header', 'x-service-id: test-service (코드의 SERVICE_ID)'],
+                  ['Header', 'x-user-id: (코드의 user_id 변수)'],
+                  ['model', 'testmodel'],
+                  ['messages', 'st.session_state.messages'],
+                  ['max_tokens', '1024'],
+                ].map(([k, v], i) => (
+                  <tr key={i}>
+                    <th style={{ width: '18%', padding: '2px 8px' }}>{k}</th>
+                    <td style={{ padding: '2px 8px' }}><code>{v}</code></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </Box>
         </motion.div>
 
