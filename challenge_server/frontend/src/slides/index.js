@@ -53,12 +53,17 @@ import Slide45_Playwright from './Slide45_Playwright';
 import Slide46_IframeCOM from './Slide46_IframeCOM';
 import Slide47_BrowserTask from './Slide47_BrowserTask';
 import Slide48_BrowserAnswer from './Slide48_BrowserAnswer';
-import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFrontendAI from './SectionFrontendAI';
 import Slide51_FrontendAIOverview from './Slide51_FrontendAIOverview';
 import Slide52_GoogleStitch from './Slide52_GoogleStitch';
 import Slide53_StitchDemo from './Slide53_StitchDemo';
 import Slide54_AIToolCompare from './Slide54_AIToolCompare';
+import Slide50_Day2Header from './Slide50_Day2Header';
+import SectionFramework from './SectionFramework';
+import Slide51_ADK from './Slide51_ADK';
+import Slide52_LangGraph from './Slide52_LangGraph';
+import Slide53_FrameworkCompare from './Slide53_FrameworkCompare';
+import Slide54_Trend from './Slide54_Trend';
 import SectionAgenticLoop from './SectionAgenticLoop';
 import Slide55_AgentLoop from './Slide55_AgentLoop';
 import Slide56_RequestsImpl from './Slide56_RequestsImpl';
@@ -147,14 +152,20 @@ const SLIDES = [
   { id: 51, component: Slide45_Playwright, title: 'Playwright', day: 1 },
   { id: 52, component: Slide46_IframeCOM, title: 'iframe/COM', day: 1 },
   { id: 53, component: Slide47_BrowserTask, title: '브라우저 과제', day: 1 },
+  // Frontend AI Design (Day 1 마지막)
+  { id: 0, component: SectionFrontendAI, title: '#8 Frontend AI Design', day: 1 },
+  { id: 0, component: Slide51_FrontendAIOverview, title: 'AI로 UI 만들기', day: 1 },
+  { id: 0, component: Slide52_GoogleStitch, title: 'Google Stitch', day: 1 },
+  { id: 0, component: Slide53_StitchDemo, title: 'Stitch 기능', day: 1 },
+  { id: 0, component: Slide54_AIToolCompare, title: 'AI 도구 비교', day: 1 },
   // Day 2
   { id: 57, component: Slide50_Day2Header, title: 'Day 2', day: 2 },
-  { id: 58, component: SectionFrontendAI, title: '#8 Frontend AI Design', day: 2 },
-  { id: 59, component: Slide51_FrontendAIOverview, title: 'AI로 UI 만들기', day: 2 },
-  { id: 60, component: Slide52_GoogleStitch, title: 'Google Stitch', day: 2 },
-  { id: 61, component: Slide53_StitchDemo, title: 'Stitch 기능', day: 2 },
-  { id: 62, component: Slide54_AIToolCompare, title: 'AI 도구 비교', day: 2 },
-  { id: 63, component: SectionAgenticLoop, title: '#9 Agentic Loop', day: 2 },
+  { id: 58, component: SectionFramework, title: '#9 Framework', day: 2 },
+  { id: 59, component: Slide51_ADK, title: 'Google ADK', day: 2 },
+  { id: 60, component: Slide52_LangGraph, title: 'LangGraph', day: 2 },
+  { id: 61, component: Slide53_FrameworkCompare, title: '프레임워크 비교', day: 2 },
+  { id: 62, component: Slide54_Trend, title: '트렌드', day: 2 },
+  { id: 63, component: SectionAgenticLoop, title: '#10 Agentic Loop', day: 2 },
   { id: 64, component: Slide55_AgentLoop, title: 'Agent Loop 패턴', day: 2 },
   { id: 65, component: Slide56_RequestsImpl, title: 'requests 구현', day: 2 },
   { id: 66, component: Slide57_ToolCallsParse, title: 'tool_calls 파싱', day: 2 },
@@ -162,14 +173,14 @@ const SLIDES = [
   { id: 68, component: Slide59_Streaming, title: 'Streaming', day: 2 },
   { id: 69, component: Slide60_AgentTask, title: 'Agent Loop 과제', day: 2 },
   { id: 70, component: Slide61_AgentAnswer, title: '예시 답안', day: 2 },
-  { id: 71, component: SectionBash, title: '#10 bash Agent', day: 2 },
+  { id: 71, component: SectionBash, title: '#11 bash Agent', day: 2 },
   { id: 72, component: Slide62_BashTool, title: 'subprocess Tool', day: 2 },
   { id: 73, component: Slide63_BashAgent, title: 'CLI Agent', day: 2 },
-  { id: 74, component: SectionVectorDB, title: '#11 Vector DB', day: 2 },
+  { id: 74, component: SectionVectorDB, title: '#12 Vector DB', day: 2 },
   { id: 75, component: Slide64_SemanticSearch, title: 'Semantic Search', day: 2 },
   { id: 76, component: Slide65_IndexExplore, title: 'Index Explore', day: 2 },
   { id: 77, component: Slide66_VDBCompare, title: '비교', day: 2 },
-  { id: 78, component: SectionHarness, title: '#12 하네스', day: 2 },
+  { id: 78, component: SectionHarness, title: '#13 하네스', day: 2 },
   { id: 79, component: Slide67_WhatIsHarness, title: '하네스란?', day: 2 },
   { id: 80, component: Slide68_5Pillars, title: '5대 요소', day: 2 },
   { id: 81, component: Slide69_ContextEng2, title: '컨텍스트 엔지니어링', day: 2 },
