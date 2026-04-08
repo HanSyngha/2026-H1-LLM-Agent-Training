@@ -74,6 +74,9 @@ questions_data: list[dict] = []  # [{slide, user, text, timestamp}]
 # {challenge_id: [{name, dept, email, timestamp}, ...]}
 completions: dict[str, list[dict]] = {cid: [] for cid in CHALLENGES}
 
+# 예시 답안 공개 상태 (메모리)
+unlocked_answers: set[str] = set()
+
 
 # ============================================
 # LLM 채점 함수
@@ -484,7 +487,37 @@ async def reset_completions(request: Request):
     from challenges import _tool_use_secrets
     _tool_use_secrets.clear()
 
+    # 답안 공개 상태도 초기화
+    unlocked_answers.clear()
+
     return {"status": "OK", "message": "모든 과제 성공 기록이 초기화되었습니다."}
+
+
+# ============================================
+# 예시 답안 공개/잠금 (강사 전용)
+# ============================================
+@app.get("/answers/status")
+async def answers_status():
+    """공개된 답안 목록 반환."""
+    return {"unlocked": list(unlocked_answers)}
+
+
+@app.post("/answers/toggle")
+async def answers_toggle(request: Request):
+    """답안 공개/잠금 토글 — 강사(syngha.han)만 가능."""
+    body = await request.json()
+    token = body.get("token", "") or request.cookies.get("challenge_token", "")
+    user = get_user_from_token(token)
+    if not user or user.get("sub") != "syngha.han":
+        return JSONResponse({"error": "강사만 변경할 수 있습니다."}, status_code=403)
+
+    answer_id = body.get("id", "")
+    if answer_id in unlocked_answers:
+        unlocked_answers.discard(answer_id)
+        return {"id": answer_id, "unlocked": False}
+    else:
+        unlocked_answers.add(answer_id)
+        return {"id": answer_id, "unlocked": True}
 
 
 # ============================================

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { postJSON } from '../api';
+import AnswerButton from './AnswerButton';
+import Slide48_BrowserAnswer from './Slide48_BrowserAnswer';
 
 export default function Slide47_BrowserTask() {
   const [key, setKey] = useState('');
@@ -84,6 +86,8 @@ export default function Slide47_BrowserTask() {
             )}
           </Box>
         </motion.div>
+
+        <AnswerButton answerId="browser"><Slide48_BrowserAnswer /></AnswerButton>
       </div>
     </div>
   );

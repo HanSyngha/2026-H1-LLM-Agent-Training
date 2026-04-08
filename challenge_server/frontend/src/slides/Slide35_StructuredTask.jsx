@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import AnswerButton from './AnswerButton';
+import Slide36_StructuredAnswer from './Slide36_StructuredAnswer';
 
 export default function Slide35_StructuredTask() {
   return (
@@ -53,6 +55,8 @@ export default function Slide35_StructuredTask() {
             </div>
           </Box>
         </motion.div>
+
+        <AnswerButton answerId="tool_use"><Slide36_StructuredAnswer /></AnswerButton>
       </div>
     </div>
   );

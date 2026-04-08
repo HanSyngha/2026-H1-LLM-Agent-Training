@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import AnswerButton from './AnswerButton';
+import Slide30_EndpointAnswer from './Slide30_EndpointAnswer';
 
 export default function Slide29_EndpointTask() {
   return (
@@ -51,6 +53,8 @@ export default function Slide29_EndpointTask() {
             <strong>3단계:</strong> 챗봇에서 아무 메시지나 보내면 → LLM 응답 → <strong style={{ color: '#059669' }}>자동 제출 & 통과!</strong>
           </Box>
         </motion.div>
+
+        <AnswerButton answerId="endpoint"><Slide30_EndpointAnswer /></AnswerButton>
       </div>
     </div>
   );

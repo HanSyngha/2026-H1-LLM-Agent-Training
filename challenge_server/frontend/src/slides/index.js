@@ -121,7 +121,6 @@ const SLIDES = [
   { id: 21, component: Slide19_Prompt2, title: 'system/user/assistant', day: 1 },
   { id: 22, component: Slide20_ContextEng, title: '컨텍스트 엔지니어링', day: 1 },
   { id: 23, component: Slide21_PromptTask, title: '프롬프트 과제', day: 1 },
-  { id: 24, component: Slide22_PromptAnswer, title: '예시 답안', day: 1 },
   // API
   { id: 25, component: SectionAPI, title: '#4 API', day: 1 },
   { id: 26, component: Slide23_APIBasic, title: 'REST API란?', day: 1 },
@@ -131,7 +130,6 @@ const SLIDES = [
   { id: 30, component: Slide27_BaseURL, title: 'base_url / api_key', day: 1 },
   { id: 31, component: Slide28_GatewayCode, title: '연결 코드', day: 1 },
   { id: 32, component: Slide29_EndpointTask, title: 'Endpoint 과제', day: 1 },
-  { id: 33, component: Slide30_EndpointAnswer, title: '예시 답안', day: 1 },
   // Structured Output
   { id: 34, component: SectionStructured, title: '#5 Structured Output', day: 1 },
   { id: 35, component: Slide31_JSONvsStructured, title: 'JSON vs Structured', day: 1 },
@@ -139,7 +137,6 @@ const SLIDES = [
   { id: 37, component: Slide33_ToolCallingFlow, title: 'Tool Calling 흐름', day: 1 },
   { id: 38, component: Slide34_ToolChoice, title: 'tool_choice', day: 1 },
   { id: 39, component: Slide35_StructuredTask, title: 'Tool Use 과제', day: 1 },
-  { id: 40, component: Slide36_StructuredAnswer, title: '예시 답안', day: 1 },
   // MCP
   { id: 41, component: SectionMCP, title: '#6 MCP', day: 1 },
   { id: 42, component: Slide37_MCP1, title: 'MCP 개요', day: 1 },
@@ -153,7 +150,6 @@ const SLIDES = [
   { id: 51, component: Slide45_Playwright, title: 'Playwright', day: 1 },
   { id: 52, component: Slide46_IframeCOM, title: 'iframe/COM', day: 1 },
   { id: 53, component: Slide47_BrowserTask, title: '브라우저 과제', day: 1 },
-  { id: 54, component: Slide48_BrowserAnswer, title: '예시 답안', day: 1 },
   // Day 1 실습
   { id: 55, component: SectionDay1Lab, title: 'Day 1 실습', day: 1 },
   { id: 56, component: Slide49_Day1Lab, title: '바이브 코딩 실습', day: 1 },

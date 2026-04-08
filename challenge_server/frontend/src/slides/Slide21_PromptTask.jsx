@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { getPromptCases, testPrompt, submitPrompt } from '../api';
+import AnswerButton from './AnswerButton';
+import Slide22_PromptAnswer from './Slide22_PromptAnswer';
 
 export default function Slide21_PromptTask() {
   const [mode, setMode] = useState('info'); // 'info' or 'lab'
@@ -59,6 +61,8 @@ function InfoMode() {
           위 <strong>"🧪 실습하기"</strong> 탭을 눌러 바로 시작하세요!
         </Box>
       </motion.div>
+
+      <AnswerButton answerId="prompt"><Slide22_PromptAnswer /></AnswerButton>
     </>
   );
 }
