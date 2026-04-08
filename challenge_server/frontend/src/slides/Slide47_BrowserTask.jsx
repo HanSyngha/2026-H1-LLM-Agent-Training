@@ -33,7 +33,8 @@ export default function Slide47_BrowserTask() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <Box color="yellow" style={{ marginTop: 8, fontSize: '.88em', padding: '14px 24px' }}>
             <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/browser/submit</code><br />
-            <code>{`{"token":"SSO토큰", "answer":{"secret_key":"추출한 비밀 키"}}`}</code>
+            <code>{`{"user_id":"본인ID", "answer":{"secret_key":"추출한 비밀 키"}}`}</code><br />
+            <span style={{ fontSize: '.85em', color: '#64748b' }}>SSO 토큰 없이 제출 가능 — 스크립트에서 바로!</span>
           </Box>
         </motion.div>
 

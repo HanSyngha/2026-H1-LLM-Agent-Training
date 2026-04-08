@@ -389,12 +389,6 @@ async def submit_answer(challenge_id: str, request: Request):
     if token:
         print(f"[SUBMIT] 토큰 앞 30자: {token[:30]}...")
 
-    if not token:
-        return JSONResponse(
-            {"status": "FAIL", "message": "token이 없습니다. SSO 로그인 후 access_token을 포함해주세요."},
-            status_code=401,
-        )
-
     if not answer:
         return JSONResponse(
             {"status": "FAIL", "message": "answer가 없습니다."},
@@ -402,12 +396,25 @@ async def submit_answer(challenge_id: str, request: Request):
         )
 
     # 1. 인증 서버에서 사용자 정보 확인
-    user = get_user_from_token(token)
-    if not user:
+    # browser 과제는 토큰 없이도 제출 가능 (스크립트로 할 수 있으므로)
+    user = None
+    if token:
+        user = get_user_from_token(token)
+
+    if not user and challenge_id != "browser":
         return JSONResponse(
-            {"status": "FAIL", "message": "토큰이 유효하지 않습니다. SSO 로그인을 다시 하세요."},
+            {"status": "FAIL", "message": "token이 없거나 유효하지 않습니다. SSO 로그인 후 access_token을 포함해주세요."},
             status_code=401,
         )
+
+    if not user:
+        # browser 과제: 토큰 없이 제출 — user_id를 body에서 받음
+        user = {
+            "sub": body.get("user_id", "anonymous"),
+            "name": body.get("user_id", "익명"),
+            "dept": "",
+            "email": "",
+        }
 
     user_name = user.get("name", "?")
     user_dept = user.get("dept", "?")

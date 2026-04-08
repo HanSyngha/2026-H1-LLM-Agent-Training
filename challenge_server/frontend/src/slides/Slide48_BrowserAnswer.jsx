@@ -28,7 +28,8 @@ export default function Slide48_BrowserAnswer() {
 
 추출한 키를 아래로 제출:
   POST http://a2g.samsungds.net:47777/challenges/browser/submit
-  {"token":"SSO토큰","answer":{"secret_key":"추출한키"}}`}</CodeBlock>
+  {"user_id":"본인ID","answer":{"secret_key":"추출한키"}}
+  (SSO 토큰 불필요 — 스크립트에서 바로 제출 가능)`}</CodeBlock>
         </motion.div>
       </div>
     </div>
