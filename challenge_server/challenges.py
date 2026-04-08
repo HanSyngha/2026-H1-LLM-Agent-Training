@@ -540,13 +540,6 @@ CHALLENGES = {
         "submit_schema": '{"title": "...", "category": "...", "sentiment": "...", "keywords": [...], "summary": "..."}',
         "validate": validate_structured,
     },
-    "mcp": {
-        "name": "MCP Tool 호출",
-        "description": "MCP 서버에 연결하여 3가지 도구를 호출하세요.",
-        "mission": MCP_MISSION,
-        "submit_schema": '{"results": ["결과1", "결과2", "결과3"]}',
-        "validate": validate_mcp,
-    },
     "browser": {
         "name": "브라우저 자동화",
         "description": "타겟 웹페이지에서 상품 목록을 추출하세요.",

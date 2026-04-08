@@ -778,7 +778,6 @@ async def download_challenge(challenge_id: str):
         "endpoint": "day1/04_endpoint/challenge",
         "tool_use": "day1/05_tool_use/challenge",
         "structured": "day1/05_structured_output",
-        "mcp": "day1/01_mcp",
         "browser": "day1/07_browser_control",
         "agent_loop": "day2/01_agent_loop",
         "final": "day2/06_final_exercise",

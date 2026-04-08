@@ -46,8 +46,6 @@ import Slide37_MCP1 from './Slide37_MCP1';
 import Slide38_MCPArch from './Slide38_MCPArch';
 import Slide39_FastMCP from './Slide39_FastMCP';
 import Slide40_MCPFlow from './Slide40_MCPFlow';
-import Slide41_MCPTask from './Slide41_MCPTask';
-import Slide42_MCPAnswer from './Slide42_MCPAnswer';
 import SectionBrowser from './SectionBrowser';
 import Slide43_BrowserCompare from './Slide43_BrowserCompare';
 import Slide44_CDP from './Slide44_CDP';
@@ -148,8 +146,6 @@ const SLIDES = [
   { id: 43, component: Slide38_MCPArch, title: 'MCP 아키텍처', day: 1 },
   { id: 44, component: Slide39_FastMCP, title: 'FastMCP 코드', day: 1 },
   { id: 45, component: Slide40_MCPFlow, title: 'MCP+LLM 연동', day: 1 },
-  { id: 46, component: Slide41_MCPTask, title: 'MCP 과제', day: 1 },
-  { id: 47, component: Slide42_MCPAnswer, title: '예시 답안', day: 1 },
   // 브라우저
   { id: 48, component: SectionBrowser, title: '#7 브라우저', day: 1 },
   { id: 49, component: Slide43_BrowserCompare, title: '브라우저 비교', day: 1 },
