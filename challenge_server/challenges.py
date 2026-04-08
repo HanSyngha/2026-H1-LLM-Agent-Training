@@ -126,7 +126,7 @@ ENDPOINT_MISSION = {
     "service_id": "test-service",
     "headers": {
         "x-service-id": "test-service (미리 세팅됨)",
-        "x-user-id": "<SSO 로그인한 사번>",
+        "x-user-id": "<SSO 로그인한 user ID>",
     },
     "hint": "app.py에 SSO 로그인을 연동하면 챗봇이 동작하고, LLM 응답 시 자동 제출됩니다.",
 }

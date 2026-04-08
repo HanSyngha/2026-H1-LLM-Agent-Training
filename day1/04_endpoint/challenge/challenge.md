@@ -30,7 +30,7 @@ resp = requests.post(
     headers={
         "Content-Type": "application/json",
         "x-service-id": SERVICE_ID,     # "test-service"
-        "x-user-id": user_id,           # SSO 사번 (자동)
+        "x-user-id": user_id,           # SSO user ID (자동)
     },
     json={
         "model": "default",

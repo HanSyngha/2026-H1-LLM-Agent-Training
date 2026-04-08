@@ -111,7 +111,7 @@ user_id = user.get("sub", "")
 # 사이드바
 with st.sidebar:
     st.success(f"✅ {user.get('name', user_id)}님 로그인됨")
-    st.caption(f"사번: {user_id}")
+    st.caption(f"User ID: {user_id}")
     st.caption(f"부서: {user.get('dept', '-')}")
     st.markdown("---")
     st.markdown("### Gateway 연결 정보")

@@ -237,7 +237,7 @@ def run_agentic_loop(messages):
 # ============================================
 with st.sidebar:
     st.success(f"✅ {user.get('name', user_id)}님 로그인됨")
-    st.caption(f"사번: {user_id}")
+    st.caption(f"User ID: {user_id}")
     st.markdown("---")
     st.markdown("### 과제: TODO 2개 채우기")
     st.markdown("""

@@ -17,7 +17,7 @@ resp = requests.post(
     headers={
         "Content-Type": "application/json",
         "x-service-id": "test-service",   # 서비스 ID
-        "x-user-id": "hong.gildong",      # SSO 사번
+        "x-user-id": "hong.gildong",      # SSO user ID
     },
     json={
         "model": "default",               # Gateway가 라우팅

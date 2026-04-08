@@ -20,7 +20,7 @@ export default function Slide30_EndpointAnswer() {
 필수 헤더:
   Content-Type: application/json
   x-service-id: test-service   (코드의 SERVICE_ID 변수)
-  x-user-id: <사번>            (코드의 user_id 변수)
+  x-user-id: <user ID>         (코드의 user_id 변수)
 
 요청 body (JSON):
 {
