@@ -58,6 +58,7 @@ import Slide51_FrontendAIOverview from './Slide51_FrontendAIOverview';
 import Slide52_GoogleStitch from './Slide52_GoogleStitch';
 import Slide53_StitchDemo from './Slide53_StitchDemo';
 import Slide54_AIToolCompare from './Slide54_AIToolCompare';
+import Slide11b_PythonSetup from './Slide11b_PythonSetup';
 import Slide01b_NoRightAnswer from './Slide01b_NoRightAnswer';
 import Slide01c_TechChoices from './Slide01c_TechChoices';
 import Slide50_Day2Header from './Slide50_Day2Header';
@@ -111,7 +112,8 @@ const SLIDES = [
   { id: 9, component: Slide09_OIDCDiff, title: 'OIDC vs OAuth2', day: 1 },
   { id: 10, component: Slide10_WhyTheory, title: '왜 이론을 알아야 하는가', day: 1 },
   { id: 11, component: Slide11_SSOLabIntro, title: '실습 안내', day: 1 },
-  { id: 12, component: Slide12_SSOTask1, title: '과제: SSO 연동 (1/2)', day: 1 },
+  { id: 0, component: Slide11b_PythonSetup, title: 'Python 환경 확인', day: 1 },
+  { id: 12, component: Slide12_SSOTask1, title: '과제: SSO 연동', day: 1 },
   { id: 14, component: Slide14_SSOTaskOIDC, title: 'OIDC 차이점', day: 1 },
   // AI 학습
   { id: 16, component: SectionAI, title: '#2 AI 학습이란?', day: 1 },
