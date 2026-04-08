@@ -123,9 +123,9 @@ def validate_prompt(answer: dict) -> dict:
 ENDPOINT_MISSION = {
     "description": "SSO 로그인 후 사내 LLM Gateway에 연결하여 챗봇을 완성하세요.",
     "gateway_url": "http://a2g.samsungds.net:8090/v1",
-    "service_id": "test_service",
+    "service_id": "test-service",
     "headers": {
-        "x-service-id": "test_service (미리 세팅됨)",
+        "x-service-id": "test-service (미리 세팅됨)",
         "x-user-id": "<SSO 로그인한 사번>",
     },
     "hint": "app.py에 SSO 로그인을 연동하면 챗봇이 동작하고, LLM 응답 시 자동 제출됩니다.",

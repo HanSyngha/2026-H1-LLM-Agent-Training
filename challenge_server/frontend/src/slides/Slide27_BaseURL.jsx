@@ -22,7 +22,7 @@ client_gateway = OpenAI(
     base_url="http://a2g.samsungds.net:8090/v1",
     api_key="not-needed",
     default_headers={
-        "x-service-id": "test_service",
+        "x-service-id": "test-service",
         "x-user-id": "hong.gildong",   # SSO 사번
     },
 )

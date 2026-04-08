@@ -40,7 +40,7 @@ export default function Slide29_EndpointTask() {
             <strong>사내 LLM Gateway 연결 정보</strong>
             <code style={{ display: 'block', marginTop: 8, lineHeight: 1.9, background: 'rgba(0,0,0,.03)', padding: '10px 14px', borderRadius: 6 }}>
               URL: http://a2g.samsungds.net:8090/v1/chat/completions<br />
-              Header: x-service-id: test_service  (세팅됨)<br />
+              Header: x-service-id: test-service  (세팅됨)<br />
               Header: x-user-id: {'<'}user_id 변수{'>'}  (SSO에서 자동 세팅됨)
             </code>
           </Box>

@@ -16,7 +16,7 @@ resp = requests.post(
     "http://a2g.samsungds.net:8090/v1/chat/completions",
     headers={
         "Content-Type": "application/json",
-        "x-service-id": "test_service",   # 서비스 ID
+        "x-service-id": "test-service",   # 서비스 ID
         "x-user-id": "hong.gildong",      # SSO 사번
     },
     json={

@@ -30,7 +30,7 @@ st.set_page_config(page_title="Tool Use 실습", page_icon="🔧", layout="cente
 CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
 AUTH_SERVER = "http://a2g.samsungds.net:8090"
 LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
-SERVICE_ID = "test_service"
+SERVICE_ID = "test-service"
 
 # OIDC 설정
 CLIENT_ID = "cli-default"
