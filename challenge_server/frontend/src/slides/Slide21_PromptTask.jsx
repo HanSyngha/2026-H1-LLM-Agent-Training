@@ -61,8 +61,6 @@ function InfoMode() {
           위 <strong>"🧪 실습하기"</strong> 탭을 눌러 바로 시작하세요!
         </Box>
       </motion.div>
-
-      <AnswerButton answerId="prompt"><Slide22_PromptAnswer /></AnswerButton>
     </>
   );
 }
@@ -163,6 +161,8 @@ function LabMode() {
           );
         })}
       </div>
+
+      <AnswerButton answerId="prompt"><Slide22_PromptAnswer /></AnswerButton>
     </div>
   );
 }
