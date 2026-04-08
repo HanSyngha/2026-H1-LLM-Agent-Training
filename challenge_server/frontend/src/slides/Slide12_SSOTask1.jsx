@@ -20,7 +20,7 @@ export default function Slide12_SSOTask1() {
                   textDecoration: 'none', fontWeight: 600, fontSize: '.9em', flexShrink: 0 }}>
                 📦 다운로드
               </a>
-              <code style={{ fontSize: '.95em' }}>
+              <code style={{ fontSize: '.9em' }}>
                 pip install streamlit requests PyJWT && streamlit run app.py --server.port 3000
               </code>
             </div>
@@ -28,34 +28,43 @@ export default function Slide12_SSOTask1() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-          <Box color="purple" style={{ marginTop: 8, fontSize: '.88em', padding: '16px 24px' }}>
-            <strong>인증 서버 정보 (OIDC)</strong>
-            <table style={{ fontSize: '.92em', margin: '8px 0 0', width: '100%' }}>
+          <Box color="purple" style={{ marginTop: 8, fontSize: '.82em', padding: '16px 24px' }}>
+            <BoxTitle color="#7c3aed">OIDC 인증 서버 정보</BoxTitle>
+            <table style={{ fontSize: '.92em', margin: '6px 0 0', width: '100%' }}>
               <tbody>
-                <tr>
-                  <th style={{ width: '18%', padding: '4px 8px' }}>Authorize</th>
-                  <td style={{ padding: '4px 8px' }}><code>GET http://a2g.samsungds.net:8090/oidc/authorize</code></td>
-                </tr>
-                <tr>
-                  <th style={{ padding: '4px 8px' }}>Token</th>
-                  <td style={{ padding: '4px 8px' }}><code>POST http://a2g.samsungds.net:8090/oidc/token</code></td>
-                </tr>
-                <tr>
-                  <th style={{ padding: '4px 8px' }}>Client ID</th>
-                  <td style={{ padding: '4px 8px' }}><code>cli-default</code> (secret 없음)</td>
-                </tr>
+                {[
+                  ['Authorize', 'GET http://a2g.samsungds.net:8090/oidc/authorize'],
+                  ['Token', 'POST http://a2g.samsungds.net:8090/oidc/token'],
+                  ['client_id', 'cli-default'],
+                  ['client_secret', '빈 문자열 (Basic Auth에서 password 비움)'],
+                  ['redirect_uri', 'http://localhost:3000'],
+                  ['scope', 'openid profile email'],
+                  ['nonce', 'UUID로 생성 (필수! 없으면 id_token 안 옴)'],
+                ].map(([k, v]) => (
+                  <tr key={k}>
+                    <th style={{ width: '20%', padding: '3px 8px', fontSize: '.9em' }}>{k}</th>
+                    <td style={{ padding: '3px 8px' }}><code>{v}</code></td>
+                  </tr>
+                ))}
               </tbody>
             </table>
-            <div style={{ marginTop: 8, lineHeight: 1.7 }}>
-              scope=<code>openid profile email</code>, <code>nonce</code>=필수 (없으면 id_token 안 옴)<br />
-              <code>id_token</code>을 JWT 디코딩 → <code>name</code>, <code>dept</code> 추출 → 제출
-            </div>
           </Box>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Box color="yellow" style={{ marginTop: 8, fontSize: '.82em', padding: '14px 24px' }}>
+            <BoxTitle color="#d97706">핵심 흐름</BoxTitle>
+            <div style={{ lineHeight: 1.7 }}>
+              authorize → code 받기 → token 교환 → <code>id_token</code> JWT 디코딩 → <code>name</code>, <code>dept</code> 추출<br />
+              <code>jwt.decode(id_token, options={'{'}verify_signature: False{'}'})</code> — <strong>/userinfo 호출 X</strong><br />
+              로그인 성공 시 앱 내 "Challenge 서버에 제출" 버튼 → <code>/challenges/sso_oidc/submit</code>
+            </div>
+          </Box>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
           <Box color="green" style={{ marginTop: 8, textAlign: 'center', fontSize: '1em' }}>
-            <strong>2단계:</strong> 바이브 코딩으로 로그인 버튼에 OIDC를 연결하세요 → 로그인 성공 → 제출!
+            <strong>2단계:</strong> 바이브 코딩으로 로그인 버튼에 OIDC 연결 → 로그인 → 제출!
           </Box>
         </motion.div>
 
