@@ -9,18 +9,26 @@ export default function Slide48_BrowserAnswer() {
         <SlideH2>막히면? 예시 답안 프롬프트</SlideH2>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <CodeBlock lang="prompt">{`Chrome CDP로 웹페이지에서 데이터를 추출해줘.
+          <CodeBlock lang="prompt">{`Python으로 브라우저 자동화하여 JS 렌더링 페이지에서 비밀 키를 추출해줘.
 
-1. Chrome을 --remote-debugging-port=9222로 실행
-   (Windows: chrome.exe --remote-debugging-port=9222)
-2. CDP WebSocket으로 연결
-3. http://a2g.samsungds.net:47777/browser-target 로 이동
-4. JS 렌더링 대기 후 테이블에서 제품명/가격 추출
-5. POST /challenges/browser/submit 에 제출
-   {"token":"SSO토큰","answer":{"products":[{"name":"...","price":123000}]}}
+대상 페이지: http://a2g.samsungds.net:47777/browser-target
+- 이 페이지는 JavaScript로 1초 후 비밀 키를 렌더링함
+- requests.get()으로는 "로딩 중..."만 보임
+- 브라우저를 실제로 열어서 JS 실행 후 텍스트를 읽어야 함
 
-CDP: Page.navigate, Runtime.evaluate 사용
-가격은 숫자만 (쉼표, '원' 제거)`}</CodeBlock>
+방법 1 (Playwright 추천):
+  pip install playwright && playwright install chromium
+  from playwright.sync_api import sync_playwright
+  페이지 열고 → #secret-key 요소의 텍스트 추출
+
+방법 2 (CDP 직접):
+  Chrome을 --remote-debugging-port=9222로 실행
+  CDP WebSocket 연결 → Page.navigate → Runtime.evaluate
+  document.getElementById('secret-key').textContent 로 추출
+
+추출한 키를 아래로 제출:
+  POST http://a2g.samsungds.net:47777/challenges/browser/submit
+  {"token":"SSO토큰","answer":{"secret_key":"추출한키"}}`}</CodeBlock>
         </motion.div>
       </div>
     </div>

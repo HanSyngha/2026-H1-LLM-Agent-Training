@@ -489,13 +489,13 @@ async def reset_completions(request: Request):
 
 
 # ============================================
-# 브라우저 과제: 데이터 API (JS에서 fetch)
+# 브라우저 과제: 비밀 키 API (JS에서 fetch)
 # ============================================
-@app.get("/api/wiki-data")
-async def wiki_data():
-    """JS에서 fetch하는 데이터 API — requests.get('/browser-target')으로는 빈 페이지만 보입니다."""
-    from challenges import BROWSER_TARGET_DATA
-    return BROWSER_TARGET_DATA
+@app.get("/api/browser-secret")
+async def browser_secret_api():
+    """JS에서 fetch하는 비밀 키 API — curl로는 직접 호출 가능하지만, 페이지에서 추출하는 것이 과제."""
+    from challenges import BROWSER_SECRET_KEY
+    return {"key": BROWSER_SECRET_KEY}
 
 
 # ============================================
@@ -504,55 +504,63 @@ async def wiki_data():
 @app.get("/browser-target", response_class=HTMLResponse)
 async def browser_target():
     """
-    JavaScript로 데이터를 로드하는 wiki 페이지입니다.
-    requests.get()으로는 빈 테이블만 보이고, CDP로 브라우저를 제어해야 데이터가 보입니다.
+    JavaScript로 비밀 키를 로드하는 페이지입니다.
+    requests.get()으로는 '로딩 중...'만 보이고, CDP/Playwright로 브라우저를 제어해야 키가 보입니다.
     """
     return HTMLResponse("""
     <!DOCTYPE html>
-    <html><head><meta charset="UTF-8"><title>반도체 제품 Wiki</title>
+    <html><head><meta charset="UTF-8"><title>Secret Key Page</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 2em; background: #f8fafc; max-width: 800px; margin: 0 auto; }
-        h1 { color: #1e293b; margin-bottom: .5em; }
-        .subtitle { color: #64748b; margin-bottom: 2em; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        th { background: #1e293b; color: white; font-weight: 600; }
-        tr:hover td { background: #f1f5f9; }
-        .product-name { font-weight: 600; color: #1e293b; }
-        .price { color: #2563eb; font-weight: 600; font-family: monospace; }
-        .loading { text-align: center; padding: 2em; color: #94a3b8; }
-        .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .75em;
-                 background: #dbeafe; color: #1d4ed8; margin-left: .5em; }
-        .note { margin-top: 2em; padding: 1em; background: #fefce8; border: 1px solid #fde68a;
-                border-radius: 8px; font-size: .85em; color: #92400e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0;
+               display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: #1e293b; border-radius: 20px; padding: 48px 56px; text-align: center;
+                box-shadow: 0 25px 60px rgba(0,0,0,.4); max-width: 520px; width: 90%; }
+        h1 { font-size: 1.6em; margin-bottom: 8px; color: #f1f5f9; }
+        .subtitle { color: #64748b; font-size: .9em; margin-bottom: 32px; }
+        .key-box { background: #0f172a; border: 2px solid #3b82f6; border-radius: 12px;
+                   padding: 20px; margin: 24px 0; }
+        .key-label { font-size: .75em; color: #64748b; text-transform: uppercase;
+                     letter-spacing: 2px; margin-bottom: 8px; }
+        .key-value { font-family: 'Courier New', monospace; font-size: 1.4em; font-weight: 900;
+                     color: #60a5fa; letter-spacing: 3px; user-select: all; }
+        .loading { color: #94a3b8; font-size: 1.1em; padding: 20px; }
+        .warning { margin-top: 24px; padding: 14px 18px; background: rgba(234,179,8,.1);
+                   border: 1px solid rgba(234,179,8,.3); border-radius: 10px;
+                   font-size: .82em; color: #fbbf24; }
+        .badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: .7em;
+                 background: rgba(59,130,246,.15); color: #60a5fa; margin-bottom: 16px;
+                 letter-spacing: 1px; }
     </style></head>
     <body>
-        <h1>반도체 제품 Wiki <span class="badge">JS Rendered</span></h1>
-        <p class="subtitle">이 페이지의 데이터는 JavaScript로 로드됩니다.</p>
-        <div id="content"><div class="loading">데이터 로드 중...</div></div>
-        <div class="note">
-            <strong>참고:</strong> 이 페이지는 JavaScript가 실행되어야 데이터가 표시됩니다.
-            단순 HTTP 요청(requests.get)으로는 "데이터 로드 중..." 만 보입니다.
+        <div class="card">
+            <div class="badge">JS RENDERED</div>
+            <h1>Browser Challenge</h1>
+            <p class="subtitle">이 비밀 키를 찾아서 제출하세요</p>
+            <div id="secret-area">
+                <div class="loading">로딩 중...</div>
+            </div>
+            <div class="warning">
+                이 페이지는 JavaScript가 실행되어야 비밀 키가 표시됩니다.<br>
+                curl이나 requests.get()으로는 보이지 않습니다.
+            </div>
         </div>
 
         <script>
-        // 페이지 로드 후 API에서 데이터를 가져와 테이블을 생성합니다.
-        // CDP로 브라우저를 제어해야만 이 JavaScript가 실행됩니다.
         (async function() {
+            // 1초 딜레이 후 비밀 키를 API에서 가져와서 렌더링
+            await new Promise(r => setTimeout(r, 1000));
             try {
-                const resp = await fetch('/api/wiki-data');
-                const products = await resp.json();
-
-                let html = '<table><thead><tr><th>제품명</th><th>가격</th></tr></thead><tbody>';
-                products.forEach(p => {
-                    html += `<tr><td class="product-name">${p.name}</td><td class="price">${p.price.toLocaleString()}원</td></tr>`;
-                });
-                html += '</tbody></table>';
-                html += `<p style="margin-top:1em;color:#64748b;font-size:.85em">총 ${products.length}개 제품 | 마지막 업데이트: ${new Date().toLocaleString('ko-KR')}</p>`;
-
-                document.getElementById('content').innerHTML = html;
+                const resp = await fetch('/api/browser-secret');
+                const data = await resp.json();
+                document.getElementById('secret-area').innerHTML =
+                    '<div class="key-box">' +
+                    '<div class="key-label">Secret Key</div>' +
+                    '<div class="key-value" id="secret-key">' + data.key + '</div>' +
+                    '</div>';
             } catch (e) {
-                document.getElementById('content').innerHTML = '<p style="color:red">데이터 로드 실패: ' + e.message + '</p>';
+                document.getElementById('secret-area').innerHTML =
+                    '<p style="color:#ef4444">로드 실패: ' + e.message + '</p>';
             }
         })();
         </script>

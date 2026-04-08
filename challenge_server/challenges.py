@@ -250,47 +250,24 @@ def validate_mcp(answer: dict) -> dict:
 
 
 # ============================================
-# 과제 5: 브라우저 자동화
+# 과제 5: 브라우저 자동화 (CDP로 비밀 키 추출)
 # ============================================
+BROWSER_SECRET_KEY = "BROWSER-CDP-2026-SAMSUNG"
+
 BROWSER_MISSION = {
     "target_url": "http://a2g.samsungds.net:47777/browser-target",
-    "description": "위 URL의 페이지에서 상품 목록(이름, 가격)을 추출하세요.",
+    "description": "위 URL에 접속하면 비밀 키가 표시됩니다. 단, JavaScript로 렌더링되므로 curl/requests로는 보이지 않습니다. CDP 또는 Playwright로 브라우저를 제어하여 비밀 키를 추출하세요.",
+    "hint": "requests.get()으로는 '로딩 중...'만 보입니다. 브라우저 자동화가 필요합니다.",
 }
-
-# 브라우저 과제 타겟 페이지 데이터
-BROWSER_TARGET_DATA = [
-    {"name": "AI 가속기 Mach-1", "price": 1250000},
-    {"name": "HBM3E 16GB", "price": 89000},
-    {"name": "DDR5 32GB", "price": 45000},
-    {"name": "SSD 990 PRO 2TB", "price": 189000},
-    {"name": "CXL 메모리 모듈", "price": 320000},
-]
 
 
 def validate_browser(answer: dict) -> dict:
-    products = answer.get("products", [])
-    if not isinstance(products, list):
-        return {"passed": False, "message": "products는 배열이어야 합니다", "details": []}
-
-    details = []
-    for expected in BROWSER_TARGET_DATA:
-        def match_product(p, exp):
-            try:
-                name_ok = exp["name"] in str(p.get("name", ""))
-                price_raw = str(p.get("price", "0")).replace(",", "").replace("원", "").strip()
-                price_ok = abs(int(price_raw) - exp["price"]) < 100
-                return name_ok and price_ok
-            except (ValueError, TypeError):
-                return False
-        found = any(match_product(p, expected) for p in products)
-        details.append({
-            "product": expected["name"],
-            "passed": found,
-            "message": "발견" if found else "미발견",
-        })
-
-    passed = sum(1 for d in details if d["passed"])
-    return {"passed": passed >= 4, "message": f"{passed}/5 상품 데이터 일치", "details": details}
+    secret = str(answer.get("secret_key", "")).strip()
+    if secret == BROWSER_SECRET_KEY:
+        return {"passed": True, "message": "브라우저 자동화 과제 통과! CDP로 비밀 키를 추출했습니다.",
+                "details": [{"passed": True, "message": f"키 일치: {secret}"}]}
+    return {"passed": False, "message": f"비밀 키가 일치하지 않습니다.",
+            "details": [{"passed": False, "message": f"제출: '{secret[:20]}...' — http://a2g.samsungds.net:47777/browser-target 페이지를 브라우저로 열어 확인하세요."}]}
 
 
 # ============================================
@@ -541,10 +518,10 @@ CHALLENGES = {
         "validate": validate_structured,
     },
     "browser": {
-        "name": "브라우저 자동화",
-        "description": "타겟 웹페이지에서 상품 목록을 추출하세요.",
+        "name": "브라우저 자동화 (CDP)",
+        "description": "JS 렌더링 페이지에서 비밀 키를 추출하세요.",
         "mission": BROWSER_MISSION,
-        "submit_schema": '{"products": [{"name": "...", "price": 123}, ...]}',
+        "submit_schema": '{"secret_key": "페이지에서 추출한 비밀 키"}',
         "validate": validate_browser,
     },
     "agent_loop": {
