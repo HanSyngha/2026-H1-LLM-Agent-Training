@@ -156,7 +156,7 @@ if prompt := st.chat_input("메시지를 입력하세요..."):
             #   x-service-id: test-service  (위의 SERVICE_ID 변수)
             #   x-user-id:                  (위의 user_id 변수)
             # body (JSON):
-            #   model: "default"
+            #   model: "testmodel"
             #   messages: st.session_state.messages
             #   max_tokens: 1024
             # =============================================

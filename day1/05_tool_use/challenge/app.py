@@ -164,7 +164,7 @@ def execute_tool(tool_name, arguments):
 def call_llm(messages):
     """LLM Gateway에 요청을 보냅니다."""
     body = {
-        "model": "default",
+        "model": "testmodel",
         "messages": messages,
         "max_tokens": 1024,
     }

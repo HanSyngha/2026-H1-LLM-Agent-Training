@@ -33,7 +33,7 @@ resp = requests.post(
         "x-user-id": user_id,           # SSO user ID (자동)
     },
     json={
-        "model": "default",
+        "model": "testmodel",
         "messages": st.session_state.messages,
         "max_tokens": 1024,
     },

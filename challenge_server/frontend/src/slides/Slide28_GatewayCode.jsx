@@ -20,7 +20,7 @@ resp = requests.post(
         "x-user-id": "<로그인한 user ID>",    # SSO 로그인 필수
     },
     json={
-        "model": "default",               # Gateway가 라우팅
+        "model": "testmodel",             # Gateway가 라우팅
         "messages": [
             {"role": "system", "content": "사내 업무 도우미입니다."},
             {"role": "user",   "content": "오늘 일정 알려줘"},
