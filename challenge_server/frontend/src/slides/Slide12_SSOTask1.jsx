@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import AnswerButton from './AnswerButton';
+import Slide15_SSOAnswer from './Slide15_SSOAnswer';
 
 export default function Slide12_SSOTask1() {
   return (
@@ -43,6 +45,8 @@ export default function Slide12_SSOTask1() {
             <strong>3단계:</strong> 바이브 코딩으로 로그인 버튼에 SSO를 연결하세요. 로그인 성공 -> 정보 표시 -> 제출 버튼 활성화!
           </Box>
         </motion.div>
+
+        <AnswerButton answerId="sso"><Slide15_SSOAnswer /></AnswerButton>
       </div>
     </div>
   );

@@ -109,7 +109,6 @@ const SLIDES = [
   { id: 12, component: Slide12_SSOTask1, title: '과제: SSO 연동 (1/2)', day: 1 },
   { id: 13, component: Slide13_SSOTask2, title: '서버 정보 & 제출', day: 1 },
   { id: 14, component: Slide14_SSOTaskOIDC, title: 'OIDC 차이점', day: 1 },
-  { id: 15, component: Slide15_SSOAnswer, title: '예시 답안', day: 1 },
   // AI 학습
   { id: 16, component: SectionAI, title: '#2 AI 학습이란?', day: 1 },
   { id: 17, component: Slide16_AILearning1, title: '학습의 모호성', day: 1 },
