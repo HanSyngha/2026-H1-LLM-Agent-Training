@@ -53,9 +53,23 @@ python -m streamlit run app.py --server.port 3000`}</CodeBlock>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-          <Box color="purple" style={{ marginTop: 8, fontSize: '.82em', padding: '14px 24px' }}>
-            <strong>PATH 등록 (영구):</strong> 시작 → "환경 변수" 검색 → 사용자 변수 Path 편집 →{' '}
-            <code>C:\Users\홍길동\AppData\Local\Programs\Python\Python312\Scripts</code> 추가
+          <Box color="purple" style={{ marginTop: 8, fontSize: '.82em', padding: '16px 24px' }}>
+            <BoxTitle color="#7c3aed">4. python / python3 → py 연결 (바이브 코딩 필수)</BoxTitle>
+            <div style={{ lineHeight: 1.7 }}>
+              AI 도구가 <code>python</code>이나 <code>python3</code> 명령을 쓰는데 안 될 때:
+            </div>
+            <CodeBlock lang="powershell">{`# PowerShell 프로필에 alias 추가 (영구)
+notepad $PROFILE
+# 열린 파일에 아래 두 줄 추가 후 저장:
+Set-Alias python py
+Set-Alias python3 py
+
+# 프로필 파일이 없다고 뜨면 먼저 생성:
+New-Item -Path $PROFILE -ItemType File -Force`}</CodeBlock>
+            <div style={{ marginTop: 6, fontSize: '.9em', color: '#64748b' }}>
+              <strong>PATH 등록:</strong> 시작 → "환경 변수" 검색 → 사용자 변수 Path 편집 →{' '}
+              <code>...\Python312\Scripts</code> 추가
+            </div>
           </Box>
         </motion.div>
       </div>
