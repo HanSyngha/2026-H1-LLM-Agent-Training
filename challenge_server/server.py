@@ -509,57 +509,75 @@ async def browser_target():
     """
     return HTMLResponse("""
     <!DOCTYPE html>
-    <html><head><meta charset="UTF-8"><title>Secret Key Page</title>
+    <html><head><meta charset="UTF-8"><title>Browser Challenge</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0;
                display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .card { background: #1e293b; border-radius: 20px; padding: 48px 56px; text-align: center;
-                box-shadow: 0 25px 60px rgba(0,0,0,.4); max-width: 520px; width: 90%; }
+                box-shadow: 0 25px 60px rgba(0,0,0,.4); max-width: 560px; width: 90%; }
         h1 { font-size: 1.6em; margin-bottom: 8px; color: #f1f5f9; }
         .subtitle { color: #64748b; font-size: .9em; margin-bottom: 32px; }
-        .key-box { background: #0f172a; border: 2px solid #3b82f6; border-radius: 12px;
-                   padding: 20px; margin: 24px 0; }
-        .key-label { font-size: .75em; color: #64748b; text-transform: uppercase;
-                     letter-spacing: 2px; margin-bottom: 8px; }
-        .key-value { font-family: 'Courier New', monospace; font-size: 1.4em; font-weight: 900;
-                     color: #60a5fa; letter-spacing: 3px; user-select: all; }
         .loading { color: #94a3b8; font-size: 1.1em; padding: 20px; }
-        .warning { margin-top: 24px; padding: 14px 18px; background: rgba(234,179,8,.1);
+        .hint { margin-top: 20px; padding: 16px 20px; background: rgba(59,130,246,.08);
+                border: 1px solid rgba(59,130,246,.2); border-radius: 12px;
+                font-size: .82em; color: #93c5fd; line-height: 1.7; text-align: left; }
+        .hint code { background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 4px;
+                     font-family: monospace; color: #60a5fa; }
+        .warning { margin-top: 16px; padding: 14px 18px; background: rgba(234,179,8,.1);
                    border: 1px solid rgba(234,179,8,.3); border-radius: 10px;
                    font-size: .82em; color: #fbbf24; }
         .badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: .7em;
                  background: rgba(59,130,246,.15); color: #60a5fa; margin-bottom: 16px;
                  letter-spacing: 1px; }
+        .status { margin-top: 24px; padding: 12px; background: #0f172a; border-radius: 10px;
+                  border: 1px solid #334155; }
+        .status-label { font-size: .7em; color: #64748b; text-transform: uppercase;
+                        letter-spacing: 2px; margin-bottom: 4px; }
+        .status-value { font-family: monospace; font-size: .9em; color: #22c55e; }
     </style></head>
     <body>
         <div class="card">
             <div class="badge">JS RENDERED</div>
             <h1>Browser Challenge</h1>
-            <p class="subtitle">이 비밀 키를 찾아서 제출하세요</p>
-            <div id="secret-area">
+            <p class="subtitle">이 페이지 어딘가에 비밀 키가 숨겨져 있습니다</p>
+            <div id="content">
                 <div class="loading">로딩 중...</div>
-            </div>
-            <div class="warning">
-                이 페이지는 JavaScript가 실행되어야 비밀 키가 표시됩니다.<br>
-                curl이나 requests.get()으로는 보이지 않습니다.
             </div>
         </div>
 
         <script>
         (async function() {
-            // 1초 딜레이 후 비밀 키를 API에서 가져와서 렌더링
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 1200));
             try {
                 const resp = await fetch('/api/browser-secret');
                 const data = await resp.json();
-                document.getElementById('secret-area').innerHTML =
-                    '<div class="key-box">' +
-                    '<div class="key-label">Secret Key</div>' +
-                    '<div class="key-value" id="secret-key">' + data.key + '</div>' +
+
+                // 비밀 키는 화면에 보이지 않는 hidden 요소에 저장
+                const hidden = document.createElement('div');
+                hidden.id = 'secret-key';
+                hidden.setAttribute('data-key', data.key);
+                hidden.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;opacity:0;';
+                hidden.textContent = data.key;
+                document.body.appendChild(hidden);
+
+                document.getElementById('content').innerHTML =
+                    '<div class="status">' +
+                    '<div class="status-label">Status</div>' +
+                    '<div class="status-value">Secret loaded — hidden in DOM</div>' +
+                    '</div>' +
+                    '<div class="hint">' +
+                    '<strong>힌트:</strong> 비밀 키는 이 페이지의 DOM 안에 숨겨져 있습니다.<br>' +
+                    '눈에는 보이지 않지만 <code>document.querySelector</code>나<br>' +
+                    '<code>Runtime.evaluate</code>로 찾을 수 있습니다.<br>' +
+                    '요소 ID: <code>#secret-key</code>' +
+                    '</div>' +
+                    '<div class="warning">' +
+                    'curl이나 requests.get()으로는 이 스크립트가 실행되지 않습니다.<br>' +
+                    'CDP, Playwright, Selenium 등 브라우저 자동화가 필요합니다.' +
                     '</div>';
             } catch (e) {
-                document.getElementById('secret-area').innerHTML =
+                document.getElementById('content').innerHTML =
                     '<p style="color:#ef4444">로드 실패: ' + e.message + '</p>';
             }
         })();
