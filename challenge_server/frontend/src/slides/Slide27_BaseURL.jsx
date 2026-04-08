@@ -23,7 +23,7 @@ client_gateway = OpenAI(
     api_key="not-needed",
     default_headers={
         "x-service-id": "test-service",
-        "x-user-id": "hong.gildong",   # SSO user ID
+        "x-user-id": "<로그인한 user ID>",  # SSO 로그인 필수
     },
 )
 

@@ -14,7 +14,7 @@ export default function Slide30_EndpointAnswer() {
 사내 LLM Gateway 정보:
 - base URL: http://a2g.samsungds.net:8090/v1
 - 모델 목록 확인: GET http://a2g.samsungds.net:8090/v1/models
-  (헤더 x-service-id: test-service, x-user-id: 아무값 필수)
+  (헤더 x-service-id: test-service, x-user-id: 실제 로그인한 ID 필수)
 - chat API: POST http://a2g.samsungds.net:8090/v1/chat/completions
 
 필수 헤더:
