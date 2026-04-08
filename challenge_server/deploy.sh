@@ -49,6 +49,10 @@ case "${1:-start}" in
         log "인증 서버: ${AUTH_SERVER}"
         echo ""
 
+        # React 프론트엔드 빌드 (로컬 node 사용)
+        log "프론트엔드 빌드 중..."
+        cd frontend && npm install --include=dev && npm run build && cd ..
+
         docker compose down --rmi local 2>/dev/null
         docker compose build --no-cache
         docker compose up -d
