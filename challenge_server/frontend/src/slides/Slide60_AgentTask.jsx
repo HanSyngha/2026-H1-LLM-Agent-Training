@@ -1,36 +1,99 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import { postJSON } from '../api';
+import AnswerButton from './AnswerButton';
+import Slide61_AgentAnswer from './Slide61_AgentAnswer';
 
 export default function Slide60_AgentTask() {
+  const [code, setCode] = useState('');
+  const [result, setResult] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!code.trim()) return;
+    setSubmitting(true);
+    try {
+      const r = await postJSON('/challenges/agent_loop/submit', { answer: { completion_code: code.trim() } });
+      setResult(r);
+    } catch (e) {
+      setResult({ status: 'FAIL', message: e.message });
+    }
+    setSubmitting(false);
+  };
+
   return (
     <div className="slide-container">
       <div className="slide-inner">
         <Badge variant="day2">Agentic Loop 실습</Badge>
-        <SlideH2 day2>바이브 코딩: Agent Loop 구현</SlideH2>
+        <SlideH2>과제: API 미로 탈출</SlideH2>
         <Divider />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Box color="blue" style={{ marginTop: '0.6em', fontSize: '.95em', padding: '20px 28px' }}>
-            <BoxTitle>문제</BoxTitle>
-            <strong>requests만</strong> 사용하여 Agent Loop를 구현하세요. <strong style={{ color: '#dc2626' }}>프레임워크 사용 금지.</strong><br /><br />
-            <strong>질문:</strong> "서울의 현재 기온은 섭씨 몇 도이며, 이를 화씨로 변환하면 몇 도인가요?"<br />
-            <strong>도구:</strong> <code>get_weather(city)</code>, <code>calculate(expression)</code> — LLM tool_calls로 정의
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Box color="blue">
+            <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
+            <a href="/downloads/agent_loop" download
+              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
+                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 8 }}>
+              📦 실습 코드 다운로드
+            </a>
+            <code style={{ display: 'block', fontSize: '1em', lineHeight: 1.8 }}>
+              pip install streamlit requests PyJWT<br />
+              streamlit run app.py --server.port 3000
+            </code>
           </Box>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-          <Box color="yellow" style={{ marginTop: '0.4em', fontSize: '.88em', padding: '14px 24px' }}>
-            <strong>성공 조건:</strong> 응답에 <strong>섭씨 값(°C)</strong>과 <strong>화씨 값(°F)</strong>이 모두 포함되어야 합니다.<br />
-            <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/agent_loop/submit</code><br />
-            <code>{`{"token":"SSO토큰", "answer":{"response":"섭씨: 22°C, 화씨: 71.6°F"}}`}</code>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+          <Box color="red" style={{ marginTop: 8 }}>
+            <BoxTitle color="#dc2626">API 미로 규칙</BoxTitle>
+            <div style={{ fontSize: '.9em', lineHeight: 1.8 }}>
+              <code>start</code> → 랜덤 3개 스텝 순서 안내 (예: step3 → step7 → step1)<br />
+              <code>step/N</code> → 순서대로 호출해야 통과, <strong style={{ color: '#dc2626' }}>틀리면 초기화!</strong><br />
+              <code>end</code> → 3개 완료 후 호출 → <strong>completion_code</strong> 획득
+            </div>
           </Box>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Box color="green" style={{ marginTop: '0.4em', fontSize: '1em', textAlign: 'center' }}>
-            <strong>성공:</strong> 홍길동님, Agentic Loop 통과!
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Box color="yellow" style={{ marginTop: 8 }}>
+            <BoxTitle color="#d97706">TODO: run_agentic_loop() 구현</BoxTitle>
+            <div style={{ fontSize: '.88em', lineHeight: 1.7 }}>
+              <code>call_llm()</code> → <code>tool_calls</code> 있으면 → <code>execute_tool()</code> 실행<br />
+              → 결과를 messages에 추가 → 다시 <code>call_llm()</code> → 없을 때까지 반복
+            </div>
           </Box>
         </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
+          <Box color="green" style={{ marginTop: 8, padding: '20px 28px' }}>
+            <BoxTitle color="#059669">Completion Code 제출</BoxTitle>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <input type="text" value={code} onChange={e => setCode(e.target.value)}
+                placeholder="completion_code를 입력하세요"
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                style={{ flex: 1, padding: '10px 14px', borderRadius: 8, border: '1.5px solid #d1d5db',
+                  fontSize: '.95em', fontFamily: 'monospace' }} />
+              <button onClick={handleSubmit} disabled={submitting || !code.trim()}
+                style={{ padding: '10px 24px', borderRadius: 8, border: 'none',
+                  background: code.trim() ? '#059669' : '#e2e8f0',
+                  color: code.trim() ? '#fff' : '#94a3b8',
+                  fontWeight: 700, fontSize: '.9em', cursor: code.trim() ? 'pointer' : 'default' }}>
+                {submitting ? '확인 중...' : '제출'}
+              </button>
+            </div>
+            {result && (
+              <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 8,
+                background: result.status === 'SUCCESS' ? '#f0fdf4' : '#fef2f2',
+                color: result.status === 'SUCCESS' ? '#059669' : '#dc2626',
+                fontWeight: 700, fontSize: '.9em' }}>
+                {result.status === 'SUCCESS' ? `🎉 ${result.message}` : `❌ ${result.message}`}
+              </div>
+            )}
+          </Box>
+        </motion.div>
+
+        <AnswerButton answerId="agent_loop"><Slide61_AgentAnswer /></AnswerButton>
       </div>
     </div>
   );

@@ -521,6 +521,50 @@ async def answers_toggle(request: Request):
 
 
 # ============================================
+# Agentic Loop 과제 — API 미로
+# ============================================
+@app.get("/challenges/agent_loop/start")
+async def agent_loop_start_api(request: Request):
+    """미로 시작 — 랜덤 3개 스텝 순서 생성."""
+    from challenges import agent_loop_start
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    if not token and not DEV_MODE:
+        return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
+    return agent_loop_start(user["sub"])
+
+
+@app.get("/challenges/agent_loop/step/{step_num}")
+async def agent_loop_step_api(step_num: int, request: Request):
+    """스텝 호출 — 순서 맞으면 진행, 틀리면 초기화."""
+    from challenges import agent_loop_call_step
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    if not token and not DEV_MODE:
+        return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
+    if step_num < 1 or step_num > 10:
+        return JSONResponse({"error": "step은 1~10 사이여야 합니다."}, status_code=400)
+    return agent_loop_call_step(user["sub"], step_num)
+
+
+@app.get("/challenges/agent_loop/end")
+async def agent_loop_end_api(request: Request):
+    """미로 완료 — 3개 다 순서대로 했으면 completion_code 반환."""
+    from challenges import agent_loop_end
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    if not token and not DEV_MODE:
+        return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
+    return agent_loop_end(user["sub"])
+
+
+# ============================================
 # 브라우저 과제: 비밀 키 API (JS에서 fetch)
 # ============================================
 @app.get("/api/browser-secret")
@@ -837,6 +881,7 @@ async def download_challenge(challenge_id: str):
         "tool_use": "day1/05_tool_use/challenge",
         "structured": "day1/05_structured_output",
         "browser": "day1/07_browser_control",
+        "agent_loop": "day2/01_agent_loop/challenge",
         "agent_loop": "day2/01_agent_loop",
         "final": "day2/06_final_exercise",
     }

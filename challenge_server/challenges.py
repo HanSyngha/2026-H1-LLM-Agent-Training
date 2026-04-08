@@ -271,41 +271,128 @@ def validate_browser(answer: dict) -> dict:
 
 
 # ============================================
-# 과제 6: Agentic Loop
+# 과제 6: Agentic Loop — API 미로
 # ============================================
+import random as _random
+
+# 유저별 세션: {user_sub: {"sequence": [3,7,1], "progress": 0}}
+_agent_loop_sessions = {}
+
+AGENT_LOOP_STEPS = {
+    1: {"name": "인증 서버 확인", "data": "AUTH_TOKEN_VALID"},
+    2: {"name": "사용자 프로필 조회", "data": "PROFILE_LOADED"},
+    3: {"name": "권한 검증", "data": "PERMISSION_GRANTED"},
+    4: {"name": "데이터베이스 연결", "data": "DB_CONNECTED"},
+    5: {"name": "캐시 조회", "data": "CACHE_HIT"},
+    6: {"name": "외부 API 호출", "data": "EXTERNAL_OK"},
+    7: {"name": "로그 기록", "data": "LOG_WRITTEN"},
+    8: {"name": "알림 전송", "data": "NOTIFICATION_SENT"},
+    9: {"name": "파일 시스템 접근", "data": "FILE_ACCESSED"},
+    10: {"name": "보안 스캔", "data": "SECURITY_CLEAR"},
+}
+
+
+def agent_loop_start(user_sub: str) -> dict:
+    """미로 시작 — 랜덤 3개 스텝 순서 생성"""
+    seq = sorted(_random.sample(range(1, 11), 3), key=lambda _: _random.random())
+    _agent_loop_sessions[user_sub] = {"sequence": seq, "progress": 0, "collected": []}
+    return {
+        "message": "미로가 시작되었습니다! 아래 3개의 API를 순서대로 호출하세요.",
+        "sequence": [
+            {"order": i + 1, "step": s, "name": AGENT_LOOP_STEPS[s]["name"]}
+            for i, s in enumerate(seq)
+        ],
+        "warning": "순서를 틀리면 처음부터 다시 시작합니다!",
+    }
+
+
+def agent_loop_call_step(user_sub: str, step_num: int) -> dict:
+    """스텝 호출 — 순서 맞으면 진행, 틀리면 초기화"""
+    session = _agent_loop_sessions.get(user_sub)
+    if not session:
+        return {"error": True, "message": "먼저 start를 호출하세요."}
+
+    expected = session["sequence"][session["progress"]]
+    if step_num != expected:
+        # 틀림 → 초기화
+        old_seq = session["sequence"]
+        _agent_loop_sessions.pop(user_sub, None)
+        return {
+            "error": True,
+            "message": f"순서가 틀렸습니다! step{expected}을 호출해야 하는데 step{step_num}을 호출했습니다. 세션이 초기화됩니다.",
+            "expected": expected,
+            "got": step_num,
+            "hint": "start부터 다시 시작하세요.",
+        }
+
+    # 맞음 → 진행
+    step_info = AGENT_LOOP_STEPS[step_num]
+    session["progress"] += 1
+    session["collected"].append(step_info["data"])
+
+    remaining = session["sequence"][session["progress"]:]
+    return {
+        "success": True,
+        "step": step_num,
+        "name": step_info["name"],
+        "code": step_info["data"],
+        "progress": f"{session['progress']}/{len(session['sequence'])}",
+        "next": f"step{remaining[0]}" if remaining else "end를 호출하세요!",
+        "message": f"step{step_num} 통과! {'다음: step' + str(remaining[0]) if remaining else '모든 스텝 완료! end를 호출하세요.'}",
+    }
+
+
+def agent_loop_end(user_sub: str) -> dict:
+    """미로 완료 확인"""
+    session = _agent_loop_sessions.get(user_sub)
+    if not session:
+        return {"error": True, "message": "먼저 start를 호출하세요."}
+
+    if session["progress"] < len(session["sequence"]):
+        done = session["progress"]
+        total = len(session["sequence"])
+        return {
+            "error": True,
+            "message": f"아직 {total - done}개 스텝이 남았습니다. ({done}/{total} 완료)",
+        }
+
+    # 성공!
+    code = "-".join(session["collected"])
+    _agent_loop_sessions.pop(user_sub, None)
+    return {
+        "success": True,
+        "message": "미로 탈출 성공!",
+        "completion_code": code,
+    }
+
+
 AGENT_LOOP_MISSION = {
-    "question": "서울의 현재 기온은 섭씨 몇 도이며, 이를 화씨로 변환하면 몇 도인가요? 최종 답을 '섭씨: X°C, 화씨: Y°F' 형식으로 알려주세요.",
-    "tools": {
-        "get_weather": {
-            "description": "도시의 현재 날씨를 조회합니다",
-            "endpoint": "LLM의 tool_calls로 처리 (외부 API 아님)",
-            "mock_response": "서울: 맑음, 22°C",
-        },
-        "calculate": {
-            "description": "수학 계산을 수행합니다",
-            "endpoint": "LLM의 tool_calls로 처리",
-            "example": "calculate('22 * 9 / 5 + 32') → 71.6",
-        },
+    "description": "Agentic Loop를 구현하여 API 미로를 탈출하세요.",
+    "apis": {
+        "start": "GET /challenges/agent_loop/start — 미로 시작, 3개 스텝 순서 안내",
+        "step": "GET /challenges/agent_loop/step/{n} — n번 스텝 호출 (순서 틀리면 초기화!)",
+        "end": "GET /challenges/agent_loop/end — 3개 완료 후 종료, completion_code 획득",
     },
-    "note": "requests로 LLM API를 직접 호출하여 Agent Loop를 구현하세요. 프레임워크 사용 금지.",
+    "flow": "start → step(순서대로 3개) → end → completion_code를 슬라이드에 입력",
 }
 
 
 def validate_agent_loop(answer: dict) -> dict:
-    response = str(answer.get("response", ""))
+    code = str(answer.get("completion_code", "")).strip()
+    if not code:
+        return {"passed": False, "message": "completion_code가 없습니다.", "details": []}
 
-    has_celsius = any(c in response for c in ["°C", "섭씨", "℃"])
-    has_fahrenheit = any(f in response for f in ["°F", "화씨", "℉"])
-    has_number = any(char.isdigit() for char in response)
+    # completion_code는 3개의 스텝 데이터를 -로 연결한 것
+    parts = code.split("-")
+    valid_codes = [s["data"] for s in AGENT_LOOP_STEPS.values()]
+    if len(parts) == 3 and all(p in valid_codes for p in parts):
+        return {
+            "passed": True,
+            "message": "Agentic Loop 과제 통과! API 미로를 성공적으로 탈출했습니다.",
+            "details": [{"step": i + 1, "passed": True, "code": p} for i, p in enumerate(parts)],
+        }
 
-    details = [
-        {"check": "섭씨 포함", "passed": has_celsius, "message": "섭씨 값이 있습니다" if has_celsius else "섭씨 값이 없습니다"},
-        {"check": "화씨 포함", "passed": has_fahrenheit, "message": "화씨 값이 있습니다" if has_fahrenheit else "화씨 값이 없습니다"},
-        {"check": "숫자 포함", "passed": has_number, "message": "숫자가 있습니다" if has_number else "숫자가 없습니다"},
-    ]
-
-    passed = all(d["passed"] for d in details)
-    return {"passed": passed, "message": "Agent Loop 응답 검증 통과" if passed else "응답 형식을 확인하세요", "details": details}
+    return {"passed": False, "message": "유효하지 않은 completion_code입니다.", "details": []}
 
 
 # ============================================
@@ -525,10 +612,10 @@ CHALLENGES = {
         "validate": validate_browser,
     },
     "agent_loop": {
-        "name": "Agentic Loop",
-        "description": "requests로 Agent Loop를 구현하여 복합 질문에 답하세요.",
+        "name": "Agentic Loop (API 미로)",
+        "description": "Agentic Loop를 구현하여 API 미로를 탈출하세요.",
         "mission": AGENT_LOOP_MISSION,
-        "submit_schema": '{"response": "섭씨: X°C, 화씨: Y°F"}',
+        "submit_schema": '{"completion_code": "스텝 코드들을 -로 연결한 문자열"}',
         "validate": validate_agent_loop,
     },
     "final": {

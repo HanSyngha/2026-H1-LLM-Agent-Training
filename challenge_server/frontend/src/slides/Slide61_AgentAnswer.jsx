@@ -6,22 +6,31 @@ export default function Slide61_AgentAnswer() {
     <div className="slide-container">
       <div className="slide-inner">
         <Badge variant="day2">Agentic Loop 실습</Badge>
-        <SlideH2 day2>막히면? 예시 답안 프롬프트</SlideH2>
+        <SlideH2>막히면? 예시 답안 프롬프트</SlideH2>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <CodeBlock lang="text">{`Python requests만 사용해서 Agent Loop를 구현해줘.
+          <CodeBlock lang="prompt">{`app.py의 run_agentic_loop(messages) 함수를 구현해줘.
 
-1. GET /challenges/agent_loop/mission 에서 미션 확인
-2. 도구 정의: get_weather(city), calculate(expression)
-3. Agent Loop:
-   - 질문 + tools를 LLM에 전송
-   - tool_calls 있으면 → 실행 → 결과를 messages에 추가 → 재호출
-   - tool_calls 없으면 → 최종 답변
-4. POST /challenges/agent_loop/submit 에 제출
-   {"token":"SSO토큰","answer":{"response":"섭씨: X°C, 화씨: Y°F"}}
+이 함수는 while 루프로 LLM을 반복 호출하여 tool_calls를 처리해야 해.
+최대 10회 반복, 무한루프 방지.
 
-/v1/chat/completions에 tools 파라미터로 정의
-choices[0].message.tool_calls 파싱`}</CodeBlock>
+구현 로직:
+1. result, error = call_llm(messages) 호출
+2. error면 return None, error
+3. msg = result["choices"][0]["message"]
+4. msg에 "tool_calls"가 없으면 → return msg.get("content"), None (종료)
+5. msg에 "tool_calls"가 있으면:
+   a. messages.append(msg)  — assistant의 tool_calls 메시지 그대로 추가
+   b. for tc in msg["tool_calls"]:
+      - fn_name = tc["function"]["name"]
+      - fn_args = json.loads(tc["function"]["arguments"]) if tc["function"].get("arguments") else {}
+      - tool_result = execute_tool(fn_name, fn_args)
+      - messages.append({"role": "tool", "tool_call_id": tc["id"],
+                         "content": json.dumps(tool_result, ensure_ascii=False)})
+   c. 루프 계속 (while로 돌아가서 다시 call_llm)
+
+call_llm(), execute_tool(), json 모듈은 이미 코드에 있음.
+반환값: (answer_text, error) 튜플.`}</CodeBlock>
         </motion.div>
       </div>
     </div>

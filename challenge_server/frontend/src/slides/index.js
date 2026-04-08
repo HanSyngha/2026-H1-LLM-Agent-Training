@@ -172,7 +172,6 @@ const SLIDES = [
   { id: 67, component: Slide58_MultiIteration, title: 'Multi-iteration', day: 2 },
   { id: 68, component: Slide59_Streaming, title: 'Streaming', day: 2 },
   { id: 69, component: Slide60_AgentTask, title: 'Agent Loop 과제', day: 2 },
-  { id: 70, component: Slide61_AgentAnswer, title: '예시 답안', day: 2 },
   { id: 71, component: SectionBash, title: '#11 bash Agent', day: 2 },
   { id: 72, component: Slide62_BashTool, title: 'subprocess Tool', day: 2 },
   { id: 73, component: Slide63_BashAgent, title: 'CLI Agent', day: 2 },
