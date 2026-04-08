@@ -51,12 +51,19 @@ case "${1:-start}" in
 
         # React 프론트엔드 빌드 (로컬 node 사용)
         log "프론트엔드 빌드 중..."
-        cd frontend && npm install --include=dev && npm run build && cd ..
+        cd frontend
+        npm install --include=dev 2>&1 | tail -3
+        npm run build 2>&1 | tail -5
+        cd ..
+        log "프론트엔드 빌드 완료"
 
+        log "Docker 이미지 빌드 중..."
         docker compose down --rmi local 2>/dev/null
-        docker compose build --no-cache
-        docker compose up -d
+        docker compose build --no-cache --progress=plain 2>&1 | tail -20
+        log "Docker 이미지 빌드 완료"
 
+        log "컨테이너 시작 중..."
+        docker compose up -d 2>&1
         log "시작 완료. 헬스체크 대기 중..."
         sleep 3
 

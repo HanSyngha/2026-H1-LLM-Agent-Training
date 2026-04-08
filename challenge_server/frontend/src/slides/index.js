@@ -58,6 +58,8 @@ import Slide51_FrontendAIOverview from './Slide51_FrontendAIOverview';
 import Slide52_GoogleStitch from './Slide52_GoogleStitch';
 import Slide53_StitchDemo from './Slide53_StitchDemo';
 import Slide54_AIToolCompare from './Slide54_AIToolCompare';
+import Slide01b_NoRightAnswer from './Slide01b_NoRightAnswer';
+import Slide01c_TechChoices from './Slide01c_TechChoices';
 import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFramework from './SectionFramework';
 import Slide51_ADK from './Slide51_ADK';
@@ -97,6 +99,8 @@ const SLIDES = [
   { id: 1, component: Slide01_Title, title: 'LLM Agent 개발 실습', day: 0 },
   { id: 2, component: Slide02_Agenda, title: '전체 과정 구성', day: 0 },
   { id: 3, component: Slide03a_WhatToLearn, title: '무엇을 배우고 싶으세요?', day: 0 },
+  { id: 0, component: Slide01b_NoRightAnswer, title: '정답은 없다', day: 0 },
+  { id: 0, component: Slide01c_TechChoices, title: '무엇을 배울까?', day: 0 },
   // Day 1
   { id: 4, component: Slide03_Day1Header, title: 'Day 1', day: 1 },
   { id: 4, component: SectionSSO, title: '#0 SSO', day: 1 },
