@@ -12,7 +12,9 @@ ENV HTTP_PROXY=${HTTP_PROXY} \
 WORKDIR /app/frontend
 
 RUN npm config set strict-ssl false && \
-    if [ -n "$HTTP_PROXY" ]; then npm config set proxy $HTTP_PROXY && npm config set https-proxy $HTTP_PROXY; fi
+    if [ -n "$HTTP_PROXY" ]; then npm config set proxy $HTTP_PROXY; fi && \
+    if [ -n "$HTTPS_PROXY" ]; then npm config set https-proxy $HTTPS_PROXY; \
+    elif [ -n "$HTTP_PROXY" ]; then npm config set https-proxy $HTTP_PROXY; fi
 
 COPY frontend/package*.json ./
 RUN npm install --legacy-peer-deps

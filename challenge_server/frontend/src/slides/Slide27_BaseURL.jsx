@@ -17,10 +17,14 @@ client_openai = OpenAI(
     # base_url 기본값: https://api.openai.com/v1
 )
 
-# 사내 Gateway 사용 (같은 코드!)
+# 사내 Gateway — 커스텀 헤더 인증 방식!
 client_gateway = OpenAI(
-    base_url="https://gateway.company.com/v1",
-    api_key="company-key-...",
+    base_url="http://a2g.samsungds.net:8090/v1",
+    api_key="not-needed",
+    default_headers={
+        "x-service-id": "test_service",
+        "x-user-id": "hong.gildong",   # SSO 사번
+    },
 )
 
 # vLLM / Ollama 로컬 사용 (역시 같은 코드!)

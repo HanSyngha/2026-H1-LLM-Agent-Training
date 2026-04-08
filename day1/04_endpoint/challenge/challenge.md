@@ -1,51 +1,55 @@
-# LLM Endpoint 연결 실습
+# LLM Gateway 연결 실습 — 사내 LLM 챗봇
 
-> 사내 LLM Gateway에 연결하여 첫 번째 응답을 받아오세요.
+> app.py의 TODO를 채워서 사내 LLM Gateway에 연결하세요.
+> SSO 로그인은 자동으로 처리됩니다.
+
+## 실행 방법
+
+```bash
+pip install streamlit requests PyJWT
+streamlit run app.py --server.port 3000
+```
 
 ## 서버 정보
 
 | 항목 | 값 |
 |------|---|
-| Challenge 서버 | `http://a2g.samsungds.net:47777` |
-| 인증 서버 | `http://a2g.samsungds.net:8090` |
-| LLM Gateway | `.env` 파일의 `LLM_GATEWAY_URL` 참고 |
-| 미션 조회 | `GET http://a2g.samsungds.net:47777/challenges/endpoint/mission` |
-| 정답 제출 | `POST http://a2g.samsungds.net:47777/challenges/endpoint/submit` |
+| LLM Gateway | `http://a2g.samsungds.net:8090/v1/chat/completions` |
+| Service ID | `test_service` (코드에 세팅됨) |
+| 인증 | SSO 자동 로그인 (user_id 자동 세팅) |
 
 ## 과제
 
-LLM Gateway에 연결하여 미션 질문에 대한 응답을 받아 제출하세요.
+`app.py`에서 `resp = None` 부분을 `requests.post(...)`로 바꾸세요.
 
-### 제출 형식
+### 필요한 정보
 
-```json
-{
-  "token": "<SSO access_token>",
-  "answer": {
-    "response": "LLM이 응답한 전체 텍스트"
-  }
-}
+```python
+resp = requests.post(
+    "http://a2g.samsungds.net:8090/v1/chat/completions",
+    headers={
+        "Content-Type": "application/json",
+        "x-service-id": SERVICE_ID,     # "test_service"
+        "x-user-id": user_id,           # SSO 사번 (자동)
+    },
+    json={
+        "model": "default",
+        "messages": st.session_state.messages,
+        "max_tokens": 1024,
+    },
+)
 ```
 
-### 성공 화면
+### 성공 조건
 
-```
-🎉 홍길동님, LLM Endpoint 연결 통과!
-LLM Gateway 연결 및 응답 확인 완료
-```
+LLM에서 200 응답이 오면 자동으로 과제가 제출됩니다.
 
 ---
 
-## 막히면? 예시 답안 프롬프트
+## 막히면? 바이브 코딩 프롬프트
 
 ```
-Python requests로 사내 LLM Gateway에 연결해서 질문에 답변 받는 코드를 만들어줘.
-
-- LLM Gateway URL: .env의 LLM_GATEWAY_URL (OpenAI Compatible)
-- 질문: "대한민국의 수도는 어디이며, 그 도시의 영문명을 알려주세요."
-- 응답을 받아서 POST http://a2g.samsungds.net:47777/challenges/endpoint/submit 에 제출
-- 제출 형식: {"token": "SSO토큰", "answer": {"response": "LLM 응답 텍스트"}}
-
-OpenAI Compatible이니까 /v1/chat/completions 엔드포인트에
-{"model": "모델명", "messages": [{"role": "user", "content": "질문"}]} 보내면 됨.
+app.py의 TODO 부분을 채워줘.
+requests.post로 LLM Gateway에 요청을 보내야 해.
+URL, 헤더, body 정보는 TODO 주석에 다 적혀있어.
 ```

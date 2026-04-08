@@ -42,7 +42,7 @@ app.add_middleware(
 # 설정
 # ============================================
 AUTH_SERVER = os.getenv("AUTH_SERVER", "https://12.81.222.45:9050")
-DEV_MODE = os.getenv("DEV_MODE", "false").lower() == "true"  # 로컬 테스트용 SSO 우회
+DEV_MODE = os.getenv("DEV_MODE", "").lower() in ("1", "true", "yes")  # 로컬 테스트용 SSO 우회
 AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "http://a2g.samsungds.net:8090")  # 브라우저가 접근하는 주소
 CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://a2g.samsungds.net:47777")  # 콜백 URL용
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
@@ -340,6 +340,26 @@ async def get_mission(challenge_id: str):
 
 
 # ============================================
+# Tool Use 과제 — 시크릿 키 발급
+# ============================================
+@app.get("/challenges/tool_use/secret")
+async def tool_use_get_secret(request: Request):
+    """Tool Use 과제용 시크릿 키를 발급합니다."""
+    from challenges import generate_tool_use_secret
+
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    if not token and not DEV_MODE:
+        return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
+
+    user = get_user_from_token(token)
+    if not user:
+        return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
+
+    secret = generate_tool_use_secret(user["sub"])
+    return {"secret_key": secret, "message": "이 키를 submit_secret_key 도구로 제출하세요."}
+
+
+# ============================================
 # 정답 제출
 # ============================================
 @app.post("/challenges/{challenge_id}/submit")
@@ -393,6 +413,10 @@ async def submit_answer(challenge_id: str, request: Request):
     user_dept = user.get("dept", "?")
     user_email = user.get("email", "?")
     user_sub = user.get("sub", "?")
+
+    # tool_use 과제: user_sub 주입 (시크릿 키 검증용)
+    if challenge_id == "tool_use":
+        answer["_user_sub"] = user_sub
 
     # 2. 정답 검증 (LLM 설정 시 LLM 채점, 미설정 시 하드코딩 검증)
     challenge = CHALLENGES[challenge_id]
@@ -733,6 +757,7 @@ async def download_challenge(challenge_id: str):
         "sso": "day1/00_sso/challenge",
         "prompt": "day1/03_prompt/challenge",
         "endpoint": "day1/04_endpoint/challenge",
+        "tool_use": "day1/05_tool_use/challenge",
         "structured": "day1/05_structured_output",
         "mcp": "day1/01_mcp",
         "browser": "day1/07_browser_control",

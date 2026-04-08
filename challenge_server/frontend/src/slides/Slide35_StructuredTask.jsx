@@ -1,55 +1,56 @@
 import { motion } from 'framer-motion';
-import { Badge, SlideH2, Divider, Box, BoxTitle, Grid, Card } from './SlideLayout';
-
-const fields = [
-  { name: 'title', desc: '기사 제목', color: '#1d4ed8' },
-  { name: 'category', desc: '기술/경제/정치/사회/스포츠', color: '#059669' },
-  { name: 'sentiment', desc: '긍정/부정/중립', color: '#7c3aed' },
-  { name: 'keywords', desc: '3~5개 배열', color: '#d97706' },
-  { name: 'summary', desc: '2문장 요약', color: '#0891b2' },
-];
+import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 
 export default function Slide35_StructuredTask() {
   return (
     <div className="slide-container">
       <div className="slide-inner">
-        <Badge variant="day1">Structured Output 실습</Badge>
-        <SlideH2>바이브 코딩: 뉴스 기사 분석</SlideH2>
+        <Badge variant="day1">Tool Use 실습</Badge>
+        <SlideH2>바이브 코딩: Function Calling 챗봇</SlideH2>
         <Divider />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Box color="blue" style={{ marginTop: 8, fontSize: '.95em', padding: '20px 28px' }}>
-            <BoxTitle>문제</BoxTitle>
-            아래 뉴스 기사를 LLM의 <strong>Structured Output</strong>(response_format)으로 분석하세요.<br />
-            <em style={{ color: '#64748b' }}>
-              "[속보] 삼성전자, 차세대 AI 반도체 'Mach-1' 양산 개시 -- Mach-1은 기존 대비 전력 효율 2배..."
-            </em>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Box color="blue">
+            <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
+            <a href="/downloads/tool_use" download
+              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
+                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 8 }}>
+              📦 실습 코드 다운로드 (tool_use_code.zip)
+            </a>
+            <code style={{ display: 'block', fontSize: '1em', lineHeight: 1.8 }}>
+              pip install streamlit requests PyJWT<br />
+              streamlit run app.py --server.port 3000
+            </code>
           </Box>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Grid cols={5} gap={12}>
-            {fields.map((f, i) => (
-              <motion.div key={f.name} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.08 }}>
-                <Card borderColor={f.color} style={{ padding: 14 }}>
-                  <h4 style={{ fontSize: '.9em', color: f.color, marginBottom: 4 }}>{f.name}</h4>
-                  <p style={{ fontSize: '.8em', margin: 0 }}>{f.desc}</p>
-                </Card>
-              </motion.div>
-            ))}
-          </Grid>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
-          <Box color="yellow" style={{ marginTop: 8, fontSize: '.88em', padding: '14px 24px' }}>
-            <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/structured/submit</code><br />
-            <code>{`{"token":"SSO토큰", "answer":{"title":"...","category":"기술","sentiment":"긍정","keywords":[...],"summary":"..."}}`}</code>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+          <Box color="yellow" style={{ marginTop: 8 }}>
+            <BoxTitle color="#d97706">2단계: TODO 2개 채우기</BoxTitle>
+            <div style={{ fontSize: '.9em', lineHeight: 1.8 }}>
+              <strong>TODO 1</strong> — <code>tools = []</code> 에 tool 스키마 2개 정의<br />
+              <strong>TODO 2</strong> — <code>execute_tool()</code> 함수 구현 (실제 API 호출)
+            </div>
           </Box>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-          <Box color="green" style={{ marginTop: 8, fontSize: '1em', textAlign: 'center' }}>
-            <strong>성공:</strong> 홍길동님, Structured Output 통과! <strong>5/5 필드 검증 통과</strong>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Box color="purple" style={{ marginTop: 8, fontSize: '.85em', padding: '16px 24px' }}>
+            <strong>제공되는 API 2개</strong>
+            <code style={{ display: 'block', marginTop: 8, lineHeight: 2, background: 'rgba(0,0,0,.03)', padding: '10px 14px', borderRadius: 6 }}>
+              GET /challenges/tool_use/secret?token=SSO토큰  → 시크릿 키 발급<br />
+              POST /challenges/tool_use/submit  → 시크릿 키 제출
+            </code>
+          </Box>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
+          <Box color="green" style={{ marginTop: 8, fontSize: '.95em' }}>
+            <strong>성공 조건:</strong> LLM이 Tool 2개를 연속 호출 →{' '}
+            <code>get_secret_key</code> → <code>submit_secret_key</code> → <strong style={{ color: '#059669' }}>자동 통과!</strong>
+            <div style={{ marginTop: 8, fontSize: '.85em', color: '#64748b' }}>
+              챗봇에 "과제 제출해줘"라고 입력하면 LLM이 알아서 Tool을 호출합니다.
+            </div>
           </Box>
         </motion.div>
       </div>

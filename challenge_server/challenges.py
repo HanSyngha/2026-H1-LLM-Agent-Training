@@ -121,26 +121,25 @@ def validate_prompt(answer: dict) -> dict:
 # 과제 2: LLM Endpoint 연결
 # ============================================
 ENDPOINT_MISSION = {
-    "question": "대한민국의 수도는 어디이며, 그 도시의 영문명을 알려주세요.",
-    "hint": ".env의 LLM_GATEWAY_URL과 LLM_MODEL을 사용하세요",
+    "description": "SSO 로그인 후 사내 LLM Gateway에 연결하여 챗봇을 완성하세요.",
+    "gateway_url": "http://a2g.samsungds.net:8090/v1",
+    "service_id": "test_service",
+    "headers": {
+        "x-service-id": "test_service (미리 세팅됨)",
+        "x-user-id": "<SSO 로그인한 사번>",
+    },
+    "hint": "app.py에 SSO 로그인을 연동하면 챗봇이 동작하고, LLM 응답 시 자동 제출됩니다.",
 }
 
 
 def validate_endpoint(answer: dict) -> dict:
     response_text = str(answer.get("response", "")).strip()
-    has_seoul_kr = "서울" in response_text
-    has_seoul_en = "Seoul" in response_text or "seoul" in response_text
 
-    if has_seoul_kr and has_seoul_en:
-        return {"passed": True, "message": "LLM Gateway 연결 및 응답 확인 완료",
-                "details": [{"passed": True, "message": f"응답: {response_text[:100]}"}]}
-    else:
-        msgs = []
-        if not has_seoul_kr:
-            msgs.append("'서울'이 포함되어야 합니다")
-        if not has_seoul_en:
-            msgs.append("'Seoul'이 포함되어야 합니다")
-        return {"passed": False, "message": ", ".join(msgs), "details": []}
+    if len(response_text) < 2:
+        return {"passed": False, "message": "LLM 응답이 비어있습니다.", "details": []}
+
+    return {"passed": True, "message": "LLM Gateway 연결 및 응답 확인 완료!",
+            "details": [{"passed": True, "message": f"응답: {response_text[:100]}"}]}
 
 
 # ============================================
@@ -437,6 +436,72 @@ def validate_sso_oidc(answer: dict) -> dict:
 
 
 # ============================================
+# 과제 3-1: Tool Use (Function Calling)
+# ============================================
+import secrets as _secrets
+
+# 유저별 시크릿 키 저장소 (서버 메모리)
+_tool_use_secrets = {}
+
+
+def generate_tool_use_secret(user_sub: str) -> str:
+    """유저별 시크릿 키 생성 및 저장"""
+    key = f"KEY-{_secrets.token_hex(6).upper()}"
+    _tool_use_secrets[user_sub] = key
+    return key
+
+
+def get_tool_use_secret(user_sub: str) -> str | None:
+    """유저의 현재 시크릿 키 조회"""
+    return _tool_use_secrets.get(user_sub)
+
+
+TOOL_USE_MISSION = {
+    "description": "LLM에 Tool(Function Calling)을 연결하여, secret key를 받아 제출하세요.",
+    "tools": [
+        {
+            "name": "get_secret_key",
+            "description": "과제용 시크릿 키를 발급받습니다.",
+            "endpoint": "GET /challenges/tool_use/secret",
+            "params": "token (SSO access_token)",
+        },
+        {
+            "name": "submit_secret_key",
+            "description": "발급받은 시크릿 키를 제출합니다.",
+            "endpoint": "POST /challenges/tool_use/submit",
+            "params": '{"token": "SSO토큰", "answer": {"secret_key": "발급받은키"}}',
+        },
+    ],
+    "flow": "LLM이 get_secret_key 호출 → 키 수령 → submit_secret_key 호출 → 통과",
+}
+
+
+def validate_tool_use(answer: dict) -> dict:
+    """시크릿 키 일치 검증 — user_sub는 서버에서 주입"""
+    secret = str(answer.get("secret_key", "")).strip()
+    user_sub = answer.get("_user_sub", "")  # 서버에서 주입
+
+    if not secret:
+        return {"passed": False, "message": "secret_key가 없습니다.", "details": []}
+
+    expected = _tool_use_secrets.get(user_sub)
+    if not expected:
+        return {"passed": False, "message": "먼저 GET /challenges/tool_use/secret 으로 키를 발급받으세요.", "details": []}
+
+    if secret != expected:
+        return {"passed": False, "message": f"시크릿 키가 일치하지 않습니다. (제출: {secret[:10]}...)", "details": []}
+
+    return {
+        "passed": True,
+        "message": "Tool Use 과제 통과! LLM이 두 개의 Tool을 연속 호출했습니다.",
+        "details": [
+            {"step": "get_secret_key", "passed": True, "message": "시크릿 키 발급 성공"},
+            {"step": "submit_secret_key", "passed": True, "message": f"키 일치: {secret}"},
+        ],
+    }
+
+
+# ============================================
 # 과제 정의 레지스트리
 # ============================================
 CHALLENGES = {
@@ -460,6 +525,13 @@ CHALLENGES = {
         "mission": ENDPOINT_MISSION,
         "submit_schema": '{"response": "string (LLM 응답 텍스트)"}',
         "validate": validate_endpoint,
+    },
+    "tool_use": {
+        "name": "Tool Use (Function Calling)",
+        "description": "LLM에 Tool을 연결하고, 시크릿 키를 받아 제출하세요.",
+        "mission": TOOL_USE_MISSION,
+        "submit_schema": '{"secret_key": "발급받은 시크릿 키"}',
+        "validate": validate_tool_use,
     },
     "structured": {
         "name": "Structured Output",

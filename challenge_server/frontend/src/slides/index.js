@@ -140,7 +140,7 @@ const SLIDES = [
   { id: 36, component: Slide32_StructuredExample, title: 'Structured 예시', day: 1 },
   { id: 37, component: Slide33_ToolCallingFlow, title: 'Tool Calling 흐름', day: 1 },
   { id: 38, component: Slide34_ToolChoice, title: 'tool_choice', day: 1 },
-  { id: 39, component: Slide35_StructuredTask, title: 'Structured 과제', day: 1 },
+  { id: 39, component: Slide35_StructuredTask, title: 'Tool Use 과제', day: 1 },
   { id: 40, component: Slide36_StructuredAnswer, title: '예시 답안', day: 1 },
   // MCP
   { id: 41, component: SectionMCP, title: '#6 MCP', day: 1 },
