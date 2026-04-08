@@ -74,9 +74,11 @@ function LabMode() {
 
   useState(() => { getPromptCases().then(setCases); }, []);
 
+  const [submitted, setSubmitted] = useState(false);
+
   const runTest = async () => {
     if (!prompt.trim()) return alert('프롬프트를 입력하세요.');
-    setTesting(true); setResults({}); setFinalMsg(null);
+    setTesting(true); setResults({}); setFinalMsg(null); setSubmitted(false);
     abortRef.current = false;
     let passed = 0;
     for (let i = 0; i < cases.length; i++) {
@@ -92,18 +94,26 @@ function LabMode() {
         setResults(prev => ({ ...prev, [cases[i].id]: { pass: false, error: e.message } }));
       }
     }
-    const total = abortRef.current ? Object.keys(results).length + 1 : cases.length;
-    setFinalMsg(abortRef.current ? `⏹ 중지됨 (${passed}개 통과)` :
-      passed === cases.length ? `🎉 ${passed}/${cases.length} 전체 통과!` : `${passed}/${cases.length} 통과`);
     setTesting(false);
+
+    if (abortRef.current) {
+      setFinalMsg(`⏹ 중지됨 (${passed}개 통과)`);
+    } else if (passed === cases.length) {
+      // 10/10 전체 통과 → 자동 제출
+      setFinalMsg('🎉 전체 통과! 자동 제출 중...');
+      try {
+        const r = await submitPrompt(prompt);
+        setSubmitted(true);
+        setFinalMsg(r.status === 'SUCCESS' ? `🎉 ${r.message}` : `❌ ${r.message}`);
+      } catch {
+        setFinalMsg('🎉 전체 통과! (제출 실패 — 다시 시도해주세요)');
+      }
+    } else {
+      setFinalMsg(`${passed}/${cases.length} 통과`);
+    }
   };
 
   const stopTest = () => { abortRef.current = true; };
-
-  const runSubmit = async () => {
-    const r = await submitPrompt(prompt);
-    setFinalMsg(r.status === 'SUCCESS' ? `🎉 ${r.message}` : `❌ ${r.message}`);
-  };
 
   const allPass = Object.values(results).length === cases.length && Object.values(results).every(r => r.pass);
 
@@ -128,11 +138,6 @@ function LabMode() {
             ⏹ 중지
           </button>
         )}
-        <button onClick={runSubmit} disabled={!allPass}
-          style={{ padding: '8px 20px', borderRadius: 8, background: allPass ? '#059669' : '#e2e8f0',
-            color: allPass ? '#fff' : '#94a3b8', border: 'none', fontWeight: 600, cursor: allPass ? 'pointer' : 'default', fontSize: '.88em' }}>
-          🎯 제출
-        </button>
         {finalMsg && <span style={{ fontSize: '.88em', fontWeight: 600, color: allPass ? '#059669' : '#dc2626' }}>{finalMsg}</span>}
       </div>
 
