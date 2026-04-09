@@ -17,8 +17,7 @@ export default function Slide85_DefenseTask() {
       if (r.pass) {
         try { await postJSON('/challenges/defense/submit', { answer: { prompt } }); } catch {}
       }
-    } catch (e) { setResult({ pass: false, message: e.message }); }
-    setTesting(false);
+    } catch (e) { setResult({ pass: false, message: String(e) }); } finally { setTesting(false); }
   };
 
   return (

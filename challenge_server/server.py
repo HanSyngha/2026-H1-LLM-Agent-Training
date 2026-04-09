@@ -67,9 +67,9 @@ llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
 
 # 채점용 LLM (기존 호환)
 llm_config = {
-    "base_url": os.getenv("LLM_GATEWAY_URL", ""),
+    "base_url": os.getenv("LLM_GATEWAY_URL", "http://a2g.samsungds.net:8090/v1"),
     "api_key": os.getenv("LLM_GATEWAY_API_KEY", ""),
-    "model": os.getenv("LLM_MODEL", "gpt-4o"),
+    "model": os.getenv("LLM_MODEL", "testmodel"),
 }
 
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}

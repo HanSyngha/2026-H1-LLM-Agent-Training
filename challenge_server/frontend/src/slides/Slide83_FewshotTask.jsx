@@ -19,8 +19,7 @@ export default function Slide83_FewshotTask() {
       if (r.pass) {
         try { await postJSON('/challenges/fewshot/submit', { answer: { prompt } }); } catch {}
       }
-    } catch (e) { setResult({ pass: false, message: e.message }); }
-    setTesting(false);
+    } catch (e) { setResult({ pass: false, message: String(e) }); } finally { setTesting(false); }
   };
 
   return (

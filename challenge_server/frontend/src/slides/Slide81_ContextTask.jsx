@@ -44,13 +44,13 @@ export default function Slide81_ContextTask() {
       const r = await postJSON('/challenges/context/test', { compressed });
       setResult(r);
       if (r.pass) {
-        // 자동 제출
         try { await postJSON('/challenges/context/submit', { answer: { compressed } }); } catch {}
       }
     } catch (e) {
-      setResult({ pass: false, message: e.message });
+      setResult({ pass: false, message: String(e) });
+    } finally {
+      setTesting(false);
     }
-    setTesting(false);
   };
 
   return (

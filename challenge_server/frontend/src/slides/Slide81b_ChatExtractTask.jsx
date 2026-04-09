@@ -57,8 +57,7 @@ export default function Slide81b_ChatExtractTask() {
       if (r.pass) {
         try { await postJSON('/challenges/chat_extract/submit', { answer: { summary } }); } catch {}
       }
-    } catch (e) { setResult({ pass: false, message: e.message }); }
-    setTesting(false);
+    } catch (e) { setResult({ pass: false, message: String(e) }); } finally { setTesting(false); }
   };
 
   return (
