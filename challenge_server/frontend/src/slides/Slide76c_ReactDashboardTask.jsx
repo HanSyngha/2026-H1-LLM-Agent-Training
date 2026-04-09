@@ -109,14 +109,37 @@ export default function Slide76c_ReactDashboardTask() {
             </div>
             {result && (
               <div style={{
-                marginTop: 8, padding: '12px 16px', borderRadius: 8,
+                marginTop: 8, padding: '14px 18px', borderRadius: 8,
                 background: result.score >= 70 ? '#f0fdf4' : result.score >= 40 ? '#fefce8' : '#fef2f2',
                 border: `1px solid ${result.score >= 70 ? '#86efac' : result.score >= 40 ? '#fde68a' : '#fca5a5'}`,
               }}>
-                <div style={{ fontSize: '1.5em', fontWeight: 900, color: result.score >= 70 ? '#059669' : result.score >= 40 ? '#d97706' : '#dc2626' }}>
-                  {result.score}점
+                <div style={{ fontSize: '2em', fontWeight: 900, color: result.score >= 70 ? '#059669' : result.score >= 40 ? '#d97706' : '#dc2626' }}>
+                  {result.score}<span style={{ fontSize: '.4em', fontWeight: 600 }}>/100</span>
                 </div>
-                <div style={{ fontSize: '.88em', color: '#475569', marginTop: 4 }}>{result.feedback || result.message || result.error}</div>
+                {result.breakdown && Object.keys(result.breakdown).length > 0 && (
+                  <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                    {[
+                      { key: 'usage', label: 'Usage', icon: '📊' },
+                      { key: 'users', label: 'Users', icon: '👥' },
+                      { key: 'tools', label: 'Tools', icon: '🔧' },
+                      { key: 'models_costs', label: 'Models+Cost', icon: '💰' },
+                      { key: 'design', label: 'Design', icon: '🎨' },
+                    ].map(({ key, label, icon }) => {
+                      const v = result.breakdown[key] || 0;
+                      const bg = v >= 15 ? '#dcfce7' : v >= 10 ? '#fefce8' : '#fef2f2';
+                      const color = v >= 15 ? '#166534' : v >= 10 ? '#92400e' : '#991b1b';
+                      return (
+                        <div key={key} style={{ padding: '4px 10px', borderRadius: 8, background: bg,
+                          fontSize: '.78em', fontWeight: 700, color }}>
+                          {icon} {label}: {v}/20
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <div style={{ fontSize: '.85em', color: '#475569', marginTop: 8, lineHeight: 1.6 }}>
+                  {result.feedback || result.message || result.error}
+                </div>
               </div>
             )}
           </Box>

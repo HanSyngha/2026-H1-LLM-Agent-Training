@@ -1192,18 +1192,26 @@ async def dashboard_submit(request: Request):
     prompt = """이 이미지는 LLM 서비스 사용 현황 대시보드입니다.
 
 제공된 API 5개:
-1. /api/usage — 일별 API 호출 수, 토큰 사용량
-2. /api/users — 주간 활성 사용자 수, 신규 사용자 수
-3. /api/tools — Tool별 호출 횟수, 성공률
-4. /api/models — 모델별 요청 수, 평균 응답시간, 비용
-5. /api/costs — 월별 비용 vs 예산
+1. usage — 일별 API 호출 수, 토큰 사용량
+2. users — 주간 활성 사용자 수, 신규 사용자 수
+3. tools — Tool별 호출 횟수, 성공률
+4. models — 모델별 요청 수, 평균 응답시간, 비용
+5. costs — 월별 비용 vs 예산
 
-채점 기준 (100점):
-- API 반영도 (50점): 위 5개 API 데이터가 모두 대시보드에 시각화되어 있는가? 빠진 API가 있으면 감점 (-10점/개)
-- 심미적 완성도 (50점): 레이아웃이 정돈되어 있는가? 색상이 조화로운가? 차트가 적절한 종류인가? 전문적인 느낌인가?
+상품이 걸려있으므로 매우 엄격하게 채점하세요. 관대함은 금물입니다.
 
-엄격하게 채점하세요. 반드시 이 JSON 형식으로만 응답:
-{"score": 1~100 숫자, "feedback": "한줄 피드백 (어떤 API가 빠졌는지, 디자인 장단점)"}"""
+5개 항목별로 채점하세요 (각 0~20점, 합계 100점):
+
+1. usage (0~20): 일별 API 호출수/토큰 데이터가 적절한 차트(라인/바)로 시각화되어 있는가? 단순 숫자 나열이면 5점 이하. 트렌드가 보이는 차트면 15점 이상.
+2. users (0~20): 사용자 수 추이와 신규 사용자가 구분되어 시각화되어 있는가? 없으면 0점.
+3. tools (0~20): Tool별 호출 횟수와 성공률이 비교 가능하게 표시되어 있는가? 테이블만이면 10점, 차트면 15점 이상.
+4. models_costs (0~20): 모델 성능(지연,비용)과 월별 비용 vs 예산이 모두 있는가? 하나라도 빠지면 10점 이하.
+5. design (0~20): 프로페셔널한 레이아웃인가? 색상 조화, 여백, 타이포그래피, 반응형. 아마추어 느낌이면 5점 이하. 상용 수준이면 18점 이상.
+
+감점 기준: 데이터가 하드코딩(API 미사용)으로 보이면 해당 항목 -5점. 차트 없이 텍스트만이면 -10점.
+
+반드시 이 JSON 형식으로만 응답:
+{"usage": 점수, "users": 점수, "tools": 점수, "models_costs": 점수, "design": 점수, "total": 합계, "feedback": "구체적 피드백 (잘한점, 부족한점, 개선 제안)"}"""
 
     try:
         # base64 이미지가 data:image/...;base64, 로 시작하면 그대로, 아니면 prefix 추가
@@ -1232,14 +1240,22 @@ async def dashboard_submit(request: Request):
 
         # JSON 파싱
         import re
-        m = re.search(r'\{.*?\}', content, re.DOTALL)
+        m = re.search(r'\{[^{}]*\}', content, re.DOTALL)
         if m:
             result = json.loads(m.group())
-            score = int(result.get("score", 0))
+            score = int(result.get("total", 0))
             feedback = result.get("feedback", "")
+            breakdown = {
+                "usage": int(result.get("usage", 0)),
+                "users": int(result.get("users", 0)),
+                "tools": int(result.get("tools", 0)),
+                "models_costs": int(result.get("models_costs", 0)),
+                "design": int(result.get("design", 0)),
+            }
         else:
             score = 0
-            feedback = content[:100]
+            feedback = content[:200]
+            breakdown = {}
 
         # 대시보드에 점수 기록
         user_sub = user.get("sub", "?")
@@ -1268,7 +1284,8 @@ async def dashboard_submit(request: Request):
             "status": "SUCCESS",
             "score": score,
             "feedback": feedback,
-            "message": f"{user_name}님 — {score}점! {feedback}",
+            "breakdown": breakdown,
+            "message": f"{user_name}님 — {score}점!",
         }
 
     except Exception as e:
