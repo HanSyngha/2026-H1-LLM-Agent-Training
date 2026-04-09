@@ -653,6 +653,17 @@ CHALLENGES = {
         "submit_schema": '{"q1": "답변1", "q2": "답변2", "q3": "답변3"}',
         "validate": validate_index_explore,
     },
+    "agent_v2": {
+        "name": "Agent 설계 (바이브 코딩)",
+        "description": "바이브 코딩으로 에이전트를 처음부터 설계하세요.",
+        "mission": {"description": "5개 API 작업을 순서대로 실행, 실패 시 재시도, completion_code 획득"},
+        "submit_schema": '{"completion_code": "수집 데이터를 -로 연결한 문자열"}',
+        "validate": lambda a: {
+            "passed": bool(a.get("completion_code", "").count("-") >= 4),
+            "message": "Agent 설계 과제 통과!" if a.get("completion_code", "").count("-") >= 4 else "completion_code가 올바르지 않습니다.",
+            "details": [],
+        },
+    },
     "context": {
         "name": "Context Blindness (압축 프롬프트)",
         "description": "5000자 회의록을 500자로 압축하여 AI가 다음 행동을 예측하게 하세요.",

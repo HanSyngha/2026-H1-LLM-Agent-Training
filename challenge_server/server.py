@@ -888,6 +888,140 @@ async def agent_loop_end_api(request: Request):
 
 
 # ============================================
+# Day2 과제: Agent 설계 (바이브 코딩)
+# ============================================
+import random as _random_mod
+
+_agent_v2_sessions = {}  # user_sub -> session state
+
+AGENT_V2_TASKS = [
+    {"id": "auth", "name": "인증 토큰 검증", "data_key": "auth_code", "fail_rate": 0},
+    {"id": "fetch_users", "name": "사용자 목록 조회", "data_key": "user_count", "fail_rate": 0.3},
+    {"id": "fetch_orders", "name": "주문 데이터 조회", "data_key": "order_total", "fail_rate": 0.3},
+    {"id": "analyze", "name": "데이터 분석 실행", "data_key": "analysis_score", "fail_rate": 0.2},
+    {"id": "report", "name": "보고서 생성", "data_key": "report_id", "fail_rate": 0.1},
+]
+
+AGENT_V2_DATA = {
+    "auth_code": "AUTH-OK-2026",
+    "user_count": 1247,
+    "order_total": 89340000,
+    "analysis_score": 94.7,
+    "report_id": "RPT-2026-Q2-FINAL",
+}
+
+
+@app.get("/challenges/agent_v2/start")
+async def agent_v2_start(request: Request):
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    user = await get_user_from_token(token or "no-token")
+    if not user:
+        return JSONResponse({"error": "token 필요"}, status_code=401)
+
+    sub = user["sub"]
+    _agent_v2_sessions[sub] = {"completed": [], "collected_data": {}, "attempts": {}}
+
+    return {
+        "message": "에이전트 과제가 시작되었습니다.",
+        "tasks": [{"id": t["id"], "name": t["name"]} for t in AGENT_V2_TASKS],
+        "instructions": "5개 작업을 순서대로 실행하세요. 일부 작업은 실패할 수 있으니 재시도하세요. 모든 작업 완료 후 /end를 호출하세요.",
+        "warning": "각 작업의 data를 수집하여 /end에 전달해야 합니다.",
+    }
+
+
+@app.get("/challenges/agent_v2/task/{task_id}")
+async def agent_v2_task(task_id: str, request: Request):
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    user = await get_user_from_token(token or "no-token")
+    if not user:
+        return JSONResponse({"error": "token 필요"}, status_code=401)
+
+    sub = user["sub"]
+    session = _agent_v2_sessions.get(sub)
+    if not session:
+        return {"error": True, "message": "먼저 /start를 호출하세요."}
+
+    task = next((t for t in AGENT_V2_TASKS if t["id"] == task_id), None)
+    if not task:
+        return {"error": True, "message": f"알 수 없는 작업: {task_id}"}
+
+    # 선행 작업 체크 (순서대로)
+    task_idx = next(i for i, t in enumerate(AGENT_V2_TASKS) if t["id"] == task_id)
+    for i in range(task_idx):
+        if AGENT_V2_TASKS[i]["id"] not in session["completed"]:
+            return {
+                "error": True,
+                "message": f"선행 작업 '{AGENT_V2_TASKS[i]['name']}'을 먼저 완료하세요.",
+            }
+
+    # 이미 완료한 작업
+    if task_id in session["completed"]:
+        return {
+            "success": True, "already_completed": True,
+            "message": f"'{task['name']}' 이미 완료됨.",
+            "data": {task["data_key"]: AGENT_V2_DATA[task["data_key"]]},
+        }
+
+    # 시도 횟수 기록
+    session["attempts"][task_id] = session["attempts"].get(task_id, 0) + 1
+
+    # 랜덤 실패
+    if _random_mod.random() < task["fail_rate"]:
+        return {
+            "error": True,
+            "message": f"'{task['name']}' 실행 실패 (서버 일시 오류). 재시도하세요.",
+            "retry": True,
+            "attempt": session["attempts"][task_id],
+        }
+
+    # 성공
+    session["completed"].append(task_id)
+    data_value = AGENT_V2_DATA[task["data_key"]]
+    session["collected_data"][task["data_key"]] = data_value
+
+    remaining = [t["name"] for t in AGENT_V2_TASKS if t["id"] not in session["completed"]]
+
+    return {
+        "success": True,
+        "task": task_id,
+        "name": task["name"],
+        "data": {task["data_key"]: data_value},
+        "progress": f"{len(session['completed'])}/{len(AGENT_V2_TASKS)}",
+        "remaining": remaining if remaining else "모든 작업 완료! /end를 호출하세요.",
+        "message": f"'{task['name']}' 완료. {'다음: ' + remaining[0] if remaining else '/end를 호출하세요.'}",
+    }
+
+
+@app.get("/challenges/agent_v2/end")
+async def agent_v2_end(request: Request):
+    token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
+    user = await get_user_from_token(token or "no-token")
+    if not user:
+        return JSONResponse({"error": "token 필요"}, status_code=401)
+
+    sub = user["sub"]
+    session = _agent_v2_sessions.get(sub)
+    if not session:
+        return {"error": True, "message": "먼저 /start를 호출하세요."}
+
+    if len(session["completed"]) < len(AGENT_V2_TASKS):
+        done = len(session["completed"])
+        total = len(AGENT_V2_TASKS)
+        return {"error": True, "message": f"아직 {total - done}개 작업이 남았습니다. ({done}/{total})"}
+
+    # 성공
+    code = "-".join(str(v) for v in session["collected_data"].values())
+    _agent_v2_sessions.pop(sub, None)
+    return {
+        "success": True,
+        "message": "모든 작업 완료!",
+        "completion_code": code,
+        "summary": session["collected_data"],
+        "total_attempts": session["attempts"],
+    }
+
+
+# ============================================
 # 브라우저 과제: 비밀 키 API (JS에서 fetch)
 # ============================================
 @app.get("/api/browser-secret")
@@ -1212,6 +1346,7 @@ async def download_challenge(challenge_id: str):
         "browser": "day1/07_browser_control",
         "agent_loop": "day2/01_agent_loop/challenge",
         "index_explore": "day2/02_index_explore/challenge",
+        "agent_v2": "day2/03_agent_v2/challenge",
     }
 
     target = dirs.get(challenge_id)

@@ -68,6 +68,7 @@ import Slide82_FewshotTheory from './Slide82_FewshotTheory';
 import Slide83_FewshotTask from './Slide83_FewshotTask';
 import Slide84_DefenseTheory from './Slide84_DefenseTheory';
 import Slide85_DefenseTask from './Slide85_DefenseTask';
+import Slide62_AgentV2Task from './Slide62_AgentV2Task';
 import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFramework from './SectionFramework';
 import Slide51_ADK from './Slide51_ADK';
@@ -191,6 +192,7 @@ const SLIDES = [
   { id: 67, component: Slide58_MultiIteration, title: 'Multi-iteration', day: 2 },
   { id: 68, component: Slide59_Streaming, title: 'Streaming', day: 2 },
   { id: 69, component: Slide60_AgentTask, title: 'Agent Loop 과제', day: 2 },
+  { id: 0, component: Slide62_AgentV2Task, title: 'Agent 설계 (바이브코딩)', day: 2 },
   { id: 71, component: SectionBash, title: '#11 bash Agent', day: 2 },
   { id: 72, component: Slide62_BashTool, title: 'subprocess Tool', day: 2 },
   { id: 73, component: Slide63_BashAgent, title: 'CLI Agent', day: 2 },
