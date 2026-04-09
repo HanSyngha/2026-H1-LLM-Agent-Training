@@ -997,10 +997,11 @@ async def agent_v2_start(request: Request):
     _agent_v2_sessions[sub] = {"completed": [], "collected_data": {}, "attempts": {}}
 
     return {
-        "message": "에이전트 과제가 시작되었습니다.",
-        "tasks": [{"id": t["id"], "name": t["name"]} for t in AGENT_V2_TASKS],
-        "instructions": "5개 작업을 순서대로 실행하세요. 일부 작업은 실패할 수 있으니 재시도하세요. 모든 작업 완료 후 /end를 호출하세요.",
-        "warning": "각 작업의 data를 수집하여 /end에 전달해야 합니다.",
+        "message": "에이전트 과제가 시작되었습니다. 5개 작업을 순서대로 실행하세요.",
+        "first_task": AGENT_V2_TASKS[0]["id"],
+        "first_task_name": AGENT_V2_TASKS[0]["name"],
+        "total_tasks": len(AGENT_V2_TASKS),
+        "instructions": "첫 번째 작업부터 시작하세요. 각 작업 완료 시 다음 작업이 안내됩니다. 실패 시 재시도하세요.",
     }
 
 

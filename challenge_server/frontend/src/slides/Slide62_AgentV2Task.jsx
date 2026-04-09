@@ -92,36 +92,50 @@ export default function Slide62_AgentV2Task() {
 
         <AnswerButton answerId="agent_v2">
           <div>
-            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안 코드</h3>
+            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안 코드 (LLM + Agentic Loop)</h3>
             <CodeBlock lang="python">{`import requests, json
 
 SERVER = "http://a2g.samsungds.net:47777"
-TOKEN = "YOUR_TOKEN"  # SSO 토큰
+LLM = "http://a2g.samsungds.net:8090/v1"
+TOKEN = "YOUR_TOKEN"
+USER_ID = "YOUR_ID"
+# tools, execute_tool, SYSTEM_PROMPT는 solve.py에 제공됨
 
-# 1. 시작
-start = requests.get(f"{SERVER}/challenges/agent_v2/start", params={"token": TOKEN}).json()
-tasks = [t["id"] for t in start["tasks"]]
-print(f"작업: {tasks}")
+def call_llm(messages):
+    r = requests.post(f"{LLM}/chat/completions",
+        headers={"Content-Type":"application/json",
+                 "x-service-id":"test-service","x-user-id":USER_ID},
+        json={"model":"testmodel","messages":messages,
+              "tools":tools,"max_tokens":1024}, timeout=120)
+    return r.json()
 
-# 2. 순서대로 실행 (실패 시 재시도)
-for task_id in tasks:
-    for attempt in range(10):
-        r = requests.get(f"{SERVER}/challenges/agent_v2/task/{task_id}", params={"token": TOKEN}).json()
-        if r.get("success"):
-            print(f"✅ {task_id}: {r.get('data',{})}")
-            break
-        elif r.get("retry"):
-            print(f"⚠️ {task_id}: 실패, 재시도 {attempt+1}")
-        else:
-            print(f"❌ {task_id}: {r.get('message','')}")
-            break
+messages = [{"role":"system","content":SYSTEM_PROMPT},
+            {"role":"user","content":"미로를 풀어주세요."}]
+completion_code = None
 
-# 3. 완료
-end = requests.get(f"{SERVER}/challenges/agent_v2/end", params={"token": TOKEN}).json()
-print(f"\\ncompletion_code: {end.get('completion_code','FAIL')}")`}</CodeBlock>
-            <p style={{ fontSize: '.85em', color: '#64748b', marginTop: 8 }}>
-              위는 직접 로직을 짠 버전입니다. LLM + Tool Calling으로 푸는 건 더 어렵습니다!
-            </p>
+for i in range(25):
+    result = call_llm(messages)
+    msg = result["choices"][0]["message"]
+
+    if not msg.get("tool_calls"):
+        if not completion_code:
+            messages.append(msg)
+            messages.append({"role":"user",
+                "content":"미완료입니다. tool을 호출하세요."})
+            continue
+        break
+
+    messages.append(msg)
+    for tc in msg["tool_calls"]:
+        fn = tc["function"]["name"]
+        args = json.loads(tc["function"]["arguments"] or "{}")
+        r = execute_tool(fn, args)
+        if r.get("completion_code"):
+            completion_code = r["completion_code"]
+        messages.append({"role":"tool","tool_call_id":tc["id"],
+            "content":json.dumps(r, ensure_ascii=False)})
+
+print(f"completion_code: {completion_code}")`}</CodeBlock>
           </div>
         </AnswerButton>
       </div>
