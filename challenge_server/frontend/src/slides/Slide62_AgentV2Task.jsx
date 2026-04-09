@@ -92,17 +92,36 @@ export default function Slide62_AgentV2Task() {
 
         <AnswerButton answerId="agent_v2">
           <div>
-            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 바이브 코딩 프롬프트</h3>
-            <CodeBlock lang="prompt">{`solve.py를 완성해줘.
+            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안 코드</h3>
+            <CodeBlock lang="python">{`import requests, json
 
-이 스크립트는 API 미로를 푸는 에이전트야.
-- GET /challenges/agent_v2/start?token=TOKEN 으로 시작
-- 5개 작업을 순서대로 GET /challenges/agent_v2/task/{id}?token=TOKEN 으로 실행
-- 작업이 랜덤으로 실패할 수 있어 → 성공할 때까지 재시도
-- 5개 다 끝나면 GET /challenges/agent_v2/end?token=TOKEN 호출
-- completion_code를 출력해줘
+SERVER = "http://a2g.samsungds.net:47777"
+TOKEN = "YOUR_TOKEN"  # SSO 토큰
 
-requests 라이브러리 사용하고, 실패 시 최대 5회 재시도해.`}</CodeBlock>
+# 1. 시작
+start = requests.get(f"{SERVER}/challenges/agent_v2/start", params={"token": TOKEN}).json()
+tasks = [t["id"] for t in start["tasks"]]
+print(f"작업: {tasks}")
+
+# 2. 순서대로 실행 (실패 시 재시도)
+for task_id in tasks:
+    for attempt in range(10):
+        r = requests.get(f"{SERVER}/challenges/agent_v2/task/{task_id}", params={"token": TOKEN}).json()
+        if r.get("success"):
+            print(f"✅ {task_id}: {r.get('data',{})}")
+            break
+        elif r.get("retry"):
+            print(f"⚠️ {task_id}: 실패, 재시도 {attempt+1}")
+        else:
+            print(f"❌ {task_id}: {r.get('message','')}")
+            break
+
+# 3. 완료
+end = requests.get(f"{SERVER}/challenges/agent_v2/end", params={"token": TOKEN}).json()
+print(f"\\ncompletion_code: {end.get('completion_code','FAIL')}")`}</CodeBlock>
+            <p style={{ fontSize: '.85em', color: '#64748b', marginTop: 8 }}>
+              위는 직접 로직을 짠 버전입니다. LLM + Tool Calling으로 푸는 건 더 어렵습니다!
+            </p>
           </div>
         </AnswerButton>
       </div>
