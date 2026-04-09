@@ -388,6 +388,8 @@ async def submit_answer(challenge_id: str, request: Request):
         "answer": { ... }
     }
 
+    """
+
     1. 토큰을 인증 서버에 보내서 사용자 확인
     2. 정답 스키마 및 내용 검증
     3. 통과 시 성공자 등록
@@ -741,7 +743,7 @@ async def prompt_test(request: Request):
 # ============================================
 # 프롬프트 과제 — 전체 제출 (10개 모두 실행)
 # ============================================
-@app.post("/challenges/prompt/submit")
+@app.post("/challenges/prompt/full-submit")
 async def prompt_submit(request: Request):
     """수강생 프롬프트로 10개 전체 테스트. 모두 통과 시 성공 등록."""
     body = await request.json()

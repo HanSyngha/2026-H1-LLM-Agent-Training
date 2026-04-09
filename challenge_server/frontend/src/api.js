@@ -31,7 +31,7 @@ export async function testPrompt(prompt, caseId) {
 }
 
 export async function submitPrompt(prompt) {
-  return postJSON('/challenges/prompt/submit', { prompt });
+  return postJSON('/challenges/prompt/full-submit', { prompt });
 }
 
 export async function submitChallenge(challengeId, answer) {
