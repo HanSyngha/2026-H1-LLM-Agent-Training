@@ -30,32 +30,41 @@ function relativeTime(ts) {
 
 // 순위에서 제외할 과제 (연습/워밍업용)
 const EXCLUDED_FROM_RANKING = ['sso_oidc', 'prompt'];
+// 점수제 과제 (VL 채점 — score 필드 사용)
+const SCORE_BASED = ['react_dashboard'];
 
 function buildLeaderboard(challenges) {
-  const ids = Object.keys(challenges).filter(id => !EXCLUDED_FROM_RANKING.includes(id));
-  const userMap = {}; // sub -> { name, dept, count, latestTimestamp }
+  const rankedIds = Object.keys(challenges).filter(id => !EXCLUDED_FROM_RANKING.includes(id) && !SCORE_BASED.includes(id));
+  const userMap = {}; // sub -> { name, dept, totalScore }
 
-  ids.forEach((id) => {
+  // 1. 일반 과제: 완료 순서 기반 점수 (1위=20점, 꼴찌=1점, 균등 분배)
+  rankedIds.forEach((id) => {
     const comps = challenges[id].completions || [];
-    comps.forEach((c) => {
+    const n = comps.length;
+    comps.forEach((c, rank) => {
       if (!userMap[c.sub]) {
-        userMap[c.sub] = { sub: c.sub, name: c.name, dept: c.dept, count: 0, latestTimestamp: c.timestamp };
+        userMap[c.sub] = { sub: c.sub, name: c.name, dept: c.dept, totalScore: 0, challenges: 0 };
       }
-      userMap[c.sub].count += 1;
-      // Track the latest completion timestamp (= the time they finished their last challenge)
-      if (new Date(c.timestamp) > new Date(userMap[c.sub].latestTimestamp)) {
-        userMap[c.sub].latestTimestamp = c.timestamp;
-      }
+      // 점수: 1위=20, 꼴찌=1, 균등 분배
+      const score = n <= 1 ? 20 : Math.round(20 - (rank * 19) / (n - 1));
+      userMap[c.sub].totalScore += score;
+      userMap[c.sub].challenges += 1;
     });
   });
 
-  const sorted = Object.values(userMap).sort((a, b) => {
-    if (b.count !== a.count) return b.count - a.count;
-    // Same count → earlier latest-completion wins
-    return new Date(a.latestTimestamp) - new Date(b.latestTimestamp);
+  // 2. 점수제 과제: score 필드 그대로 합산
+  SCORE_BASED.forEach((id) => {
+    const comps = challenges[id]?.completions || [];
+    comps.forEach((c) => {
+      if (!userMap[c.sub]) {
+        userMap[c.sub] = { sub: c.sub, name: c.name, dept: c.dept, totalScore: 0, challenges: 0 };
+      }
+      userMap[c.sub].totalScore += (c.score || 0);
+      userMap[c.sub].challenges += 1;
+    });
   });
 
-  return sorted;
+  return Object.values(userMap).sort((a, b) => b.totalScore - a.totalScore);
 }
 
 /* ── styles (CSS-in-JS for self-contained component) ── */
@@ -528,7 +537,7 @@ export default function Dashboard() {
         </motion.div>
         <motion.div style={S.statCard} whileHover={{ y: -2 }}>
           <div style={{ ...S.statNum, color: '#d97706', fontSize: '1.4rem' }}>
-            {champion ? `👑 ${champion.name}` : '—'}
+            {champion ? `👑 ${champion.name} (${champion.totalScore}점)` : '—'}
           </div>
           <div style={S.statLabel}>현재 1위</div>
         </motion.div>
@@ -556,7 +565,7 @@ export default function Dashboard() {
                     <div style={S.podiumName}>{u.name}</div>
                     <div style={S.podiumDept}>{u.dept}</div>
                     <div style={S.podiumCount(i)}>
-                      {u.count}개 완료
+                      {u.totalScore}점
                     </div>
                   </motion.div>
                 ))}
@@ -579,7 +588,7 @@ export default function Dashboard() {
                   background: '#f1f5f9',
                   color: '#475569',
                 }}>
-                  {u.count}개 완료
+                  {u.totalScore}점
                 </span>
               </div>
             ))}

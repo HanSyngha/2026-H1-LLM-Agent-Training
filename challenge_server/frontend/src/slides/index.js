@@ -72,6 +72,7 @@ import Slide85_DefenseTask from './Slide85_DefenseTask';
 import Slide62_AgentV2Task from './Slide62_AgentV2Task';
 import Slide63b_BashToolTask from './Slide63b_BashToolTask';
 import Slide76b_ReactSetup from './Slide76b_ReactSetup';
+import Slide76c_ReactDashboardTask from './Slide76c_ReactDashboardTask';
 import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFramework from './SectionFramework';
 import Slide51_ADK from './Slide51_ADK';
@@ -215,6 +216,7 @@ const SLIDES = [
   { id: 84, component: Slide72_RAG, title: 'RAG 파이프라인', day: 2 },
   { id: 88, component: SectionWrapup, title: '마무리', day: 2 },
   { id: 0, component: Slide76b_ReactSetup, title: 'React 가이드', day: 2 },
+  { id: 0, component: Slide76c_ReactDashboardTask, title: 'React 대시보드 과제', day: 2 },
   { id: 89, component: Slide75_Summary, title: '학습 정리', day: 2 },
   { id: 90, component: Slide76_Message, title: '핵심 메시지', day: 2 },
   { id: 91, component: Slide77_ThankYou, title: '감사합니다', day: 2 },

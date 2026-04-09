@@ -1100,6 +1100,174 @@ async def agent_v2_end(request: Request):
 
 
 # ============================================
+# VL 모델 설정 (대시보드 채점용)
+# ============================================
+vl_config = {
+    "base_url": os.getenv("VL_GATEWAY_URL", ""),
+    "api_key": os.getenv("VL_GATEWAY_API_KEY", ""),
+    "model": os.getenv("VL_MODEL", ""),
+}
+
+
+# ============================================
+# React 대시보드 과제 — 가상 API
+# ============================================
+@app.get("/dashboard-challenge/api/usage")
+async def dashboard_api_usage():
+    """일별 API 사용량"""
+    import random
+    random.seed(2026)
+    return {"data": [{"date": f"2026-03-{d:02d}", "calls": random.randint(800, 3000),
+                       "tokens": random.randint(50000, 200000)} for d in range(1, 32)]}
+
+@app.get("/dashboard-challenge/api/users")
+async def dashboard_api_users():
+    """사용자 수 추이"""
+    import random
+    random.seed(42)
+    base = 50
+    return {"data": [{"week": f"W{w}", "active_users": min(base + w * 8 + random.randint(-5, 15), 200),
+                       "new_users": random.randint(3, 20)} for w in range(1, 13)]}
+
+@app.get("/dashboard-challenge/api/tools")
+async def dashboard_api_tools():
+    """Tool 사용 횟수"""
+    return {"data": [
+        {"tool": "get_weather", "calls": 4520, "success_rate": 98.2},
+        {"tool": "search_web", "calls": 3890, "success_rate": 95.7},
+        {"tool": "calculate", "calls": 2150, "success_rate": 99.8},
+        {"tool": "read_file", "calls": 1870, "success_rate": 97.1},
+        {"tool": "execute_code", "calls": 1340, "success_rate": 88.5},
+        {"tool": "send_email", "calls": 890, "success_rate": 99.1},
+    ]}
+
+@app.get("/dashboard-challenge/api/models")
+async def dashboard_api_models():
+    """모델별 사용량"""
+    return {"data": [
+        {"model": "gpt-oss-20b", "requests": 12500, "avg_latency_ms": 1200, "cost_per_1k": 0.8},
+        {"model": "qwen3.5-9b", "requests": 8700, "avg_latency_ms": 450, "cost_per_1k": 0.3},
+        {"model": "gemma-3n-e4b", "requests": 5200, "avg_latency_ms": 280, "cost_per_1k": 0.15},
+    ]}
+
+@app.get("/dashboard-challenge/api/costs")
+async def dashboard_api_costs():
+    """월별 비용 추이"""
+    return {"data": [
+        {"month": "2025-10", "cost": 12500, "budget": 20000},
+        {"month": "2025-11", "cost": 15800, "budget": 20000},
+        {"month": "2025-12", "cost": 18200, "budget": 20000},
+        {"month": "2026-01", "cost": 22100, "budget": 25000},
+        {"month": "2026-02", "cost": 28500, "budget": 30000},
+        {"month": "2026-03", "cost": 31200, "budget": 35000},
+    ]}
+
+
+@app.post("/dashboard-challenge/submit")
+async def dashboard_submit(request: Request):
+    """대시보드 스크린샷 제출 — VL 모델로 채점"""
+    body = await request.json()
+    token = body.get("token", "") or request.cookies.get("challenge_token", "")
+    image_data = body.get("image", "")  # base64 image
+
+    if not image_data:
+        return JSONResponse({"error": "이미지가 없습니다."}, status_code=400)
+
+    user = await get_user_from_token(token or "no-token")
+    if not user:
+        return JSONResponse({"error": "로그인이 필요합니다."}, status_code=401)
+
+    if not vl_config.get("base_url"):
+        return JSONResponse({"error": "VL 모델이 설정되지 않았습니다. /settings에서 VL 모델을 등록하세요."}, status_code=400)
+
+    # VL 모델로 채점
+    prompt = """이 이미지는 LLM 서비스 사용 현황 대시보드입니다.
+
+제공된 API 5개:
+1. /api/usage — 일별 API 호출 수, 토큰 사용량
+2. /api/users — 주간 활성 사용자 수, 신규 사용자 수
+3. /api/tools — Tool별 호출 횟수, 성공률
+4. /api/models — 모델별 요청 수, 평균 응답시간, 비용
+5. /api/costs — 월별 비용 vs 예산
+
+채점 기준 (100점):
+- API 반영도 (50점): 위 5개 API 데이터가 모두 대시보드에 시각화되어 있는가? 빠진 API가 있으면 감점 (-10점/개)
+- 심미적 완성도 (50점): 레이아웃이 정돈되어 있는가? 색상이 조화로운가? 차트가 적절한 종류인가? 전문적인 느낌인가?
+
+엄격하게 채점하세요. 반드시 이 JSON 형식으로만 응답:
+{"score": 1~100 숫자, "feedback": "한줄 피드백 (어떤 API가 빠졌는지, 디자인 장단점)"}"""
+
+    try:
+        # base64 이미지가 data:image/...;base64, 로 시작하면 그대로, 아니면 prefix 추가
+        img_url = image_data if image_data.startswith("data:") else f"data:image/png;base64,{image_data}"
+
+        resp = await async_post(
+            f"{vl_config['base_url']}/chat/completions",
+            headers={"Authorization": f"Bearer {vl_config.get('api_key', '')}", "Content-Type": "application/json"},
+            json={
+                "model": vl_config["model"],
+                "messages": [{"role": "user", "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": img_url}},
+                ]}],
+                "temperature": 0,
+                "max_tokens": 200,
+            },
+            verify=False, timeout=180, proxies={"http": None, "https": None},
+        )
+
+        if resp.status_code != 200:
+            return {"status": "FAIL", "message": f"VL 모델 오류: {resp.status_code}", "score": 0}
+
+        msg_data = resp.json()["choices"][0]["message"]
+        content = (msg_data.get("content") or msg_data.get("reasoning_content") or msg_data.get("reasoning") or "").strip()
+
+        # JSON 파싱
+        import re
+        m = re.search(r'\{.*?\}', content, re.DOTALL)
+        if m:
+            result = json.loads(m.group())
+            score = int(result.get("score", 0))
+            feedback = result.get("feedback", "")
+        else:
+            score = 0
+            feedback = content[:100]
+
+        # 대시보드에 점수 기록
+        user_sub = user.get("sub", "?")
+        user_name = user.get("name", "?")
+        user_dept = user.get("dept", "?")
+
+        # 기존 기록이 있으면 점수 업데이트 (최고점 유지)
+        existing = next((c for c in completions.get("react_dashboard", []) if c["sub"] == user_sub), None)
+        if existing:
+            if score > existing.get("score", 0):
+                existing["score"] = score
+                existing["feedback"] = feedback
+                existing["timestamp"] = datetime.now().isoformat()
+                _save_state()
+        else:
+            if "react_dashboard" not in completions:
+                completions["react_dashboard"] = []
+            completions["react_dashboard"].append({
+                "sub": user_sub, "name": user_name, "dept": user_dept,
+                "email": user.get("email", ""), "score": score,
+                "feedback": feedback, "timestamp": datetime.now().isoformat(),
+            })
+            _save_state()
+
+        return {
+            "status": "SUCCESS",
+            "score": score,
+            "feedback": feedback,
+            "message": f"{user_name}님 — {score}점! {feedback}",
+        }
+
+    except Exception as e:
+        return {"status": "FAIL", "message": str(e), "score": 0}
+
+
+# ============================================
 # 브라우저 과제: 비밀 키 API (JS에서 fetch)
 # ============================================
 @app.get("/api/browser-secret")
@@ -1348,6 +1516,18 @@ async def prompt_submit(request: Request):
 # ============================================
 # LLM Endpoint 관리 API
 # ============================================
+@app.get("/settings/vl")
+async def get_vl_settings():
+    return {"base_url": vl_config["base_url"], "model": vl_config["model"], "configured": bool(vl_config["base_url"])}
+
+@app.post("/settings/vl")
+async def set_vl_settings(request: Request):
+    body = await request.json()
+    vl_config["base_url"] = body.get("base_url", "")
+    vl_config["api_key"] = body.get("api_key", "")
+    vl_config["model"] = body.get("model", "")
+    return {"status": "ok", "message": f"VL 모델 설정: {vl_config['model']}"}
+
 @app.get("/settings/llm-endpoints")
 async def list_llm_endpoints():
     return {"endpoints": llm_endpoints, "challenge_map": challenge_llm_map}

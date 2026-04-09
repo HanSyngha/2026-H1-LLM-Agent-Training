@@ -680,6 +680,13 @@ CHALLENGES = {
             "details": [],
         },
     },
+    "react_dashboard": {
+        "name": "React 대시보드 디자인",
+        "description": "가상 API로 사용 현황 대시보드를 React로 디자인하세요.",
+        "mission": {"description": "API 5개 활용 + 시각화 + 디자인 → VL 모델이 채점"},
+        "submit_schema": '{"image": "base64 스크린샷"}',
+        "validate": lambda a: {"passed": True, "message": "VL 모델이 채점", "details": []},
+    },
     "bash_tool": {
         "name": "Bash Tool (파일 해독)",
         "description": "subprocess tool로 암호화 파일을 해독하세요.",
