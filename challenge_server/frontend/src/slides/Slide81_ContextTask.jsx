@@ -39,17 +39,23 @@ export default function Slide81_ContextTask() {
   const [testing, setTesting] = useState(false);
 
   const handleTest = async () => {
-    console.log('[Context] handleTest called, compressed:', compressed.length, 'testing:', testing);
-    setTesting(true); setResult(null);
+    if (testing) return;
+    console.log('[Context] START, len:', compressed.length);
+    setTesting(true);
+    setResult(null);
     try {
+      console.log('[Context] calling API...');
       const r = await postJSON('/challenges/context/test', { compressed });
+      console.log('[Context] response:', JSON.stringify(r).substring(0, 100));
       setResult(r);
       if (r.pass) {
         try { await postJSON('/challenges/context/submit', { answer: { compressed } }); } catch {}
       }
     } catch (e) {
+      console.error('[Context] ERROR:', e);
       setResult({ pass: false, message: String(e) });
     } finally {
+      console.log('[Context] DONE');
       setTesting(false);
     }
   };
