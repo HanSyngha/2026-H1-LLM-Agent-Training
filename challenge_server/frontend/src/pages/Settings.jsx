@@ -130,7 +130,7 @@ export default function Settings() {
                 <td>
                   <select value={challengeMap[c.id] || ''} onChange={e => setMapping(c.id, e.target.value)}
                     style={{ padding: 6, borderRadius: 6, border: '1px solid var(--border)', minWidth: 150 }}>
-                    <option value="">(기본) testmodel — a2g.samsungds.net:8090</option>
+                    <option value="">(기본) testmodel — 12.81.222.45:8090</option>
                     {Object.entries(endpoints).map(([id, e]) => (
                       <option key={id} value={id}>{e.name} ({e.model})</option>
                     ))}

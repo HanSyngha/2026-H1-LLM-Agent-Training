@@ -67,7 +67,7 @@ llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
 
 # 채점용 LLM (기존 호환)
 llm_config = {
-    "base_url": os.getenv("LLM_GATEWAY_URL", "http://a2g.samsungds.net:8090/v1"),
+    "base_url": os.getenv("LLM_GATEWAY_URL", "http://12.81.222.45:8090/v1"),
     "api_key": os.getenv("LLM_GATEWAY_API_KEY", ""),
     "model": os.getenv("LLM_MODEL", "testmodel"),
 }
@@ -636,14 +636,14 @@ async def context_test(request: Request):
     compressed = body.get("compressed", "")
 
     if not compressed:
-        return JSONResponse({"error": "압축 프롬프트가 없습니다."}, status_code=400)
+        return {"pass": False, "message": "압축 프롬프트가 없습니다.", "actions": []}
     if len(compressed) > 250:
         return {"pass": False, "message": f"200자 이내로 압축하세요. (현재 {len(compressed)}자)", "actions": []}
 
     llm_id = challenge_llm_map.get("context")
     llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
     if not llm.get("base_url"):
-        return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
+        return {"pass": False, "message": "LLM이 설정되지 않았습니다. /settings에서 확인하세요.", "actions": []}
 
     prompt = f"""아래는 회의록 요약입니다. 이 내용을 바탕으로 조직이 다음에 실행해야 할 핵심 행동 3가지를 예측하세요.
 각 행동을 한 줄로 간결하게 작성하세요. JSON 배열로 반환하세요.
@@ -711,14 +711,14 @@ async def chat_extract_test(request: Request):
     body = await request.json()
     summary = body.get("summary", "")
     if not summary:
-        return JSONResponse({"error": "요약이 없습니다."}, status_code=400)
+        return {"pass": False, "message": "요약이 없습니다.", "checks": []}
     if len(summary) > 350:
         return {"pass": False, "message": f"300자 이내로 요약하세요. (현재 {len(summary)}자)", "checks": []}
 
     llm_id = challenge_llm_map.get("chat_extract")
     llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
     if not llm.get("base_url"):
-        return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
+        return {"pass": False, "message": "LLM이 설정되지 않았습니다.", "checks": []}
 
     prompt = f"""아래는 팀 대화 요약입니다. 이 요약에 다음 5가지 핵심 정보가 포함되어 있는지 확인하세요.
 각 항목에 대해 포함 여부를 JSON으로 답하세요.
@@ -789,12 +789,12 @@ async def fewshot_test(request: Request):
     system_prompt = body.get("prompt", "")
 
     if not system_prompt:
-        return JSONResponse({"error": "시스템 프롬프트가 없습니다."}, status_code=400)
+        return {"pass": False, "message": "시스템 프롬프트가 없습니다.", "results": []}
 
     llm_id = challenge_llm_map.get("fewshot")
     llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
     if not llm.get("base_url"):
-        return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
+        return {"pass": False, "message": "LLM이 설정되지 않았습니다.", "results": []}
 
     results = []
     for tc in FEWSHOT_TEST_CASES:
@@ -868,12 +868,12 @@ async def defense_test(request: Request):
     system_prompt = body.get("prompt", "")
 
     if not system_prompt:
-        return JSONResponse({"error": "시스템 프롬프트가 없습니다."}, status_code=400)
+        return {"pass": False, "message": "방어 프롬프트가 없습니다.", "results": []}
 
     llm_id = challenge_llm_map.get("defense")
     llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
     if not llm.get("base_url"):
-        return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
+        return {"pass": False, "message": "LLM이 설정되지 않았습니다.", "results": []}
 
     # LLM이 기본적으로 코드를 공유하려 함 → 학생의 방어 프롬프트가 이를 막아야 함
     full_system = f"""당신은 온라인 쇼핑몰 고객 서비스 봇입니다.
