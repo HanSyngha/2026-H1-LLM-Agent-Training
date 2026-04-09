@@ -119,17 +119,34 @@ async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config
         if resp.status_code != 200:
             return {"error": f"LLM HTTP {resp.status_code}"}
 
-        content = (resp.json()["choices"][0]["message"].get("content") or "").strip()
+        raw_content = (resp.json()["choices"][0]["message"].get("content") or "").strip()
 
-        # JSON 추출 (코드블록 처리)
-        if content.startswith("```"):
-            lines = content.split("\n")
-            content = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:]).strip()
+        # JSON 추출 — 여러 형태 대응
+        content = raw_content
 
-        return {"content": content, "parsed": json.loads(content)}
+        # 1. 코드블록 제거 (```json ... ``` 또는 ``` ... ```)
+        if "```" in content:
+            import re
+            m = re.search(r'```(?:json)?\s*\n?(.*?)```', content, re.DOTALL)
+            if m:
+                content = m.group(1).strip()
 
-    except json.JSONDecodeError:
-        return {"error": "LLM 응답이 유효한 JSON이 아닙니다", "raw": content[:200]}
+        # 2. 직접 파싱 시도
+        try:
+            return {"content": raw_content, "parsed": json.loads(content)}
+        except json.JSONDecodeError:
+            pass
+
+        # 3. { } 블록 추출 시도
+        import re
+        m = re.search(r'\{.*\}', content, re.DOTALL)
+        if m:
+            try:
+                return {"content": raw_content, "parsed": json.loads(m.group())}
+            except json.JSONDecodeError:
+                pass
+
+        return {"error": "LLM 응답이 유효한 JSON이 아닙니다", "raw": raw_content[:500]}
     except requests.Timeout:
         return {"error": "LLM 응답 시간 초과 (3분)"}
     except Exception as e:
