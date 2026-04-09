@@ -8,18 +8,33 @@ const CATEGORIES = ['P1-인프라', 'P1-데이터', 'P2-성능', 'P2-기능', 'P
 
 export default function Slide83_FewshotTask() {
   const [prompt, setPrompt] = useState('');
-  const [result, setResult] = useState(null);
+  const [results, setResults] = useState([]);
   const [testing, setTesting] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 10 });
+  const [finalMsg, setFinalMsg] = useState(null);
 
   const handleTest = async () => {
-    setTesting(true); setResult(null);
+    if (testing) return;
+    setTesting(true); setResults([]); setFinalMsg(null);
+    let passed = 0;
     try {
-      const r = await postJSON('/challenges/fewshot/test', { prompt });
-      setResult(r);
-      if (r.pass) {
-        try { await postJSON('/challenges/fewshot/submit', { answer: { prompt } }); } catch {}
+      for (let i = 0; i < 10; i++) {
+        setProgress({ current: i + 1, total: 10 });
+        const r = await postJSON('/challenges/fewshot/test-one', { prompt, case_id: i });
+        setResults(prev => [...prev, r]);
+        if (r.pass) passed++;
       }
-    } catch (e) { setResult({ pass: false, message: String(e) }); } finally { setTesting(false); }
+      if (passed === 10) {
+        setFinalMsg(`🎉 ${passed}/10 전부 통과!`);
+        try { await postJSON('/challenges/fewshot/submit', { answer: { prompt } }); } catch {}
+      } else {
+        setFinalMsg(`${passed}/10 통과 - 프롬프트를 개선하세요`);
+      }
+    } catch (e) {
+      setFinalMsg(`에러: ${String(e)}`);
+    } finally {
+      setTesting(false);
+    }
   };
 
   return (
@@ -57,34 +72,30 @@ export default function Slide83_FewshotTask() {
             marginTop: 8, padding: '10px 24px', borderRadius: 8, border: 'none', width: '100%',
             background: '#7c3aed', color: '#fff', fontWeight: 700, fontSize: '.9em', cursor: 'pointer',
           }}>
-          {testing ? '10개 티켓 분류 중...' : '🧪 분류 테스트 (10개 티켓)'}
+          {testing ? `⏳ ${progress.current}/${progress.total} 분류 중...` : '🧪 분류 테스트 (10개 티켓)'}
         </button>
 
-        {result && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            style={{ marginTop: 10, padding: 12, borderRadius: 8,
-              background: result.pass ? '#f0fdf4' : '#fef2f2',
-              border: `1px solid ${result.pass ? '#86efac' : '#fca5a5'}` }}>
-            <div style={{ fontWeight: 700, color: result.pass ? '#059669' : '#dc2626', marginBottom: 6 }}>
-              {result.pass ? '🎉 ' : ''}{result.message}
-            </div>
-            {result.results && (
-              <div style={{ fontSize: '.78em' }}>
-                {result.results.map((r, i) => (
-                  <div key={i} style={{
-                    display: 'flex', gap: 8, padding: '4px 0',
-                    borderBottom: '1px solid #f1f5f9', alignItems: 'center',
-                  }}>
-                    <span style={{ width: 20, textAlign: 'center' }}>{r.pass ? '✅' : '❌'}</span>
-                    <span style={{ flex: 2, color: '#475569' }}>{r.input}...</span>
-                    <span style={{ flex: 1, fontWeight: 700, color: '#059669' }}>{r.expected}</span>
-                    <span style={{ flex: 1, color: r.pass ? '#059669' : '#dc2626', fontFamily: 'monospace' }}>
-                      {r.actual}
-                    </span>
-                  </div>
-                ))}
-              </div>
+        {(results.length > 0 || finalMsg) && (
+          <div style={{ marginTop: 10, padding: 12, borderRadius: 8, background: '#fafbfc', border: '1px solid #e2e8f0' }}>
+            {finalMsg && (
+              <div style={{ fontWeight: 700, marginBottom: 6,
+                color: finalMsg.includes('🎉') ? '#059669' : '#dc2626' }}>{finalMsg}</div>
             )}
+            <div style={{ fontSize: '.78em' }}>
+              {results.map((r, i) => (
+                <div key={i} style={{
+                  display: 'flex', gap: 8, padding: '4px 0',
+                  borderBottom: '1px solid #f1f5f9', alignItems: 'center',
+                }}>
+                  <span style={{ width: 20, textAlign: 'center' }}>{r.pass ? '✅' : '❌'}</span>
+                  <span style={{ flex: 2, color: '#475569' }}>{r.input}...</span>
+                  <span style={{ flex: 1, fontWeight: 700, color: '#059669' }}>{r.expected}</span>
+                  <span style={{ flex: 1, color: r.pass ? '#059669' : '#dc2626', fontFamily: 'monospace' }}>
+                    {r.actual}
+                  </span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
 

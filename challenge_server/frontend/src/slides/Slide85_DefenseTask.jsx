@@ -6,18 +6,33 @@ import AnswerButton from './AnswerButton';
 
 export default function Slide85_DefenseTask() {
   const [prompt, setPrompt] = useState('');
-  const [result, setResult] = useState(null);
+  const [results, setResults] = useState([]);
   const [testing, setTesting] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 10 });
+  const [finalMsg, setFinalMsg] = useState(null);
 
   const handleTest = async () => {
-    setTesting(true); setResult(null);
+    if (testing) return;
+    setTesting(true); setResults([]); setFinalMsg(null);
+    let defended = 0;
     try {
-      const r = await postJSON('/challenges/defense/test', { prompt });
-      setResult(r);
-      if (r.pass) {
-        try { await postJSON('/challenges/defense/submit', { answer: { prompt } }); } catch {}
+      for (let i = 0; i < 10; i++) {
+        setProgress({ current: i + 1, total: 10 });
+        const r = await postJSON('/challenges/defense/test-one', { prompt, attack_id: i });
+        setResults(prev => [...prev, r]);
+        if (!r.leaked) defended++;
       }
-    } catch (e) { setResult({ pass: false, message: String(e) }); } finally { setTesting(false); }
+      if (defended === 10) {
+        setFinalMsg(`🛡️ ${defended}/10 공격 방어 성공`);
+        try { await postJSON('/challenges/defense/submit', { answer: { prompt } }); } catch {}
+      } else {
+        setFinalMsg(`💀 ${defended}/10 공격 방어 실패`);
+      }
+    } catch (e) {
+      setFinalMsg(`에러: ${String(e)}`);
+    } finally {
+      setTesting(false);
+    }
   };
 
   return (
@@ -48,21 +63,20 @@ export default function Slide85_DefenseTask() {
             color: prompt.trim() ? '#fff' : '#94a3b8',
             fontWeight: 700, fontSize: '.9em', cursor: 'pointer',
           }}>
-          {testing ? '10가지 공격 실행 중...' : '⚔️ 공격 시작 (10라운드)'}
+          {testing ? `⚔️ ${progress.current}/${progress.total} 공격 실행 중...` : '⚔️ 공격 시작 (10라운드)'}
         </button>
 
-        {result && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            style={{ marginTop: 10 }}>
-            <div style={{
-              padding: '10px 16px', borderRadius: 8, marginBottom: 8,
-              background: result.pass ? '#f0fdf4' : '#fef2f2',
-              color: result.pass ? '#059669' : '#dc2626',
-              fontWeight: 700, fontSize: '.95em',
-            }}>
-              {result.pass ? '🛡️ ' : '💀 '}{result.message}
-            </div>
-            {result.results && result.results.map((r, i) => (
+        {(results.length > 0 || finalMsg) && (
+          <div style={{ marginTop: 10 }}>
+            {finalMsg && (
+              <div style={{
+                padding: '10px 16px', borderRadius: 8, marginBottom: 8,
+                background: finalMsg.includes('🛡️') ? '#f0fdf4' : '#fef2f2',
+                color: finalMsg.includes('🛡️') ? '#059669' : '#dc2626',
+                fontWeight: 700, fontSize: '.95em',
+              }}>{finalMsg}</div>
+            )}
+            {results.map((r, i) => (
               <div key={i} style={{
                 padding: '8px 12px', marginBottom: 4, borderRadius: 6,
                 background: r.leaked ? '#fef2f2' : '#f0fdf4',
@@ -77,7 +91,7 @@ export default function Slide85_DefenseTask() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         )}
 
         <AnswerButton answerId="defense">

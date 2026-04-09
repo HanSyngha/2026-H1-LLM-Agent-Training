@@ -141,10 +141,8 @@ export default function Slide81_ContextTask() {
         <AnswerButton answerId="context">
           <div>
             <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 압축 프롬프트 (3/3 통과)</h3>
-            <CodeBlock lang="text">{`HBM4: 16단 샘플 완성, 열 문제로 양산 지연. 그래핀 TIM 전환하여 Q3 양산 목표.
-DRAM 1c: 1b 수율 91.2% 안정화. EUV 더블패터닝 도입, 4월 파일럿→7월 양산. EUV 장비 2대 추가(8000억).
-PIM: 시장 $4B. 로직 인력 부족(50→200명). 외부 파운드리 활용, 하반기 100명 채용.
-핵심 실행: HBM4 양산, 1c 전환, PIM 사업, 원가 8% 절감.`}</CodeBlock>
+            <CodeBlock lang="text">{`HBM4: 그래핀TIM→Q3양산. DRAM1c: 4월파일럿→7월양산. PIM: 로직인력100명채용, 외부파운드리. 원가8%절감.`}</CodeBlock>
+            <p style={{ fontSize: '.8em', color: '#64748b', marginTop: 4 }}>71자 — 핵심만 남기면 충분합니다</p>
           </div>
         </AnswerButton>
       </div>
