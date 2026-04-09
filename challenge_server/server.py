@@ -1176,16 +1176,17 @@ async def dashboard_submit(request: Request):
     image_data = body.get("image", "")  # base64 image
 
     if not image_data:
-        return JSONResponse({"error": "이미지가 없습니다. 스크린샷을 붙여넣으세요."}, status_code=400)
+        return {"status": "FAIL", "score": 0, "message": "이미지가 없습니다. 스크린샷을 붙여넣으세요."}
 
     print(f"[DASHBOARD] 이미지 수신: {len(image_data)} chars")
 
     user = await get_user_from_token(token or "no-token")
     if not user:
-        return JSONResponse({"error": "로그인이 필요합니다."}, status_code=401)
+        return {"status": "FAIL", "score": 0, "message": "로그인이 필요합니다."}
 
     if not vl_config.get("base_url"):
-        return JSONResponse({"error": "VL 모델이 설정되지 않았습니다. /settings에서 VL 모델을 등록하세요."}, status_code=400)
+        print("[DASHBOARD] VL 모델 미설정")
+        return {"status": "FAIL", "score": 0, "message": "VL 모델이 설정되지 않았습니다. /settings 페이지에서 VL 모델을 등록하세요.", "feedback": "VL 미설정"}
 
     # VL 모델로 채점
     prompt = """이 이미지는 LLM 서비스 사용 현황 대시보드입니다.

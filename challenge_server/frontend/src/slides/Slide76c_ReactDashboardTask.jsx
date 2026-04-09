@@ -116,7 +116,7 @@ export default function Slide76c_ReactDashboardTask() {
                 <div style={{ fontSize: '1.5em', fontWeight: 900, color: result.score >= 70 ? '#059669' : result.score >= 40 ? '#d97706' : '#dc2626' }}>
                   {result.score}점
                 </div>
-                <div style={{ fontSize: '.88em', color: '#475569', marginTop: 4 }}>{result.feedback || result.message}</div>
+                <div style={{ fontSize: '.88em', color: '#475569', marginTop: 4 }}>{result.feedback || result.message || result.error}</div>
               </div>
             )}
           </Box>
