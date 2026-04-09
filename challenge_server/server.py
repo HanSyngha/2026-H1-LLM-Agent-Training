@@ -760,26 +760,26 @@ async def chat_extract_test(request: Request):
 # ============================================
 # Day2 과제 2: Few-shot 최적화
 # ============================================
+# 사내 IT 헬프데스크 티켓 분류 — few-shot 없이는 규칙을 알 수 없음
 FEWSHOT_TEST_CASES = [
-    {"input": "배송이 너무 느려서 화가 납니다", "label": "불만"},
-    {"input": "제품 품질이 좋아서 재구매 의향 있습니다", "label": "만족"},
-    {"input": "다음 주 수요일까지 배송 가능한가요?", "label": "문의"},
-    {"input": "환불 절차가 어떻게 되나요?", "label": "문의"},
-    {"input": "포장이 파손되어 도착했습니다", "label": "불만"},
-    {"input": "가격 대비 성능이 훌륭합니다", "label": "만족"},
-    {"input": "사이즈 교환하고 싶습니다", "label": "문의"},
-    {"input": "두 번 다시 이 가게에서 안 삽니다", "label": "불만"},
-    {"input": "디자인이 예쁘고 실용적이에요", "label": "만족"},
-    {"input": "재고가 언제 들어오나요?", "label": "문의"},
+    {"input": "VPN 접속이 안 됩니다. 재택근무 불가능합니다.", "label": "P1-인프라"},
+    {"input": "SAP에서 전표 조회가 10초 이상 걸립니다", "label": "P2-성능"},
+    {"input": "그룹웨어 결재 화면에서 첨부파일 미리보기 기능 추가 요청합니다", "label": "P3-개선"},
+    {"input": "이메일 서버가 다운되어 전사 메일 송수신 불가", "label": "P1-인프라"},
+    {"input": "ERP 재고 수량이 실제와 37개 차이납니다", "label": "P1-데이터"},
+    {"input": "사내 포털 검색 속도가 이전보다 느려졌습니다", "label": "P2-성능"},
+    {"input": "모바일 앱에서 출장 신청 시 날짜 선택이 안 됩니다", "label": "P2-기능"},
+    {"input": "대시보드에 부서별 필터 옵션을 추가해주세요", "label": "P3-개선"},
+    {"input": "인사시스템에서 퇴직자 정보가 여전히 조회됩니다", "label": "P1-데이터"},
+    {"input": "화상회의 시 화면 공유하면 프레임이 끊깁니다", "label": "P2-성능"},
 ]
 
 
 @app.post("/challenges/fewshot/test")
 async def fewshot_test(request: Request):
-    """Few-shot 테스트 - 수강생 프롬프트+예시로 분류 정확도 측정"""
+    """Few-shot 테스트 - system prompt(few-shot 포함)로 분류 정확도 측정"""
     body = await request.json()
     system_prompt = body.get("prompt", "")
-    examples = body.get("examples", [])
 
     if not system_prompt:
         return JSONResponse({"error": "시스템 프롬프트가 없습니다."}, status_code=400)
@@ -789,15 +789,12 @@ async def fewshot_test(request: Request):
     if not llm.get("base_url"):
         return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
 
-    # 메시지 구성: system + few-shot examples + test input
     results = []
     for tc in FEWSHOT_TEST_CASES:
-        messages = [{"role": "system", "content": system_prompt}]
-        for ex in examples:
-            messages.append({"role": "user", "content": ex.get("input", "")})
-            messages.append({"role": "assistant", "content": ex.get("label", "")})
-        messages.append({"role": "user", "content": tc["input"]})
-
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": tc["input"]},
+        ]
         try:
             resp = await async_post(
                 f"{llm['base_url']}/chat/completions",
@@ -814,20 +811,18 @@ async def fewshot_test(request: Request):
                 continue
             msg = resp_json["choices"][0]["message"]
             answer = (msg.get("content") or "").strip()
-            # 일부 모델은 reasoning 필드에 답변을 넣음
             reasoning = (msg.get("reasoning") or "")
             full_text = answer + " " + reasoning
             passed = tc["label"] in full_text
-            results.append({"input": tc["input"], "expected": tc["label"], "actual": (answer or reasoning)[:30], "pass": passed})
-        except Exception:
-            results.append({"input": tc["input"], "expected": tc["label"], "actual": "ERROR", "pass": False})
+            results.append({"input": tc["input"][:30], "expected": tc["label"], "actual": (answer or reasoning)[:40], "pass": passed})
+        except Exception as e:
+            results.append({"input": tc["input"][:30], "expected": tc["label"], "actual": str(e)[:30], "pass": False})
 
     correct = sum(1 for r in results if r["pass"])
     return {
-        "pass": correct >= 8,  # 80% 이상
-        "message": f"{correct}/{len(results)} 정확 ({correct*10}%)",
+        "pass": correct == len(results),
+        "message": f"{correct}/{len(results)} 정확 — {'통과!' if correct == len(results) else '시스템 프롬프트를 개선하세요'}",
         "results": results,
-        "example_count": len(examples),
     }
 
 
