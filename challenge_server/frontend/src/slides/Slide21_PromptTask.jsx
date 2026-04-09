@@ -72,6 +72,7 @@ function LabMode() {
   const [testing, setTesting] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [finalMsg, setFinalMsg] = useState(null);
+  const [selectedCase, setSelectedCase] = useState(null);
   const abortRef = useRef(false);
 
   useState(() => { getPromptCases().then(setCases); }, []);
@@ -150,7 +151,10 @@ function LabMode() {
           const bg = r ? (r.pass ? '#f0fdf4' : '#fef2f2') : '#f8fafc';
           const border = r ? (r.pass ? '#86efac' : '#fca5a5') : '#e2e8f0';
           return (
-            <div key={tc.id} style={{ padding: 8, borderRadius: 8, border: `1px solid ${border}`, background: bg, fontSize: '.75em' }}>
+            <div key={tc.id}
+              onClick={() => setSelectedCase(selectedCase === tc.id ? null : tc.id)}
+              style={{ padding: 8, borderRadius: 8, border: `1px solid ${border}`, background: bg,
+                fontSize: '.75em', cursor: 'pointer', outline: selectedCase === tc.id ? '2px solid #2563eb' : 'none' }}>
               <div style={{ fontWeight: 600, marginBottom: 2 }}>#{tc.id} {tc.title}</div>
               {r ? (
                 <span style={{ color: r.pass ? '#059669' : '#dc2626', fontWeight: 700 }}>{r.pass ? 'PASS' : 'FAIL'}</span>
@@ -161,6 +165,42 @@ function LabMode() {
           );
         })}
       </div>
+
+      {/* 선택된 케이스 상세 */}
+      {selectedCase && (() => {
+        const tc = cases.find(c => c.id === selectedCase);
+        const r = results[selectedCase];
+        if (!tc) return null;
+        return (
+          <div style={{ marginTop: 10, padding: 14, borderRadius: 10, border: '1px solid #e2e8f0',
+            background: '#fafbfc', fontSize: '.8em', maxHeight: 240, overflowY: 'auto' }}>
+            <div style={{ fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+              #{tc.id} {tc.title} — 기사 내용
+            </div>
+            <div style={{ background: '#f1f5f9', padding: 10, borderRadius: 6, lineHeight: 1.6,
+              fontSize: '.9em', color: '#334155', marginBottom: 8, whiteSpace: 'pre-wrap' }}>
+              {tc.input}
+            </div>
+            {r && !r.pass && r.details && (
+              <div>
+                <div style={{ fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>오답 상세:</div>
+                {r.details.filter(d => !d.pass).map((d, i) => (
+                  <div key={i} style={{ padding: '4px 8px', marginBottom: 3, borderRadius: 4,
+                    background: '#fef2f2', fontSize: '.9em' }}>
+                    <strong>{d.field}</strong>: 기대 <code>{JSON.stringify(d.expected)}</code> → 실제 <code>{JSON.stringify(d.actual)}</code>
+                  </div>
+                ))}
+              </div>
+            )}
+            {r && r.pass && (
+              <div style={{ color: '#059669', fontWeight: 600 }}>모든 필드 일치!</div>
+            )}
+            {r && r.error && (
+              <div style={{ color: '#dc2626' }}>에러: {r.error}</div>
+            )}
+          </div>
+        );
+      })()}
 
       <AnswerButton answerId="prompt"><Slide22_PromptAnswer /></AnswerButton>
     </div>
