@@ -99,6 +99,7 @@ def _save_state():
         data = {
             "completions": completions,
             "unlocked_answers": list(unlocked_answers),
+            "questions": questions_data,
         }
         _DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, default=str))
         print(f"[STATE] 저장 완료: {len(json.dumps(data))}B")
@@ -118,7 +119,7 @@ from threading import Lock
 reactions_lock = Lock()
 reactions_data: dict[int, dict[str, int]] = {}  # {slide_num: {type: count}}
 questions_lock = Lock()
-questions_data: list[dict] = []  # [{slide, user, text, timestamp}]
+questions_data: list[dict] = _saved.get("questions", [])  # [{slide, user, text, timestamp}]
 
 # 성공자 저장 (파일에서 복원 - 초기화 전까지 유지)
 completions: dict[str, list[dict]] = _saved.get("completions", {cid: [] for cid in CHALLENGES})
@@ -1432,6 +1433,7 @@ async def add_question(request: Request):
             "text": text,
             "timestamp": datetime.now().isoformat(),
         })
+        _save_state()
     return {"ok": True}
 
 
@@ -1441,6 +1443,13 @@ async def get_questions(slide: int = 0):
         if slide == 0:
             return questions_data[-50:]  # 최근 50개
         return [q for q in questions_data if q["slide"] == slide][-20:]
+
+
+@app.get("/questions/all")
+async def get_all_questions():
+    """전체 질문 목록 (강사용 게시판)"""
+    with questions_lock:
+        return {"questions": questions_data, "total": len(questions_data)}
 
 
 # ============================================
