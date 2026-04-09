@@ -196,7 +196,25 @@ function LabMode() {
               <div style={{ color: '#059669', fontWeight: 600 }}>모든 필드 일치!</div>
             )}
             {r && r.error && (
-              <div style={{ color: '#dc2626' }}>에러: {r.error}</div>
+              <div style={{ color: '#dc2626', marginBottom: 6 }}>에러: {r.error}</div>
+            )}
+            {r && r.actual && (
+              <div style={{ marginTop: 6 }}>
+                <div style={{ fontWeight: 700, color: '#475569', marginBottom: 4 }}>LLM 실제 응답:</div>
+                <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: 10, borderRadius: 6,
+                  fontSize: '.85em', overflow: 'auto', maxHeight: 120, whiteSpace: 'pre-wrap' }}>
+                  {JSON.stringify(r.actual, null, 2)}
+                </pre>
+              </div>
+            )}
+            {r && r.raw && (
+              <div style={{ marginTop: 6 }}>
+                <div style={{ fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>LLM 원문 (파싱 실패):</div>
+                <pre style={{ background: '#fef2f2', color: '#991b1b', padding: 10, borderRadius: 6,
+                  fontSize: '.85em', overflow: 'auto', maxHeight: 80 }}>
+                  {r.raw}
+                </pre>
+              </div>
             )}
           </div>
         );
