@@ -61,6 +61,13 @@ import Slide54_AIToolCompare from './Slide54_AIToolCompare';
 import Slide11b_PythonSetup from './Slide11b_PythonSetup';
 import Slide01b_NoRightAnswer from './Slide01b_NoRightAnswer';
 import Slide01c_TechChoices from './Slide01c_TechChoices';
+import SectionContextEng from './SectionContextEng';
+import Slide80_ContextBlindness from './Slide80_ContextBlindness';
+import Slide81_ContextTask from './Slide81_ContextTask';
+import Slide82_FewshotTheory from './Slide82_FewshotTheory';
+import Slide83_FewshotTask from './Slide83_FewshotTask';
+import Slide84_DefenseTheory from './Slide84_DefenseTheory';
+import Slide85_DefenseTask from './Slide85_DefenseTask';
 import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFramework from './SectionFramework';
 import Slide51_ADK from './Slide51_ADK';
@@ -163,6 +170,15 @@ const SLIDES = [
   { id: 0, component: Slide54_AIToolCompare, title: 'AI 도구 비교', day: 1 },
   // Day 2
   { id: 57, component: Slide50_Day2Header, title: 'Day 2', day: 2 },
+  // Context Engineering
+  { id: 0, component: SectionContextEng, title: '#8 Context Engineering', day: 2 },
+  { id: 0, component: Slide80_ContextBlindness, title: 'Context Blindness', day: 2 },
+  { id: 0, component: Slide81_ContextTask, title: '압축 프롬프트 과제', day: 2 },
+  { id: 0, component: Slide82_FewshotTheory, title: 'Few-shot Learning', day: 2 },
+  { id: 0, component: Slide83_FewshotTask, title: 'Few-shot 과제', day: 2 },
+  { id: 0, component: Slide84_DefenseTheory, title: 'Prompt Injection', day: 2 },
+  { id: 0, component: Slide85_DefenseTask, title: 'System Prompt 방어 과제', day: 2 },
+  // Framework
   { id: 58, component: SectionFramework, title: '#9 Framework', day: 2 },
   { id: 59, component: Slide51_ADK, title: 'Google ADK', day: 2 },
   { id: 60, component: Slide52_LangGraph, title: 'LangGraph', day: 2 },

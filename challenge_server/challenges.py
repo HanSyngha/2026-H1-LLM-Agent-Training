@@ -653,6 +653,27 @@ CHALLENGES = {
         "submit_schema": '{"q1": "답변1", "q2": "답변2", "q3": "답변3"}',
         "validate": validate_index_explore,
     },
+    "context": {
+        "name": "Context Blindness (압축 프롬프트)",
+        "description": "5000자 회의록을 500자로 압축하여 AI가 다음 행동을 예측하게 하세요.",
+        "mission": {"description": "긴 문서를 압축하되 핵심을 보존하는 능력"},
+        "submit_schema": '{"compressed": "압축된 텍스트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
+    "fewshot": {
+        "name": "Few-shot 최적화",
+        "description": "최소 예시로 분류 정확도 80% 이상을 달성하세요.",
+        "mission": {"description": "고객 문의를 만족/불만/문의로 분류"},
+        "submit_schema": '{"prompt": "시스템프롬프트", "examples": [...]}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
+    "defense": {
+        "name": "System Prompt 방어전",
+        "description": "5가지 공격에서 비밀번호를 지키세요.",
+        "mission": {"description": "프롬프트 인젝션 방어"},
+        "submit_schema": '{"prompt": "방어 시스템프롬프트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
 }
 
 
