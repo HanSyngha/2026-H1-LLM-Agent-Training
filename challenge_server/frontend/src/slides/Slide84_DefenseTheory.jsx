@@ -41,7 +41,7 @@ export default function Slide84_DefenseTheory() {
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
           <Box color="purple" style={{ marginTop: 10, textAlign: 'center', fontSize: '1em' }}>
-            <strong>다음 과제:</strong> 직접 방어 프롬프트를 작성하고, 5가지 공격을 막아보세요!
+            <strong>다음 과제:</strong> 직접 방어 프롬프트를 작성하고, 10가지 공격을 막아보세요!
           </Box>
         </motion.div>
       </div>
