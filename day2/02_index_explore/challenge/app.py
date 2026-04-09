@@ -290,12 +290,21 @@ def ai_hierarchical_search(question, files):
     if not memory_md.strip():
         return "MEMORY.md가 비어있습니다.", []
 
+    sub_files = [f for f in files.keys() if f != "MEMORY.md"]
+
+    # 검증: 하위 파일이 2개 이상 있어야 함
+    if len(sub_files) < 2:
+        return f"하위 .md 파일이 {len(sub_files)}개뿐입니다. 최소 2개 이상의 하위 파일로 정리하세요.", []
+
+    # 검증: MEMORY.md가 500자 이내여야 함 (인덱스니까)
+    if len(memory_md) > 500:
+        return f"MEMORY.md가 {len(memory_md)}자입니다. 인덱스는 500자 이내로 작성하세요. (raw 데이터를 넣지 마세요!)", []
+
     trace = []
     trace.append({"step": "MEMORY.md 읽기", "content": memory_md[:200]})
 
     # 전체 문서 context 구성 (MEMORY.md 기반 계층 구조)
     ctx = f"## MEMORY.md (인덱스)\n{memory_md}\n"
-    sub_files = [f for f in files.keys() if f != "MEMORY.md"]
     for fname in sub_files:
         content = files[fname]
         if content.strip():

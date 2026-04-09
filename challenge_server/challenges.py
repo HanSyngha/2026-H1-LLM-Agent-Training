@@ -596,6 +596,7 @@ def validate_tool_use(answer: dict) -> dict:
 # ============================================
 # 과제 정의 레지스트리
 # ============================================
+# 순서: Day1(sso→prompt→endpoint→tool_use→browser) → Day2(context→chat→fewshot→defense→agent_loop→agent_v2→index)
 CHALLENGES = {
     "sso_oidc": {
         "name": "SSO OIDC 로그인",
@@ -625,13 +626,6 @@ CHALLENGES = {
         "submit_schema": '{"secret_key": "발급받은 시크릿 키"}',
         "validate": validate_tool_use,
     },
-    "structured": {
-        "name": "Structured Output",
-        "description": "뉴스 기사를 분석하여 구조화된 JSON으로 추출하세요.",
-        "mission": STRUCTURED_MISSION,
-        "submit_schema": '{"title": "...", "category": "...", "sentiment": "...", "keywords": [...], "summary": "..."}',
-        "validate": validate_structured,
-    },
     "browser": {
         "name": "브라우저 자동화 (CDP)",
         "description": "JS 렌더링 페이지에서 비밀 키를 추출하세요.",
@@ -639,19 +633,41 @@ CHALLENGES = {
         "submit_schema": '{"secret_key": "페이지에서 추출한 비밀 키"}',
         "validate": validate_browser,
     },
+    # === Day 2 ===
+    "context": {
+        "name": "Context Blindness (압축 프롬프트)",
+        "description": "회의록을 200자로 압축하여 AI가 다음 행동을 예측하게 하세요.",
+        "mission": {"description": "긴 문서를 압축하되 핵심을 보존하는 능력"},
+        "submit_schema": '{"compressed": "압축된 텍스트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
+    "chat_extract": {
+        "name": "채팅 정보 추출",
+        "description": "팀 대화에서 일정/할일/결정사항을 빠짐없이 추출하세요.",
+        "mission": {"description": "장문 채팅 기록에서 핵심 정보 5개 추출"},
+        "submit_schema": '{"summary": "요약 텍스트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
+    "fewshot": {
+        "name": "Few-shot (IT 티켓 분류)",
+        "description": "사내 IT 헬프데스크 티켓을 P1/P2/P3로 분류하세요.",
+        "mission": {"description": "few-shot 예시로 사내 전용 분류 규칙 학습"},
+        "submit_schema": '{"prompt": "시스템프롬프트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
+    "defense": {
+        "name": "System Prompt 방어전",
+        "description": "10가지 공격에서 VIP 할인코드를 지키세요.",
+        "mission": {"description": "프롬프트 인젝션 방어"},
+        "submit_schema": '{"prompt": "방어 시스템프롬프트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
     "agent_loop": {
         "name": "Agentic Loop (API 미로)",
         "description": "Agentic Loop를 구현하여 API 미로를 탈출하세요.",
         "mission": AGENT_LOOP_MISSION,
         "submit_schema": '{"completion_code": "스텝 코드들을 -로 연결한 문자열"}',
         "validate": validate_agent_loop,
-    },
-    "index_explore": {
-        "name": "Index Explore (.md 인덱스)",
-        "description": "계층적 .md 인덱스를 만들어 AI가 문서를 탐색하게 하세요.",
-        "mission": {"description": "raw 문서 10개를 .md 계층 구조로 정리하고, AI가 3개 질문에 답하면 통과"},
-        "submit_schema": '{"q1": "답변1", "q2": "답변2", "q3": "답변3"}',
-        "validate": validate_index_explore,
     },
     "agent_v2": {
         "name": "Agent 설계 (바이브 코딩)",
@@ -664,33 +680,12 @@ CHALLENGES = {
             "details": [],
         },
     },
-    "chat_extract": {
-        "name": "채팅 정보 추출",
-        "description": "팀 대화에서 일정/할일/결정사항을 빠짐없이 추출하세요.",
-        "mission": {"description": "장문 채팅 기록에서 핵심 정보 5개 추출"},
-        "submit_schema": '{"summary": "요약 텍스트"}',
-        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
-    },
-    "context": {
-        "name": "Context Blindness (압축 프롬프트)",
-        "description": "5000자 회의록을 500자로 압축하여 AI가 다음 행동을 예측하게 하세요.",
-        "mission": {"description": "긴 문서를 압축하되 핵심을 보존하는 능력"},
-        "submit_schema": '{"compressed": "압축된 텍스트"}',
-        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
-    },
-    "fewshot": {
-        "name": "Few-shot 최적화",
-        "description": "최소 예시로 분류 정확도 80% 이상을 달성하세요.",
-        "mission": {"description": "고객 문의를 만족/불만/문의로 분류"},
-        "submit_schema": '{"prompt": "시스템프롬프트", "examples": [...]}',
-        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
-    },
-    "defense": {
-        "name": "System Prompt 방어전",
-        "description": "5가지 공격에서 비밀번호를 지키세요.",
-        "mission": {"description": "프롬프트 인젝션 방어"},
-        "submit_schema": '{"prompt": "방어 시스템프롬프트"}',
-        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    "index_explore": {
+        "name": "Index Explore (.md 인덱스)",
+        "description": "계층적 .md 인덱스를 만들어 AI가 문서를 탐색하게 하세요.",
+        "mission": {"description": "raw 문서 10개를 .md 계층 구조로 정리하고, AI가 3개 질문에 답하면 통과"},
+        "submit_schema": '{"q1": "답변1", "q2": "답변2", "q3": "답변3"}',
+        "validate": validate_index_explore,
     },
 }
 
