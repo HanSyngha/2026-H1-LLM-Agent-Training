@@ -1227,20 +1227,28 @@ async def dashboard_submit(request: Request):
                     {"type": "image_url", "image_url": {"url": img_url}},
                 ]}],
                 "temperature": 0,
-                "max_tokens": 200,
+                "max_tokens": 8192,
             },
-            verify=False, timeout=180, proxies={"http": None, "https": None},
+            verify=False, timeout=300, proxies={"http": None, "https": None},
         )
 
         if resp.status_code != 200:
             return {"status": "FAIL", "message": f"VL 모델 오류: {resp.status_code}", "score": 0}
 
         msg_data = resp.json()["choices"][0]["message"]
-        content = (msg_data.get("content") or msg_data.get("reasoning_content") or msg_data.get("reasoning") or "").strip()
+        content = (msg_data.get("content") or "").strip()
+        reasoning = (msg_data.get("reasoning_content") or msg_data.get("reasoning") or "").strip()
+
+        # content에 JSON이 없으면 reasoning에서 찾기
+        all_text = content + "\n" + reasoning
+
+        print(f"[DASHBOARD] content: {len(content)} chars, reasoning: {len(reasoning)} chars")
 
         # JSON 파싱
         import re
-        m = re.search(r'\{[^{}]*\}', content, re.DOTALL)
+        m = re.search(r'\{[^{}]*"total"[^{}]*\}', all_text, re.DOTALL)
+        if not m:
+            m = re.search(r'\{[^{}]*"score"[^{}]*\}', all_text, re.DOTALL)
         if m:
             result = json.loads(m.group())
             score = int(result.get("total", 0))
