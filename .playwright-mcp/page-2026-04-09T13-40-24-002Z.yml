@@ -1,0 +1,109 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - link "LLM Agent 교육" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "대시보드" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "강의" [ref=e9] [cursor=pointer]:
+        - /url: /slides
+      - link "질문" [ref=e10] [cursor=pointer]:
+        - /url: /questions
+    - generic [ref=e11]:
+      - generic [ref=e12]: 한승하
+      - generic [ref=e13]: (S/W혁신팀)
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Challenge Dashboard" [level=1] [ref=e16]
+      - paragraph [ref=e17]: 5초마다 자동으로 갱신됩니다
+      - button "🔄 전체 초기화" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]: "13"
+        - generic [ref=e23]: 총 챌린지
+      - generic [ref=e24]:
+        - generic [ref=e25]: "1"
+        - generic [ref=e26]: 총 완료
+      - generic [ref=e27]:
+        - generic [ref=e28]: "1"
+        - generic [ref=e29]: 참여자
+      - generic [ref=e30]:
+        - generic [ref=e31]: 👑 한승하
+        - generic [ref=e32]: 현재 1위
+    - generic [ref=e33]:
+      - generic [ref=e34]: 🏆 종합 순위
+      - generic [ref=e37]:
+        - generic [ref=e38]: 🥇
+        - generic [ref=e39]: 한승하
+        - generic [ref=e40]: S/W혁신팀
+        - generic [ref=e41]: 1개 완료
+    - generic [ref=e42]:
+      - generic [ref=e43]: 📋 챌린지별 현황
+      - generic [ref=e44]:
+        - generic [ref=e46] [cursor=pointer]:
+          - generic [ref=e47]: SSO OIDC 로그인
+          - generic [ref=e48]:
+            - generic [ref=e49]: 0명 완료
+            - img [ref=e50]
+        - generic [ref=e53] [cursor=pointer]:
+          - generic [ref=e54]: 프롬프트 엔지니어링
+          - generic [ref=e55]:
+            - generic [ref=e56]: 0명 완료
+            - img [ref=e57]
+        - generic [ref=e60] [cursor=pointer]:
+          - generic [ref=e61]: LLM Endpoint 연결
+          - generic [ref=e62]:
+            - generic [ref=e63]: 0명 완료
+            - img [ref=e64]
+        - generic [ref=e67] [cursor=pointer]:
+          - generic [ref=e68]: Tool Use (Function Calling)
+          - generic [ref=e69]:
+            - generic [ref=e70]: 0명 완료
+            - img [ref=e71]
+        - generic [ref=e74] [cursor=pointer]:
+          - generic [ref=e75]: Structured Output
+          - generic [ref=e76]:
+            - generic [ref=e77]: 0명 완료
+            - img [ref=e78]
+        - generic [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]: 브라우저 자동화 (CDP)
+          - generic [ref=e83]:
+            - generic [ref=e84]: 0명 완료
+            - img [ref=e85]
+        - generic [ref=e88] [cursor=pointer]:
+          - generic [ref=e89]: Agentic Loop (API 미로)
+          - generic [ref=e90]:
+            - generic [ref=e91]: 🥇 한승하
+            - generic [ref=e92]: 1명 완료
+            - button "초기화" [ref=e93]
+            - img [ref=e94]
+        - generic [ref=e97] [cursor=pointer]:
+          - generic [ref=e98]: Index Explore (.md 인덱스)
+          - generic [ref=e99]:
+            - generic [ref=e100]: 0명 완료
+            - img [ref=e101]
+        - generic [ref=e104] [cursor=pointer]:
+          - generic [ref=e105]: Agent 설계 (바이브 코딩)
+          - generic [ref=e106]:
+            - generic [ref=e107]: 0명 완료
+            - img [ref=e108]
+        - generic [ref=e111] [cursor=pointer]:
+          - generic [ref=e112]: 채팅 정보 추출
+          - generic [ref=e113]:
+            - generic [ref=e114]: 0명 완료
+            - img [ref=e115]
+        - generic [ref=e118] [cursor=pointer]:
+          - generic [ref=e119]: Context Blindness (압축 프롬프트)
+          - generic [ref=e120]:
+            - generic [ref=e121]: 0명 완료
+            - img [ref=e122]
+        - generic [ref=e125] [cursor=pointer]:
+          - generic [ref=e126]: Few-shot 최적화
+          - generic [ref=e127]:
+            - generic [ref=e128]: 0명 완료
+            - img [ref=e129]
+        - generic [ref=e132] [cursor=pointer]:
+          - generic [ref=e133]: System Prompt 방어전
+          - generic [ref=e134]:
+            - generic [ref=e135]: 0명 완료
+            - img [ref=e136]
