@@ -198,21 +198,21 @@ function LabMode() {
             {r && r.error && (
               <div style={{ color: '#dc2626', marginBottom: 6 }}>에러: {r.error}</div>
             )}
-            {r && r.actual && (
+            {r && r.raw && (
               <div style={{ marginTop: 6 }}>
-                <div style={{ fontWeight: 700, color: '#475569', marginBottom: 4 }}>LLM 실제 응답:</div>
+                <div style={{ fontWeight: 700, color: '#475569', marginBottom: 4 }}>LLM ��문 응답:</div>
                 <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: 10, borderRadius: 6,
-                  fontSize: '.85em', overflow: 'auto', maxHeight: 120, whiteSpace: 'pre-wrap' }}>
-                  {JSON.stringify(r.actual, null, 2)}
+                  fontSize: '.82em', overflow: 'auto', maxHeight: 120, whiteSpace: 'pre-wrap', margin: 0 }}>
+                  {r.raw}
                 </pre>
               </div>
             )}
-            {r && r.raw && (
+            {r && r.actual && (
               <div style={{ marginTop: 6 }}>
-                <div style={{ fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>LLM 원문 (파싱 실패):</div>
-                <pre style={{ background: '#fef2f2', color: '#991b1b', padding: 10, borderRadius: 6,
-                  fontSize: '.85em', overflow: 'auto', maxHeight: 80 }}>
-                  {r.raw}
+                <div style={{ fontWeight: 700, color: '#475569', marginBottom: 4 }}>파싱된 JSON:</div>
+                <pre style={{ background: '#f1f5f9', color: '#334155', padding: 10, borderRadius: 6,
+                  fontSize: '.82em', overflow: 'auto', maxHeight: 100, whiteSpace: 'pre-wrap', margin: 0 }}>
+                  {JSON.stringify(r.actual, null, 2)}
                 </pre>
               </div>
             )}

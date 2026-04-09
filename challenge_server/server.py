@@ -718,7 +718,11 @@ async def prompt_test(request: Request):
     result = await call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
 
     if "error" in result:
-        return {"case_id": case_id, "pass": False, "error": result["error"], "raw": result.get("raw", "")}
+        return {
+            "case_id": case_id, "title": tc.get("title", ""),
+            "pass": False, "error": result["error"],
+            "raw": result.get("raw") or "(응답 없음)",
+        }
 
     # 검증
     validation = validate_result(result["parsed"], tc["expected"])
@@ -730,6 +734,7 @@ async def prompt_test(request: Request):
         "details": validation["details"],
         "actual": result["parsed"],
         "expected": tc["expected"],
+        "raw": result.get("content", ""),  # LLM 원문도 항상 포함
     }
 
 
