@@ -187,7 +187,7 @@ function LabMode() {
                 {r.details.filter(d => !d.pass).map((d, i) => (
                   <div key={i} style={{ padding: '4px 8px', marginBottom: 3, borderRadius: 4,
                     background: '#fef2f2', fontSize: '.9em' }}>
-                    <strong>{d.field}</strong>: 기대 <code>{JSON.stringify(d.expected)}</code> → 실제 <code>{JSON.stringify(d.actual)}</code>
+                    <strong>{d.key}</strong>: 기대 <code>{JSON.stringify(d.expected)}</code> → 실제 <code>{JSON.stringify(d.actual)}</code>
                   </div>
                 ))}
               </div>
