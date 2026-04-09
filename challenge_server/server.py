@@ -764,7 +764,7 @@ async def prompt_submit(request: Request):
     results = []
     all_pass = True
     for tc in PROMPT_TEST_CASES:
-        llm_result = call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
+        llm_result = await call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
 
         if "error" in llm_result:
             results.append({"case_id": tc["id"], "title": tc["title"], "pass": False, "error": llm_result["error"]})
