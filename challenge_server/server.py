@@ -72,6 +72,16 @@ llm_config = {
     "model": os.getenv("LLM_MODEL", "testmodel"),
 }
 
+# 사내 LLM Gateway 헤더 (x-service-id, x-user-id 필수)
+def llm_headers(llm=None):
+    cfg = llm or llm_config
+    return {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {cfg.get('api_key', '')}",
+        "x-service-id": "test-service",
+        "x-user-id": "syngha.han",
+    }
+
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
 challenge_llm_map: dict[str, str] = {}
 
@@ -172,10 +182,7 @@ async def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
     try:
         resp = await async_post(
             f"{llm_config['base_url']}/chat/completions",
-            headers={
-                "Authorization": f"Bearer {llm_config['api_key']}",
-                "Content-Type": "application/json",
-            },
+            headers=llm_headers(),
             json={
                 "model": llm_config["model"],
                 "messages": [{"role": "user", "content": prompt}],
@@ -228,7 +235,7 @@ async def update_settings(request: Request):
     try:
         resp = await async_post(
             f"{new_url}/chat/completions",
-            headers={"Authorization": f"Bearer {new_key}", "Content-Type": "application/json"},
+            headers=llm_headers({"api_key": new_key}),
             json={"model": new_model, "messages": [{"role": "user", "content": "test"}]},
         )
         if resp.status_code == 200:
@@ -647,7 +654,7 @@ async def context_test(request: Request):
     try:
         resp = await async_post(
             f"{llm['base_url']}/chat/completions",
-            headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+            headers=llm_headers(llm),
             json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}], "temperature": 0},
             verify=False, timeout=60, proxies={"http": None, "https": None},
         )
@@ -729,7 +736,7 @@ async def chat_extract_test(request: Request):
     try:
         resp = await async_post(
             f"{llm['base_url']}/chat/completions",
-            headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+            headers=llm_headers(llm),
             json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}], "temperature": 0},
             verify=False, timeout=60, proxies={"http": None, "https": None},
         )
@@ -796,7 +803,7 @@ async def fewshot_test(request: Request):
         try:
             resp = await async_post(
                 f"{llm['base_url']}/chat/completions",
-                headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+                headers=llm_headers(llm),
                 json={"model": llm.get("model", ""), "messages": messages, "temperature": 0},
                 verify=False, timeout=30, proxies={"http": None, "https": None},
             )
@@ -881,7 +888,7 @@ async def defense_test(request: Request):
         try:
             resp = await async_post(
                 f"{llm['base_url']}/chat/completions",
-                headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+                headers=llm_headers(llm),
                 json={"model": llm.get("model", ""), "messages": [
                     {"role": "system", "content": full_system},
                     {"role": "user", "content": attack},
@@ -1217,7 +1224,7 @@ async def dashboard_submit(request: Request):
 
         resp = await async_post(
             f"{vl_config['base_url']}/chat/completions",
-            headers={"Authorization": f"Bearer {vl_config.get('api_key', '')}", "Content-Type": "application/json"},
+            headers=llm_headers(vl_config),
             json={
                 "model": vl_config["model"],
                 "messages": [{"role": "user", "content": [
@@ -1582,7 +1589,7 @@ async def add_llm_endpoint(request: Request):
     try:
         resp = await async_post(
             f"{llm_endpoints[eid]['base_url']}/chat/completions",
-            headers={"Authorization": f"Bearer {llm_endpoints[eid]['api_key']}", "Content-Type": "application/json"},
+            headers=llm_headers(llm_endpoints[eid]),
             json={"model": llm_endpoints[eid]["model"], "messages": [{"role": "user", "content": "test"}]},
             verify=False, timeout=15, proxies={"http": None, "https": None},
         )

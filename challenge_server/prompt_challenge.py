@@ -98,8 +98,10 @@ async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config
             requests.post,
             f"{llm_config['base_url']}/chat/completions",
             headers={
-                "Authorization": f"Bearer {llm_config.get('api_key', '')}",
                 "Content-Type": "application/json",
+                "Authorization": f"Bearer {llm_config.get('api_key', '')}",
+                "x-service-id": "test-service",
+                "x-user-id": "syngha.han",
             },
             json={
                 "model": llm_config.get("model", ""),
