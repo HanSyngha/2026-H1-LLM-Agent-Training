@@ -67,9 +67,9 @@ llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
 
 # 채점용 LLM (기존 호환)
 llm_config = {
-    "base_url": os.getenv("LLM_GATEWAY_URL", "http://12.81.222.45:8090/v1"),
-    "api_key": os.getenv("LLM_GATEWAY_API_KEY", ""),
-    "model": os.getenv("LLM_MODEL", "testmodel"),
+    "base_url": os.getenv("LLM_GATEWAY_URL") or "http://12.81.222.45:8090/v1",
+    "api_key": os.getenv("LLM_GATEWAY_API_KEY") or "",
+    "model": os.getenv("LLM_MODEL") or "testmodel",
 }
 
 # 사내 LLM Gateway 헤더 (x-service-id, x-user-id 필수)
