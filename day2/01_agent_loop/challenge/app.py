@@ -194,7 +194,7 @@ SYSTEM_PROMPT = """당신은 API 미로를 풀어주는 에이전트입니다.
 # ============================================
 # LLM 호출 함수 (구현 완료)
 # ============================================
-def call_llm(messages, force_tool=False):
+def call_llm(messages):
     """LLM Gateway에 요청을 보냅니다."""
     all_messages = messages
     if not any(m.get("role") == "system" for m in messages):
@@ -205,9 +205,8 @@ def call_llm(messages, force_tool=False):
         "messages": all_messages,
         "max_tokens": 1024,
         "tools": tools,
+        "tool_choice": "auto",
     }
-    if force_tool:
-        body["tool_choice"] = "required"
 
     resp = requests.post(
         f"{LLM_GATEWAY}/chat/completions",

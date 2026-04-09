@@ -173,7 +173,7 @@ SYSTEM_PROMPT = """당신은 과제 제출을 도와주는 어시스턴트입니
 # =============================================
 # LLM 호출 함수 (구현 완료)
 # =============================================
-def call_llm(messages, force_tool=False):
+def call_llm(messages):
     """LLM Gateway에 요청을 보냅니다."""
     # system prompt가 없으면 자동 추가
     all_messages = messages
@@ -187,9 +187,7 @@ def call_llm(messages, force_tool=False):
     }
     if tools:
         body["tools"] = tools
-        # tool 호출을 강제 (텍스트 응답 방지)
-        if force_tool:
-            body["tool_choice"] = "required"
+        body["tool_choice"] = "auto"
 
     resp = requests.post(
         f"{LLM_GATEWAY}/chat/completions",
@@ -213,19 +211,21 @@ def call_llm(messages, force_tool=False):
 def run_agentic_loop(messages):
     """LLM을 반복 호출하여 tool_calls를 처리합니다."""
     max_iterations = 5
-    first_call = True
+    tool_called = False
 
     for _ in range(max_iterations):
-        result, error = call_llm(messages, force_tool=first_call)
-        first_call = False
+        result, error = call_llm(messages)
         if error:
             return None, error
 
         msg = result["choices"][0]["message"]
 
-        # tool_calls가 없으면 → 최종 텍스트 응답
         if not msg.get("tool_calls"):
+            if not tool_called:
+                return None, "❌ LLM이 Tool을 호출하지 않았습니다. tools 정의가 올바른지 확인하세요."
             return msg.get("content", ""), None
+
+        tool_called = True
 
         # tool_calls 처리: assistant 메시지 추가
         messages.append(msg)
