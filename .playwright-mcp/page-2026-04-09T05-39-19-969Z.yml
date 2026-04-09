@@ -1,0 +1,44 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - link "LLM Agent 교육" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "대시보드" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "강의" [ref=e9] [cursor=pointer]:
+        - /url: /slides
+    - generic [ref=e10]:
+      - generic [ref=e11]: 한승하
+      - generic [ref=e12]: (S/W혁신팀)
+  - generic [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e84]:
+        - generic [ref=e85]: Context Engineering 실습
+        - 'heading "과제: 5000자 회의록을 500자로 압축" [level=2] [ref=e86]'
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]: 원본 회의록 (376자)
+            - generic [ref=e91]: "[반도체 사업부 2026년 상반기 전략 회의록] 일시: 2026-03-15 | 참석: 최현우 부사장, 박영수 상무, 김태호 팀장, 오정훈 팀장 외 1. HBM4 개발: 16단 적층 샘플 완성, 열 관리 문제로 양산 2개월 지연. 그래핀 TIM으로 전환 검토 → Q3 양산 목표. 2. DRAM 1c 전환: 1b 수율 91.2% 안정화. EUV 더블 패터닝 도입, 4월 파일럿→7월 양산. EUV 장비 2대 추가(8,000억). 3. AI 가속기(PIM): 시장 $4B 전망. 로직 인력 부족(50→200명), 외부 파운드리 활용 결정. 하반기 100명 채용. 4. 핵심 실행과제: HBM4 Q3 양산, 1c 전환, PIM 사업, 원가 8% 절감, AI석박사 50명 확보."
+          - generic [ref=e92]:
+            - generic [ref=e93]: 압축 프롬프트 (71/500자)
+            - textbox "핵심만 남겨서 500자 이내로 압축하세요..." [ref=e94]: "HBM4: 그래핀 TIM 개발하여 Q3 양산. DRAM 1c: 4월 파일럿 라인 가동. PIM: 로직 설계 인력 100명 채용."
+            - button "AI 예측 중..." [disabled] [ref=e96] [cursor=pointer]
+      - button "☰" [ref=e26] [cursor=pointer]
+      - generic [ref=e27]: 60 / 95
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - button "←" [ref=e30] [cursor=pointer]
+        - generic [ref=e31]: 60/95
+        - button "→" [ref=e32] [cursor=pointer]
+        - button "💬" [ref=e33] [cursor=pointer]
+      - generic [ref=e35]:
+        - button "👍" [ref=e36] [cursor=pointer]
+        - button "❓" [ref=e37] [cursor=pointer]
+        - button "😕" [ref=e38] [cursor=pointer]
+        - button "✅" [ref=e39] [cursor=pointer]
+        - button "❌" [ref=e40] [cursor=pointer]
+        - button "⏩" [ref=e41] [cursor=pointer]
+        - button "⏪" [ref=e42] [cursor=pointer]
+      - generic [ref=e44]:
+        - textbox "💬 질문을 입력하세요..." [ref=e45]
+        - button "전송" [ref=e46] [cursor=pointer]

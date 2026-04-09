@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Badge, SlideH2, Divider, Box } from './SlideLayout';
+import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 
 export default function Slide84_DefenseTheory() {
   return (

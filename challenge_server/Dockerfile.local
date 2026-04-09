@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Seoul
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements.txt
+COPY server.py challenges.py prompt_challenge.py ./
+COPY dashboard.html prompt_page.html settings_page.html ./
+COPY financial_articles.json ./
+COPY frontend/dist ./frontend/dist
+EXPOSE 47777
+CMD ["python", "server.py"]

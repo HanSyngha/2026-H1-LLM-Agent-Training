@@ -736,9 +736,13 @@ async def fewshot_test(request: Request):
             if resp.status_code != 200:
                 results.append({"input": tc["input"], "expected": tc["label"], "actual": "ERROR", "pass": False})
                 continue
-            answer = (resp.json()["choices"][0]["message"].get("content") or "").strip()
-            passed = tc["label"] in answer
-            results.append({"input": tc["input"], "expected": tc["label"], "actual": answer[:20], "pass": passed})
+            msg = resp.json()["choices"][0]["message"]
+            answer = (msg.get("content") or "").strip()
+            # 일부 모델은 reasoning 필드에 답변을 넣음
+            reasoning = (msg.get("reasoning") or "")
+            full_text = answer + " " + reasoning
+            passed = tc["label"] in full_text
+            results.append({"input": tc["input"], "expected": tc["label"], "actual": (answer or reasoning)[:30], "pass": passed})
         except Exception:
             results.append({"input": tc["input"], "expected": tc["label"], "actual": "ERROR", "pass": False})
 

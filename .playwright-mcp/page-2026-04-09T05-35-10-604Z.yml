@@ -1,0 +1,13 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - link "LLM Agent 교육" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "대시보드" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "강의" [ref=e9] [cursor=pointer]:
+        - /url: /slides
+    - generic [ref=e10]:
+      - generic [ref=e11]: 한승하
+      - generic [ref=e12]: (S/W혁신팀)
+  - generic [ref=e14]: 로딩 중입니다...
