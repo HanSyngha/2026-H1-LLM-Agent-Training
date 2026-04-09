@@ -108,7 +108,6 @@ async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config
                     {"role": "user", "content": input_text},
                 ],
                 "temperature": 0,
-                "max_tokens": 500,
             },
             verify=False,
             timeout=180,

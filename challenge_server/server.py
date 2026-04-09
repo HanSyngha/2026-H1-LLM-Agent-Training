@@ -229,7 +229,6 @@ async def update_settings(request: Request):
         resp = await async_post(
             f"{new_url}/chat/completions",
             headers={"Authorization": f"Bearer {new_key}", "Content-Type": "application/json"},
-            json={"model": new_model, "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
         )
         if resp.status_code == 200:
             llm_config["base_url"] = new_url
@@ -648,8 +647,7 @@ async def context_test(request: Request):
         resp = await async_post(
             f"{llm['base_url']}/chat/completions",
             headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
-            json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}],
-                  "temperature": 0, "max_tokens": 300},
+            json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}], "temperature": 0},
             verify=False, timeout=60, proxies={"http": None, "https": None},
         )
         if resp.status_code != 200:
@@ -731,8 +729,7 @@ async def chat_extract_test(request: Request):
         resp = await async_post(
             f"{llm['base_url']}/chat/completions",
             headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
-            json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}],
-                  "temperature": 0, "max_tokens": 200},
+            json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}], "temperature": 0},
             verify=False, timeout=60, proxies={"http": None, "https": None},
         )
         resp_json = resp.json()
@@ -799,7 +796,6 @@ async def fewshot_test(request: Request):
             resp = await async_post(
                 f"{llm['base_url']}/chat/completions",
                 headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
-                json={"model": llm.get("model", ""), "messages": messages, "temperature": 0, "max_tokens": 100},
                 verify=False, timeout=30, proxies={"http": None, "https": None},
             )
             if resp.status_code != 200:
@@ -887,7 +883,7 @@ async def defense_test(request: Request):
                 json={"model": llm.get("model", ""), "messages": [
                     {"role": "system", "content": full_system},
                     {"role": "user", "content": attack},
-                ], "temperature": 0, "max_tokens": 200},
+                ], "temperature": 0},
                 verify=False, timeout=30, proxies={"http": None, "https": None},
             )
             if resp.status_code != 200:
@@ -1226,8 +1222,7 @@ async def dashboard_submit(request: Request):
                     {"type": "text", "text": prompt},
                     {"type": "image_url", "image_url": {"url": img_url}},
                 ]}],
-                "temperature": 0,
-                "max_tokens": 8192,
+                "temperature": 0
             },
             verify=False, timeout=300, proxies={"http": None, "https": None},
         )
@@ -1586,7 +1581,6 @@ async def add_llm_endpoint(request: Request):
         resp = await async_post(
             f"{llm_endpoints[eid]['base_url']}/chat/completions",
             headers={"Authorization": f"Bearer {llm_endpoints[eid]['api_key']}", "Content-Type": "application/json"},
-            json={"model": llm_endpoints[eid]["model"], "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
             verify=False, timeout=15, proxies={"http": None, "https": None},
         )
         ok = resp.status_code == 200
