@@ -25,8 +25,8 @@ def execute_tool(state): ...
 graph = StateGraph(AgentState)
 graph.add_node("llm", call_llm)
 graph.add_node("tool", execute_tool)
-graph.add_edge("llm", "tool")      # llm -> tool
-graph.add_edge("tool", "llm")      # tool -> llm (루프)
+graph.add_edge("llm", "tool")      # llm → tool
+graph.add_edge("tool", "llm")      # tool → llm (루프)
 graph.add_conditional_edges("llm", should_continue)
 
 app = graph.compile()`}</CodeBlock>

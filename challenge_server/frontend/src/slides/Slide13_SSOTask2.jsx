@@ -36,8 +36,8 @@ export default function Slide13_SSOTask2() {
             <div style={{ textAlign: 'left', lineHeight: 1.8 }}>
               <code>id_token</code> JWT 디코딩으로 이름/부서를 표시하세요 (<code>/userinfo</code> 호출 X)<br /><br />
               <strong>필수 파라미터:</strong> scope=<code>openid profile email</code>, <code>nonce</code>=UUID (없으면 id_token 안 옴)<br />
-              <strong>JWT 디코딩:</strong> <code>{'jwt.decode(id_token, options={"verify_signature": False})'}</code> -> claims의 <code>name</code>, <code>dept</code><br />
-              <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 -> <code>/challenges/sso_oidc/submit</code>
+              <strong>JWT 디코딩:</strong> <code>{'jwt.decode(id_token, options={"verify_signature": False})'}</code> → claims의 <code>name</code>, <code>dept</code><br />
+              <strong>제출:</strong> 앱 내 "Challenge 서버에 제출" 버튼 → <code>/challenges/sso_oidc/submit</code>
             </div>
           </Box>
         </motion.div>

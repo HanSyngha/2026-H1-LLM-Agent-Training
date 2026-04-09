@@ -68,7 +68,7 @@ export default function Slide26_Gateway() {
               <text x={385} y={132} textAnchor="middle" fill="#475569" fontSize={13}>인터페이스</text>
             </AnimatedBox>
 
-            {/* Arrow: Code -> Gateway */}
+            {/* Arrow: Code → Gateway */}
             <motion.line
               x1={202} y1={110} x2={288} y2={110}
               stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowBlue26)"
@@ -84,7 +84,7 @@ export default function Slide26_Gateway() {
               </AnimatedBox>
             ))}
 
-            {/* Arrows: Gateway -> LLMs */}
+            {/* Arrows: Gateway → LLMs */}
             <motion.path d="M482,88 Q530,38 588,32" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.2, duration: 0.5 }} />
             <motion.path d="M482,100 L588,90" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"

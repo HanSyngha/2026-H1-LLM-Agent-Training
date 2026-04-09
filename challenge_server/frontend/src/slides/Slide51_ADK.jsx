@@ -13,7 +13,7 @@ export default function Slide51_ADK() {
           <CodeBlock>{`from google.adk import Agent, Tool, Runner
 
 # Tool 정의
-def search_web(query: str) -> str:
+def search_web(query: str) → str:
     """웹에서 정보를 검색합니다."""
     return web_api.search(query)
 

@@ -39,7 +39,7 @@ export default function Slide40_MCPFlow() {
               <text x={470} y={114} textAnchor="middle" fill="#475569" fontSize={13}>tools 목록에 search_employee 있음</text>
             </AnimatedBox>
 
-            {/* Arrow: user -> LLM */}
+            {/* Arrow: user → LLM */}
             <motion.line x1={470} y1={50} x2={470} y2={70} stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowB40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.5, duration: 0.4 }} />
 
@@ -50,7 +50,7 @@ export default function Slide40_MCPFlow() {
               </text>
             </AnimatedBox>
 
-            {/* Arrow: LLM -> tool_call */}
+            {/* Arrow: LLM → tool_call */}
             <motion.line x1={470} y1={124} x2={470} y2={146} stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowB40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.65, duration: 0.4 }} />
 
@@ -65,11 +65,11 @@ export default function Slide40_MCPFlow() {
               <text x={695} y={255} textAnchor="middle" fill="#475569" fontSize={13}>(실제 실행)</text>
             </AnimatedBox>
 
-            {/* Arrow: tool_call -> MCP Client */}
+            {/* Arrow: tool_call → MCP Client */}
             <motion.line x1={470} y1={188} x2={195} y2={210} stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowB40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.9, duration: 0.4 }} />
 
-            {/* Arrow: Client -> Server */}
+            {/* Arrow: Client → Server */}
             <motion.line x1={292} y1={237} x2={598} y2={237} stroke="#10b981" strokeWidth={2} markerEnd="url(#arrowG40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.0, duration: 0.5 }} />
 
@@ -79,7 +79,7 @@ export default function Slide40_MCPFlow() {
               JSON-RPC
             </motion.text>
 
-            {/* Arrow: Server -> Client (return) */}
+            {/* Arrow: Server → Client (return) */}
             <motion.line x1={598} y1={250} x2={292} y2={250} stroke="#10b981" strokeWidth={2} markerEnd="url(#arrowG40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.15, duration: 0.5 }} />
 
@@ -89,7 +89,7 @@ export default function Slide40_MCPFlow() {
               <text x={470} y={324} textAnchor="middle" fill="#475569" fontSize={13}>"김철수님은 개발1팀 소속입니다."</text>
             </AnimatedBox>
 
-            {/* Arrow: Client -> LLM response */}
+            {/* Arrow: Client → LLM response */}
             <motion.line x1={195} y1={266} x2={470} y2={286} stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowB40)"
               initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.3, duration: 0.4 }} />
           </svg>

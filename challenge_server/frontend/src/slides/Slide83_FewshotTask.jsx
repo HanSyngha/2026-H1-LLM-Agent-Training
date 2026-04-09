@@ -96,7 +96,7 @@ export default function Slide83_FewshotTask() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         <AnswerButton answerId="fewshot">

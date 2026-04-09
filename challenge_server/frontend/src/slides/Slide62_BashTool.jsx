@@ -11,7 +11,7 @@ export default function Slide62_BashTool() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <CodeBlock>{`import subprocess
 
-def run_command(command: str, timeout: int = 30) -> dict:
+def run_command(command: str, timeout: int = 30) → dict:
     """쉘 명령어를 실행하고 결과를 반환합니다."""
     try:
         result = subprocess.run(

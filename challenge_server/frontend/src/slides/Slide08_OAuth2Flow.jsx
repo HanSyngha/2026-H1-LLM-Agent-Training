@@ -78,7 +78,7 @@ export default function Slide08_OAuth2Flow() {
             {/* Step 4: POST /token */}
             <AnimatedBox x={740} y={20} w={200} h={70} fill="rgba(124,58,237,.08)" stroke="rgba(124,58,237,.5)" delay={1.0}>
               <text x={840} y={50} textAnchor="middle" fill="#6d28d9" fontWeight={700} fontSize={16}>4. POST /token</text>
-              <text x={840} y={72} textAnchor="middle" fill="#475569" fontSize={13}>{'code -> access_token'}</text>
+              <text x={840} y={72} textAnchor="middle" fill="#475569" fontSize={13}>{'code → access_token'}</text>
             </AnimatedBox>
 
             {/* Arrows between steps */}
@@ -97,7 +97,7 @@ export default function Slide08_OAuth2Flow() {
 
             {/* Key point */}
             <AnimatedBox x={260} y={235} w={680} h={55} fill="rgba(51,65,85,.08)" stroke="rgba(100,116,139,.3)" delay={1.5}>
-              <text x={600} y={268} textAnchor="middle" fill="#1e293b" fontWeight={600} fontSize={15}>핵심: access_token만으로는 사용자가 누군지 모릅니다 -> /userinfo API 호출 필수</text>
+              <text x={600} y={268} textAnchor="middle" fill="#1e293b" fontWeight={600} fontSize={15}>핵심: access_token만으로는 사용자가 누군지 모릅니다 → /userinfo API 호출 필수</text>
             </AnimatedBox>
           </svg>
         </motion.div>

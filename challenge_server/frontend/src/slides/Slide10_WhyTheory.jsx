@@ -25,8 +25,8 @@ export default function Slide10_WhyTheory() {
               <p style={{ fontSize: '.95em', lineHeight: 1.6, textAlign: 'left' }}>
                 <strong>표준:</strong> 공인 CA<br />
                 <strong>사내:</strong> 자체 인증서<br />
-                -> AI는 <code>verify=True</code>로 짜줌<br />
-                -> <strong style={{ color: '#dc2626' }}>연결 거부</strong>
+                → AI는 <code>verify=True</code>로 짜줌<br />
+                → <strong style={{ color: '#dc2626' }}>연결 거부</strong>
               </p>
             </Card>
           </motion.div>
@@ -37,8 +37,8 @@ export default function Slide10_WhyTheory() {
               <p style={{ fontSize: '.95em', lineHeight: 1.6, textAlign: 'left' }}>
                 <strong>표준:</strong> 긴 시크릿 필수<br />
                 <strong>사내:</strong> 빈 문자열<br />
-                -> AI는 시크릿을 넣어줌<br />
-                -> <strong style={{ color: '#dc2626' }}>인증 실패</strong>
+                → AI는 시크릿을 넣어줌<br />
+                → <strong style={{ color: '#dc2626' }}>인증 실패</strong>
               </p>
             </Card>
           </motion.div>
@@ -49,8 +49,8 @@ export default function Slide10_WhyTheory() {
               <p style={{ fontSize: '.95em', lineHeight: 1.6, textAlign: 'left' }}>
                 <strong>표준:</strong> scope만으로 발급<br />
                 <strong>사내:</strong> nonce 필수<br />
-                -> AI는 nonce를 안 넣음<br />
-                -> <strong style={{ color: '#dc2626' }}>토큰 없음</strong>
+                → AI는 nonce를 안 넣음<br />
+                → <strong style={{ color: '#dc2626' }}>토큰 없음</strong>
               </p>
             </Card>
           </motion.div>

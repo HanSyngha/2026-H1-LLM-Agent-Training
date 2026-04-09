@@ -22,9 +22,9 @@ export default function Slide09_OIDCDiff() {
             }}>
               <h4 style={{ color: '#2563eb', fontSize: '1.15em', marginBottom: '.8em' }}>OAuth2</h4>
               <div style={{ fontSize: '1em', lineHeight: 2 }}>
-                <div>1. <code>/authorize</code> -> 로그인</div>
+                <div>1. <code>/authorize</code> → 로그인</div>
                 <div>2. <code>callback?code=</code></div>
-                <div>3. <code>POST /token</code> -> <strong>access_token</strong></div>
+                <div>3. <code>POST /token</code> → <strong>access_token</strong></div>
                 <div style={{ color: '#dc2626', fontWeight: 600 }}>4. <code>GET /userinfo</code> {'<-'} 추가 호출 필요!</div>
               </div>
               <div style={{ marginTop: '1em', padding: '8px 12px', background: 'rgba(59,130,246,.06)', borderRadius: 8, fontSize: '.9em', color: '#334155' }}>
@@ -45,10 +45,10 @@ export default function Slide09_OIDCDiff() {
             }}>
               <h4 style={{ color: '#7c3aed', fontSize: '1.15em', marginBottom: '.8em' }}>OIDC (OpenID Connect)</h4>
               <div style={{ fontSize: '1em', lineHeight: 2 }}>
-                <div>1. <code>/authorize</code> -> 로그인 <span style={{ color: '#7c3aed' }}>(+ nonce!)</span></div>
+                <div>1. <code>/authorize</code> → 로그인 <span style={{ color: '#7c3aed' }}>(+ nonce!)</span></div>
                 <div>2. <code>callback?code=</code></div>
-                <div>3. <code>POST /token</code> -> access_token <strong style={{ color: '#7c3aed' }}>+ id_token</strong></div>
-                <div style={{ color: '#059669', fontWeight: 600 }}>-> JWT 디코딩만 하면 끝!</div>
+                <div>3. <code>POST /token</code> → access_token <strong style={{ color: '#7c3aed' }}>+ id_token</strong></div>
+                <div style={{ color: '#059669', fontWeight: 600 }}> → JWT 디코딩만 하면 끝!</div>
               </div>
               <div style={{ marginTop: '1em', padding: '8px 12px', background: 'rgba(124,58,237,.06)', borderRadius: 8, fontSize: '.9em', color: '#334155' }}>
                 요청 <strong>3번</strong> -- id_token 안에 사용자 정보가 이미 들어있습니다

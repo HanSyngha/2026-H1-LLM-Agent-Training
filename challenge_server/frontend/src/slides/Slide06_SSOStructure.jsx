@@ -75,14 +75,14 @@ export default function Slide06_SSOStructure() {
               <text x={670} y={128} textAnchor="middle" fill="#475569" fontSize={13}>인물정보</text>
             </AnimatedBox>
 
-            {/* Arrow: Client -> SSO */}
+            {/* Arrow: Client → SSO */}
             <AnimatedArrow x1={200} y1={110} x2={288} y2={110} delay={0.9} />
             <motion.text x={244} y={100} textAnchor="middle" fill="#2563eb" fontSize={12}
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
               1. 로그인
             </motion.text>
 
-            {/* Arrow: SSO -> HR DB */}
+            {/* Arrow: SSO → HR DB */}
             <AnimatedArrow x1={490} y1={110} x2={578} y2={110} delay={1.0} color="#059669" />
             <motion.text x={534} y={100} textAnchor="middle" fill="#059669" fontSize={12}
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>

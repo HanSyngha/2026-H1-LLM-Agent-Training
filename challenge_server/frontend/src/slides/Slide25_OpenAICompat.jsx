@@ -67,7 +67,7 @@ export default function Slide25_OpenAICompat() {
               <text x={385} y={132} textAnchor="middle" fill="#475569" fontSize={13}>인터페이스</text>
             </AnimatedBox>
 
-            {/* Arrow code -> gateway */}
+            {/* Arrow code → gateway */}
             <AnimatedArrow x1={202} y1={110} x2={288} y2={110} delay={0.7} />
 
             {/* LLMs */}
@@ -82,7 +82,7 @@ export default function Slide25_OpenAICompat() {
               </AnimatedBox>
             ))}
 
-            {/* Arrows gateway -> LLMs */}
+            {/* Arrows gateway → LLMs */}
             <AnimatedPath d="M482,88 Q530,38 588,32" delay={1.2} />
             <AnimatedPath d="M482,100 L588,90" delay={1.3} />
             <AnimatedPath d="M482,115 L588,148" delay={1.4} />

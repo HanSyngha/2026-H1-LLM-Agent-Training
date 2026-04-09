@@ -15,7 +15,7 @@ ALLOWED_COMMANDS = {"ls", "cat", "grep", "find", "head",
 BLOCKED_PATTERNS = ["rm -rf", "sudo", ":(){:|:&}", "dd if="]
 ALLOWED_DIR = "/home/user/workspace"
 
-def validate_command(cmd: str) -> bool:
+def validate_command(cmd: str) → bool:
     # 1. 위험 패턴 차단
     for pattern in BLOCKED_PATTERNS:
         if pattern in cmd:

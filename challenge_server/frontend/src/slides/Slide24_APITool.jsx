@@ -11,7 +11,7 @@ export default function Slide24_APITool() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <CodeBlock lang="python">{`# 1. 일반 Python 함수 작성
-def get_weather(city: str) -> dict:
+def get_weather(city: str) → dict:
     """도시의 현재 날씨를 조회합니다."""
     resp = requests.get(f"https://weather.api/{city}")
     return resp.json()

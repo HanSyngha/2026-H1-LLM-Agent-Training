@@ -14,14 +14,14 @@ export default function Slide39_FastMCP() {
 mcp = FastMCP("사내 도구 서버")
 
 @mcp.tool()
-def search_employee(name: str) -> dict:
+def search_employee(name: str) → dict:
     """직원 이름으로 인사정보를 검색합니다."""
     # SSO API 호출
     result = sso_api.search(name)
     return {"name": result.name, "dept": result.dept}
 
 @mcp.tool()
-def book_meeting_room(room: str, time: str) -> str:
+def book_meeting_room(room: str, time: str) → str:
     """회의실을 예약합니다."""
     return booking_api.reserve(room, time)
 
