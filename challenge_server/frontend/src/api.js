@@ -23,7 +23,9 @@ export async function getMe() {
 
 export async function getChallenges() { return fetchJSON('/challenges'); }
 export async function getCompletions() { return fetchJSON('/completions'); }
-export async function resetCompletions() { return postJSON('/completions/reset', {}); }
+export async function resetCompletions(challengeId) {
+  return postJSON('/completions/reset', challengeId ? { challenge_id: challengeId } : {});
+}
 export async function getPromptCases() { return fetchJSON('/challenges/prompt/cases'); }
 
 export async function testPrompt(prompt, caseId) {

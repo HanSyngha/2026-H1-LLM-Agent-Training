@@ -330,7 +330,7 @@ function ChevronDown({ style }) {
 
 /* ── Challenge Card component ─────────────────────── */
 
-function ChallengeCard({ name, completions }) {
+function ChallengeCard({ name, completions, isAdmin, challengeId, onReset }) {
   const [open, setOpen] = useState(false);
   const comps = completions || [];
   const topCompleter = comps.length > 0 ? comps[0] : null;
@@ -353,6 +353,14 @@ function ChallengeCard({ name, completions }) {
           <span style={S.countBadge(comps.length > 0)}>
             {comps.length}명 완료
           </span>
+          {isAdmin && comps.length > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); onReset(challengeId); }}
+              style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #ef4444',
+                background: 'transparent', color: '#ef4444', fontSize: '.7em', cursor: 'pointer',
+                fontWeight: 600 }}>
+              초기화
+            </button>
+          )}
           <ChevronDown style={S.chevron(open)} />
         </div>
       </div>
@@ -592,8 +600,16 @@ export default function Dashboard() {
           {ids.map((id) => (
             <ChallengeCard
               key={id}
+              challengeId={id}
               name={challenges[id].name}
               completions={challenges[id].completions}
+              isAdmin={isAdmin}
+              onReset={async (cid) => {
+                if (!confirm(`'${challenges[cid].name}' 과제를 초기화하시겠습니까?`)) return;
+                await resetCompletions(cid);
+                const fresh = await getCompletions();
+                setData(fresh);
+              }}
             />
           ))}
         </div>

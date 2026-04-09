@@ -529,14 +529,21 @@ async def reset_completions(request: Request):
     if not user or user.get("sub") != "syngha.han":
         return JSONResponse({"error": "강사만 초기화할 수 있습니다."}, status_code=403)
 
+    challenge_id = body.get("challenge_id")  # 특정 과제만 초기화 (없으면 전체)
+
+    if challenge_id:
+        if challenge_id in completions:
+            completions[challenge_id] = []
+            _save_state()
+            return {"status": "OK", "message": f"'{challenge_id}' 과제가 초기화되었습니다."}
+        return JSONResponse({"error": f"과제 '{challenge_id}'를 찾을 수 없습니다."}, status_code=404)
+
+    # 전체 초기화
     for cid in completions:
         completions[cid] = []
 
-    # tool_use 시크릿도 초기화
     from challenges import _tool_use_secrets
     _tool_use_secrets.clear()
-
-    # 답안 공개 상태도 초기화
     unlocked_answers.clear()
     _save_state()
 
