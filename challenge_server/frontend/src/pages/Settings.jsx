@@ -7,6 +7,8 @@ export default function Settings() {
   const [challenges, setChallenges] = useState([]);
   const [form, setForm] = useState({ name: '', base_url: '', api_key: '', model: '' });
   const [status, setStatus] = useState(null);
+  const [vlForm, setVlForm] = useState({ base_url: '', api_key: '', model: '' });
+  const [vlStatus, setVlStatus] = useState(null);
 
   useEffect(() => {
     fetchJSON('/settings/llm-endpoints').then(d => {
@@ -14,6 +16,9 @@ export default function Settings() {
       setChallengeMap(d.challenge_map || {});
     });
     fetchJSON('/challenges').then(setChallenges);
+    fetchJSON('/settings/vl').then(d => {
+      if (d.base_url) setVlForm({ base_url: d.base_url, api_key: '', model: d.model });
+    });
   }, []);
 
   const addLLM = async () => {
@@ -82,6 +87,34 @@ export default function Settings() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      <div className="card" style={{ marginBottom: 16 }}>
+        <h3>VL 모델 설정 (대시보드 채점용)</h3>
+        <p style={{ fontSize: '.85em', color: 'var(--text3)', marginTop: 4 }}>React 대시보드 과제의 스크린샷을 채점하는 Vision-Language 모델</p>
+        <input placeholder="Base URL (예: http://a2g.samsungds.net:8090/v1)" value={vlForm.base_url}
+          onChange={e => setVlForm({ ...vlForm, base_url: e.target.value })}
+          style={{ width: '100%', padding: 10, border: '1px solid var(--border)', borderRadius: 8, marginTop: 8, fontFamily: 'monospace' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
+          <input placeholder="모델명 (예: qwen3.5-35b-a3b)" value={vlForm.model}
+            onChange={e => setVlForm({ ...vlForm, model: e.target.value })}
+            style={{ padding: 10, border: '1px solid var(--border)', borderRadius: 8 }} />
+          <input placeholder="API Key" type="password" value={vlForm.api_key}
+            onChange={e => setVlForm({ ...vlForm, api_key: e.target.value })}
+            style={{ padding: 10, border: '1px solid var(--border)', borderRadius: 8 }} />
+        </div>
+        <button className="btn btn-blue" onClick={async () => {
+          setVlStatus({ ok: null, msg: '설정 중...' });
+          const r = await postJSON('/settings/vl', vlForm);
+          setVlStatus({ ok: r.status === 'ok', msg: r.message });
+        }} style={{ marginTop: 12 }}>VL 모델 설정</button>
+        {vlStatus && (
+          <div style={{ marginTop: 8, padding: 10, borderRadius: 8, fontSize: '.85em',
+            background: vlStatus.ok ? '#f0fdf4' : '#fef2f2',
+            color: vlStatus.ok ? 'var(--green)' : 'var(--red)' }}>
+            {vlStatus.msg}
           </div>
         )}
       </div>
