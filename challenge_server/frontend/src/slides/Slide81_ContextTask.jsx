@@ -101,6 +101,13 @@ export default function Slide81_ContextTask() {
                 ))}
               </div>
             )}
+            {result.raw && (
+              <details style={{ marginTop: 6, fontSize: '.8em' }}>
+                <summary style={{ cursor: 'pointer', color: '#64748b' }}>LLM Raw Output</summary>
+                <pre style={{ background: '#1e293b', color: '#e2e8f0', padding: 8, borderRadius: 6,
+                  overflow: 'auto', maxHeight: 100, whiteSpace: 'pre-wrap', marginTop: 4 }}>{result.raw}</pre>
+              </details>
+            )}
           </motion.div>
         )}
 
