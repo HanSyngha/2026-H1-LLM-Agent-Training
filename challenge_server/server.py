@@ -1055,7 +1055,8 @@ async def agent_v2_task(task_id: str, request: Request):
     data_value = AGENT_V2_DATA[task["data_key"]]
     session["collected_data"][task["data_key"]] = data_value
 
-    remaining = [t["name"] for t in AGENT_V2_TASKS if t["id"] not in session["completed"]]
+    remaining = [t for t in AGENT_V2_TASKS if t["id"] not in session["completed"]]
+    next_task = remaining[0] if remaining else None
 
     return {
         "success": True,
@@ -1063,8 +1064,9 @@ async def agent_v2_task(task_id: str, request: Request):
         "name": task["name"],
         "data": {task["data_key"]: data_value},
         "progress": f"{len(session['completed'])}/{len(AGENT_V2_TASKS)}",
-        "remaining": remaining if remaining else "모든 작업 완료! /end를 호출하세요.",
-        "message": f"'{task['name']}' 완료. {'다음: ' + remaining[0] if remaining else '/end를 호출하세요.'}",
+        "next_task_id": next_task["id"] if next_task else None,
+        "next_task_name": next_task["name"] if next_task else None,
+        "message": f"'{task['name']}' 완료." + (f" 다음 작업: run_task(task_id='{next_task['id']}')" if next_task else " 모든 작업 완료! finish_maze를 호출하세요."),
     }
 
 
