@@ -119,7 +119,7 @@ async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config
         if resp.status_code != 200:
             return {"error": f"LLM HTTP {resp.status_code}"}
 
-        content = resp.json()["choices"][0]["message"]["content"].strip()
+        content = (resp.json()["choices"][0]["message"].get("content") or "").strip()
 
         # JSON 추출 (코드블록 처리)
         if content.startswith("```"):
