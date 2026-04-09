@@ -39,6 +39,7 @@ export default function Slide81_ContextTask() {
   const [testing, setTesting] = useState(false);
 
   const handleTest = async () => {
+    console.log('[Context] handleTest called, compressed:', compressed.length, 'testing:', testing);
     setTesting(true); setResult(null);
     try {
       const r = await postJSON('/challenges/context/test', { compressed });
@@ -92,8 +93,8 @@ export default function Slide81_ContextTask() {
             <button onClick={handleTest} disabled={testing || !compressed.trim() || compressed.length > 200}
               style={{
                 marginTop: 8, padding: '8px 20px', borderRadius: 8, border: 'none', width: '100%',
-                background: compressed.trim() && compressed.length <= 500 ? '#7c3aed' : '#e2e8f0',
-                color: compressed.trim() && compressed.length <= 500 ? '#fff' : '#94a3b8',
+                background: compressed.trim() && compressed.length <= 200 ? '#7c3aed' : '#e2e8f0',
+                color: compressed.trim() && compressed.length <= 200 ? '#fff' : '#94a3b8',
                 fontWeight: 700, fontSize: '.9em', cursor: 'pointer',
               }}>
               {testing ? 'AI 예측 중...' : '🧪 AI에게 다음 행동 예측시키기'}
