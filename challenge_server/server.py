@@ -1424,6 +1424,7 @@ async def download_challenge(challenge_id: str):
         "browser": "day1/07_browser_control",
         "agent_loop": "day2/01_agent_loop/challenge",
         "index_explore": "day2/02_index_explore/challenge",
+        "bash_tool": "day2/04_bash_tool/challenge",
         "agent_v2": "day2/03_agent_v2/challenge",
     }
 

@@ -70,6 +70,7 @@ import Slide83_FewshotTask from './Slide83_FewshotTask';
 import Slide84_DefenseTheory from './Slide84_DefenseTheory';
 import Slide85_DefenseTask from './Slide85_DefenseTask';
 import Slide62_AgentV2Task from './Slide62_AgentV2Task';
+import Slide63b_BashToolTask from './Slide63b_BashToolTask';
 import Slide76b_ReactSetup from './Slide76b_ReactSetup';
 import Slide50_Day2Header from './Slide50_Day2Header';
 import SectionFramework from './SectionFramework';
@@ -199,6 +200,7 @@ const SLIDES = [
   { id: 71, component: SectionBash, title: '#12 bash Agent', day: 2 },
   { id: 72, component: Slide62_BashTool, title: 'subprocess Tool', day: 2 },
   { id: 73, component: Slide63_BashAgent, title: 'CLI Agent', day: 2 },
+  { id: 0, component: Slide63b_BashToolTask, title: 'Bash Tool 과제', day: 2 },
   { id: 74, component: SectionVectorDB, title: '#13 Vector DB', day: 2 },
   { id: 75, component: Slide64_SemanticSearch, title: 'Semantic Search', day: 2 },
   { id: 76, component: Slide65_IndexExplore, title: 'Index Explore', day: 2 },

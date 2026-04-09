@@ -1,0 +1,12 @@
+=== Bash Tool 과제 ===
+
+encoded.txt 파일에 비밀 코드가 숨겨져 있습니다.
+
+해독 순서:
+1. encoded.txt를 base64 디코딩하세요
+2. 디코딩된 텍스트의 각 줄에서 첫 번째 글자를 추출하세요
+3. 첫 글자들을 순서대로 이어붙이면 비밀 코드입니다
+
+PowerShell 명령어 힌트:
+- base64 디코딩: [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((Get-Content encoded.txt -Raw)))
+- 또는 Python: python -c "import base64; print(base64.b64decode(open('encoded.txt').read()).decode())"

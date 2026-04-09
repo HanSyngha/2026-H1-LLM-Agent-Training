@@ -680,6 +680,17 @@ CHALLENGES = {
             "details": [],
         },
     },
+    "bash_tool": {
+        "name": "Bash Tool (파일 해독)",
+        "description": "subprocess tool로 암호화 파일을 해독하세요.",
+        "mission": {"description": "encoded.txt를 PowerShell/Python 명령어로 해독"},
+        "submit_schema": '{"secret_code": "해독된 비밀 코드"}',
+        "validate": lambda a: {
+            "passed": a.get("secret_code", "").strip() == "AGENT2026",
+            "message": "Bash Tool 과제 통과!" if a.get("secret_code", "").strip() == "AGENT2026" else "비밀 코드가 틀렸습니다.",
+            "details": [],
+        },
+    },
     "index_explore": {
         "name": "Index Explore (.md 인덱스)",
         "description": "계층적 .md 인덱스를 만들어 AI가 문서를 탐색하게 하세요.",
