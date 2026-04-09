@@ -4,6 +4,7 @@ import { getMe } from './api';
 import Dashboard from './pages/Dashboard';
 import PromptChallenge from './pages/PromptChallenge';
 import Questions from './pages/Questions';
+import Feedback from './pages/Feedback';
 import Slides from './pages/Slides';
 import Settings from './pages/Settings';
 import Navbar from './components/Navbar';
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/slides" element={<Slides user={user} />} />
         <Route path="/challenges/prompt" element={<PromptChallenge user={user} />} />
         <Route path="/questions" element={<Questions />} />
+        <Route path="/feedback" element={<Feedback />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>

@@ -8,6 +8,7 @@ export default function Navbar({ user }) {
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>대시보드</NavLink>
         <NavLink to="/slides" className={({ isActive }) => isActive ? 'active' : ''}>강의</NavLink>
         <NavLink to="/questions" className={({ isActive }) => isActive ? 'active' : ''}>질문</NavLink>
+        <NavLink to="/feedback" className={({ isActive }) => isActive ? 'active' : ''}>피드백</NavLink>
         {/* 설정은 네비에 노출하지 않음 — /settings 직접 입력만 */}
       </nav>
       <div className="user">

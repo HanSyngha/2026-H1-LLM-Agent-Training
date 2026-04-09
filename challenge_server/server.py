@@ -110,6 +110,7 @@ def _save_state():
             "completions": completions,
             "unlocked_answers": list(unlocked_answers),
             "questions": questions_data,
+            "feedback": feedback_data,
         }
         _DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, default=str))
         print(f"[STATE] 저장 완료: {len(json.dumps(data))}B")
@@ -130,6 +131,7 @@ reactions_lock = Lock()
 reactions_data: dict[int, dict[str, int]] = {}  # {slide_num: {type: count}}
 questions_lock = Lock()
 questions_data: list[dict] = _saved.get("questions", [])  # [{slide, user, text, timestamp}]
+feedback_data: list[dict] = _saved.get("feedback", [])  # [{user, text, rating, timestamp}]
 
 # 성공자 저장 (파일에서 복원 - 초기화 전까지 유지)
 completions: dict[str, list[dict]] = _saved.get("completions", {cid: [] for cid in CHALLENGES})
@@ -1745,6 +1747,33 @@ async def get_all_questions():
     """전체 질문 목록 (강사용 게시판)"""
     with questions_lock:
         return {"questions": questions_data, "total": len(questions_data)}
+
+
+# ============================================
+# 피드백
+# ============================================
+@app.post("/feedback")
+async def post_feedback(request: Request):
+    body = await request.json()
+    text = body.get("text", "").strip()
+    rating = body.get("rating", 0)
+    if not text:
+        return JSONResponse({"error": "피드백을 입력하세요."}, status_code=400)
+    token = request.cookies.get("challenge_token", "")
+    user = await get_user_from_token(token or "no-token")
+    feedback_data.append({
+        "user": user.get("name", "익명") if user else "익명",
+        "text": text,
+        "rating": rating,
+        "timestamp": datetime.now().isoformat(),
+    })
+    _save_state()
+    return {"ok": True}
+
+
+@app.get("/feedback")
+async def get_feedback():
+    return {"feedback": feedback_data, "total": len(feedback_data)}
 
 
 # ============================================
