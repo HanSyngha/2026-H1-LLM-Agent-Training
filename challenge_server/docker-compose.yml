@@ -38,9 +38,9 @@ services:
       <<: *proxy-env
       AUTH_SERVER: "${AUTH_SERVER:-https://12.81.222.45:9050}"
       CHALLENGE_PORT: "47777"
-      LLM_GATEWAY_URL: "${LLM_GATEWAY_URL:-}"
+      LLM_GATEWAY_URL: "${LLM_GATEWAY_URL:-http://12.81.222.45:8090/v1}"
       LLM_GATEWAY_API_KEY: "${LLM_GATEWAY_API_KEY:-}"
-      LLM_MODEL: "${LLM_MODEL:-gpt-4o}"
+      LLM_MODEL: "${LLM_MODEL:-testmodel}"
       DEV_MODE: "${DEV_MODE:-false}"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:47777/health')"]
