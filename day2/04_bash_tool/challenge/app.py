@@ -67,15 +67,24 @@ def execute_command(command):
     return "TODO: subprocess.run()으로 구현하세요!"
 
 
+# ============================================
+# TODO: read_file 함수도 구현하세요!
+#
+# 파일 경로를 받아서 내용을 읽어 반환하세요.
+#
+# 힌트:
+#   with open(path, "r", encoding="utf-8") as f:
+#       return f.read()
+# ============================================
+def read_file(path):
+    return "TODO: open()으로 파일 읽기를 구현하세요!"
+
+
 def execute_tool(tool_name, arguments):
     if tool_name == "run_command":
         return {"output": execute_command(arguments.get("command", ""))}
     elif tool_name == "read_file":
-        try:
-            with open(arguments.get("path", ""), "r", encoding="utf-8") as f:
-                return {"content": f.read()[:2000]}
-        except Exception as e:
-            return {"error": str(e)}
+        return {"content": read_file(arguments.get("path", ""))}
     return {"error": f"unknown tool: {tool_name}"}
 
 # ============================================

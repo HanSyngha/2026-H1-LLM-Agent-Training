@@ -42,10 +42,11 @@ export default function Slide63b_BashToolTask() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
           <Box color="yellow" style={{ marginTop: 8 }}>
-            <BoxTitle color="#d97706">TODO: execute_command() 구현</BoxTitle>
+            <BoxTitle color="#d97706">TODO 2개 채우기</BoxTitle>
             <div style={{ fontSize: '.88em', lineHeight: 1.7 }}>
-              <code>subprocess.run(command, shell=True, capture_output=True, text=True)</code><br />
-              LLM이 PowerShell/Python 명령어로 <code>encoded.txt</code>를 해독합니다.
+              <strong>TODO 1</strong> — <code>execute_command()</code>: subprocess.run()으로 명령어 실행<br />
+              <strong>TODO 2</strong> — <code>read_file()</code>: open()으로 파일 읽기<br />
+              LLM이 이 두 tool로 <code>encoded.txt</code>를 해독합니다.
             </div>
           </Box>
         </motion.div>
@@ -86,23 +87,18 @@ export default function Slide63b_BashToolTask() {
 
         <AnswerButton answerId="bash_tool">
           <div>
-            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안: execute_command 구현</h3>
-            <CodeBlock lang="python">{`def execute_command(command):
-    try:
-        result = subprocess.run(
-            command, shell=True,
-            capture_output=True, text=True, timeout=30
-        )
-        return result.stdout if result.stdout else result.stderr
-    except Exception as e:
-        return f"Error: {e}"
+            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 바이브코딩 프롬프트</h3>
+            <CodeBlock lang="prompt">{`app.py의 TODO 2개를 채워줘.
 
-# 이것만 구현하면 LLM이 알아서 해독합니다!
-# "해독해줘"라고 입력하면:
-# 1. mission.txt 읽기
-# 2. python -c "import base64; ..." 명령 실행
-# 3. 각 줄 첫 글자 추출
-# 4. 비밀 코드 알려줌`}</CodeBlock>
+1. execute_command(command) 함수:
+   subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
+   stdout 있으면 stdout, 없으면 stderr 반환
+
+2. read_file(path) 함수:
+   open(path, "r", encoding="utf-8")로 파일 읽어서 내용 반환
+   에러 시 에러 메시지 반환
+
+두 함수만 구현하면 LLM이 알아서 해독합니다.`}</CodeBlock>
           </div>
         </AnswerButton>
       </div>
