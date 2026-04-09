@@ -115,7 +115,7 @@ export default function Slides({ user }) {
     if (isPresenter) return;
     const sync = () => {
       fetchJSON('/slides/current').then(d => {
-        if (d.slide && d.slide !== currentSlide) setCurrentSlide(d.slide);
+        if (d.slide && Number(d.slide) !== currentSlide) setCurrentSlide(Number(d.slide));
       }).catch(() => {});
     };
     sync();

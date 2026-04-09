@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { getPromptCases, testPrompt, submitPrompt } from '../api';
@@ -75,7 +75,7 @@ function LabMode() {
   const [selectedCase, setSelectedCase] = useState(null);
   const abortRef = useRef(false);
 
-  useState(() => { getPromptCases().then(setCases); }, []);
+  useEffect(() => { getPromptCases().then(setCases); }, []);
 
   const [submitted, setSubmitted] = useState(false);
 
