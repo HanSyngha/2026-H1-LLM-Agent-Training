@@ -62,7 +62,7 @@ AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "http://a2g.samsungds.net:8090")  # 브�
 CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://a2g.samsungds.net:47777")  # 콜백 URL용
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
 
-# LLM 설정 — 여러 개 등록 가능, 과제별로 선택
+# LLM 설정 - 여러 개 등록 가능, 과제별로 선택
 llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
 
 # 채점용 LLM (기존 호환)
@@ -75,21 +75,60 @@ llm_config = {
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
 challenge_llm_map: dict[str, str] = {}
 
+# ============================================
+# 영속 저장소 - JSON 파일 (서버 재시작해도 유지)
+# ============================================
+_DATA_FILE = Path(__file__).parent / "data" / "state.json"
+_DATA_FILE.parent.mkdir(exist_ok=True)
+
+
+def _load_state():
+    """저장된 상태를 파일에서 로드"""
+    try:
+        if _DATA_FILE.exists():
+            return json.loads(_DATA_FILE.read_text())
+    except Exception:
+        pass
+    return {}
+
+
+def _save_state():
+    """현재 상태를 파일에 저장"""
+    try:
+        _DATA_FILE.parent.mkdir(exist_ok=True)
+        data = {
+            "completions": completions,
+            "unlocked_answers": list(unlocked_answers),
+        }
+        _DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, default=str))
+        print(f"[STATE] 저장 완료: {len(json.dumps(data))}B")
+    except Exception as e:
+        import traceback
+        print(f"[STATE ERROR] 저장 실패: {e}")
+        traceback.print_exc()
+
+
+_saved = _load_state()
+
 # 슬라이드 동기화 (강사가 넘기면 수강생도 따라감)
 current_slide = {"slide": 1}
 
-# 반응/질문 저장 (동시성 고려 — Lock 사용)
+# 반응/질문 저장 (동시성 고려 - Lock 사용)
 from threading import Lock
 reactions_lock = Lock()
 reactions_data: dict[int, dict[str, int]] = {}  # {slide_num: {type: count}}
 questions_lock = Lock()
 questions_data: list[dict] = []  # [{slide, user, text, timestamp}]
 
-# 성공자 저장 (메모리 — 서버 재시작 시 초기화)
-completions: dict[str, list[dict]] = {cid: [] for cid in CHALLENGES}
+# 성공자 저장 (파일에서 복원 - 초기화 전까지 유지)
+completions: dict[str, list[dict]] = _saved.get("completions", {cid: [] for cid in CHALLENGES})
+# 새로 추가된 과제가 있으면 빈 리스트로 초기화
+for cid in CHALLENGES:
+    if cid not in completions:
+        completions[cid] = []
 
-# 예시 답안 공개 상태 (메모리)
-unlocked_answers: set[str] = set()
+# 예시 답안 공개 상태 (파일에서 복원)
+unlocked_answers: set[str] = set(_saved.get("unlocked_answers", []))
 
 
 # ============================================
@@ -182,7 +221,7 @@ async def update_settings(request: Request):
     if not new_url:
         llm_config["base_url"] = ""
         llm_config["api_key"] = ""
-        return {"status": "ok", "message": "LLM 설정 제거됨 — 하드코딩 검증 모드로 전환"}
+        return {"status": "ok", "message": "LLM 설정 제거됨 - 하드코딩 검증 모드로 전환"}
 
     # 연결 테스트
     try:
@@ -195,7 +234,7 @@ async def update_settings(request: Request):
             llm_config["base_url"] = new_url
             llm_config["api_key"] = new_key
             llm_config["model"] = new_model
-            return {"status": "ok", "message": f"LLM 연결 성공 — 모델: {new_model}"}
+            return {"status": "ok", "message": f"LLM 연결 성공 - 모델: {new_model}"}
         else:
             return {"status": "error", "message": f"LLM 응답 오류: HTTP {resp.status_code}"}
     except Exception as e:
@@ -236,7 +275,7 @@ async def get_user_from_token(token: str) -> dict | None:
 # ============================================
 @app.get("/auth/login")
 async def auth_login(request: Request, redirect: str = "/"):
-    """SSO 로그인 시작 — OIDC authorize로 리다이렉트합니다."""
+    """SSO 로그인 시작 - OIDC authorize로 리다이렉트합니다."""
     state = uuid.uuid4().hex
     params = urlencode({
         "client_id": "cli-default",
@@ -255,7 +294,7 @@ async def auth_login(request: Request, redirect: str = "/"):
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str = "", state: str = ""):
-    """SSO 콜백 — code를 token으로 교환하고 쿠키에 저장합니다."""
+    """SSO 콜백 - code를 token으로 교환하고 쿠키에 저장합니다."""
     if not code:
         return HTMLResponse("<h1>code가 없습니다</h1>", status_code=400)
 
@@ -306,7 +345,7 @@ async def auth_me(request: Request):
 
 @app.get("/auth/logout")
 async def auth_logout():
-    """로그아웃 — 쿠키 삭제"""
+    """로그아웃 - 쿠키 삭제"""
     response = RedirectResponse(url="/")
     response.delete_cookie("challenge_token")
     return response
@@ -355,7 +394,7 @@ async def get_mission(challenge_id: str):
 
 
 # ============================================
-# Tool Use 과제 — 시크릿 키 발급
+# Tool Use 과제 - 시크릿 키 발급
 # ============================================
 @app.get("/challenges/tool_use/secret")
 async def tool_use_get_secret(request: Request):
@@ -388,11 +427,6 @@ async def submit_answer(challenge_id: str, request: Request):
         "answer": { ... }
     }
 
-    """
-
-    1. 토큰을 인증 서버에 보내서 사용자 확인
-    2. 정답 스키마 및 내용 검증
-    3. 통과 시 성공자 등록
     """
     if challenge_id not in CHALLENGES:
         raise HTTPException(404, f"과제 '{challenge_id}'를 찾을 수 없습니다")
@@ -456,6 +490,7 @@ async def submit_answer(challenge_id: str, request: Request):
             "email": user_email,
             "timestamp": datetime.now().isoformat(),
         })
+        _save_state()
 
     return {
         "status": "SUCCESS",
@@ -487,7 +522,7 @@ async def get_completions():
 
 @app.post("/completions/reset")
 async def reset_completions(request: Request):
-    """대시보드 초기화 — 강사(syngha.han)만 가능."""
+    """대시보드 초기화 - 강사(syngha.han)만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     user = await get_user_from_token(token)
@@ -503,6 +538,7 @@ async def reset_completions(request: Request):
 
     # 답안 공개 상태도 초기화
     unlocked_answers.clear()
+    _save_state()
 
     return {"status": "OK", "message": "모든 과제 성공 기록이 초기화되었습니다."}
 
@@ -518,7 +554,7 @@ async def answers_status():
 
 @app.post("/answers/toggle")
 async def answers_toggle(request: Request):
-    """답안 공개/잠금 토글 — 강사(syngha.han)만 가능."""
+    """답안 공개/잠금 토글 - 강사(syngha.han)만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     user = await get_user_from_token(token)
@@ -528,18 +564,20 @@ async def answers_toggle(request: Request):
     answer_id = body.get("id", "")
     if answer_id in unlocked_answers:
         unlocked_answers.discard(answer_id)
+        _save_state()
         return {"id": answer_id, "unlocked": False}
     else:
         unlocked_answers.add(answer_id)
+        _save_state()
         return {"id": answer_id, "unlocked": True}
 
 
 # ============================================
-# Agentic Loop 과제 — API 미로
+# Agentic Loop 과제 - API 미로
 # ============================================
 @app.get("/challenges/agent_loop/start")
 async def agent_loop_start_api(request: Request):
-    """미로 시작 — 랜덤 3개 스텝 순서 생성."""
+    """미로 시작 - 랜덤 3개 스텝 순서 생성."""
     from challenges import agent_loop_start
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
@@ -552,7 +590,7 @@ async def agent_loop_start_api(request: Request):
 
 @app.get("/challenges/agent_loop/step/{step_num}")
 async def agent_loop_step_api(step_num: int, request: Request):
-    """스텝 호출 — 순서 맞으면 진행, 틀리면 초기화."""
+    """스텝 호출 - 순서 맞으면 진행, 틀리면 초기화."""
     from challenges import agent_loop_call_step
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
@@ -567,7 +605,7 @@ async def agent_loop_step_api(step_num: int, request: Request):
 
 @app.get("/challenges/agent_loop/end")
 async def agent_loop_end_api(request: Request):
-    """미로 완료 — 3개 다 순서대로 했으면 completion_code 반환."""
+    """미로 완료 - 3개 다 순서대로 했으면 completion_code 반환."""
     from challenges import agent_loop_end
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
@@ -583,13 +621,13 @@ async def agent_loop_end_api(request: Request):
 # ============================================
 @app.get("/api/browser-secret")
 async def browser_secret_api():
-    """JS에서 fetch하는 비밀 키 API — curl로는 직접 호출 가능하지만, 페이지에서 추출하는 것이 과제."""
+    """JS에서 fetch하는 비밀 키 API - curl로는 직접 호출 가능하지만, 페이지에서 추출하는 것이 과제."""
     from challenges import BROWSER_SECRET_KEY
     return {"key": BROWSER_SECRET_KEY}
 
 
 # ============================================
-# 브라우저 과제 타겟 페이지 (JS 렌더링 — CDP 필수)
+# 브라우저 과제 타겟 페이지 (JS 렌더링 - CDP 필수)
 # ============================================
 @app.get("/browser-target", response_class=HTMLResponse)
 async def browser_target():
@@ -654,7 +692,7 @@ async def browser_target():
                 document.getElementById('content').innerHTML =
                     '<div class="status">' +
                     '<div class="status-label">Status</div>' +
-                    '<div class="status-value">Secret loaded — hidden in DOM</div>' +
+                    '<div class="status-value">Secret loaded - hidden in DOM</div>' +
                     '</div>' +
                     '<div class="hint">' +
                     '<strong>힌트:</strong> 비밀 키는 이 페이지의 DOM 안에 숨겨져 있습니다.<br>' +
@@ -677,7 +715,7 @@ async def browser_target():
 
 
 # ============================================
-# 프롬프트 과제 — 테스트 케이스 목록
+# 프롬프트 과제 - 테스트 케이스 목록
 # ============================================
 @app.get("/challenges/prompt/cases")
 async def prompt_cases():
@@ -692,7 +730,7 @@ async def prompt_cases():
 
 
 # ============================================
-# 프롬프트 과제 — 단일 테스트 실행
+# 프롬프트 과제 - 단일 테스트 실행
 # ============================================
 @app.post("/challenges/prompt/test")
 async def prompt_test(request: Request):
@@ -741,7 +779,7 @@ async def prompt_test(request: Request):
 
 
 # ============================================
-# 프롬프트 과제 — 전체 제출 (10개 모두 실행)
+# 프롬프트 과제 - 전체 제출 (10개 모두 실행)
 # ============================================
 @app.post("/challenges/prompt/full-submit")
 async def prompt_submit(request: Request):
@@ -806,11 +844,12 @@ async def prompt_submit(request: Request):
                 "email": user.get("email", ""),
                 "timestamp": datetime.now().isoformat(),
             })
+            _save_state()
 
     return {
         "status": "SUCCESS" if all_pass else "FAIL",
         "user": user_name,
-        "message": f"🎉 {user_name}님, 프롬프트 엔지니어링 통과! {passed_count}/10" if all_pass else f"{passed_count}/10 통과 — 실패한 케이스를 확인하세요.",
+        "message": f"🎉 {user_name}님, 프롬프트 엔지니어링 통과! {passed_count}/10" if all_pass else f"{passed_count}/10 통과 - 실패한 케이스를 확인하세요.",
         "passed": passed_count,
         "total": 10,
         "results": results,
@@ -902,8 +941,6 @@ async def download_challenge(challenge_id: str):
         "browser": "day1/07_browser_control",
         "agent_loop": "day2/01_agent_loop/challenge",
         "index_explore": "day2/02_index_explore/challenge",
-        "agent_loop": "day2/01_agent_loop",
-        "final": "day2/06_final_exercise",
     }
 
     target = dirs.get(challenge_id)
@@ -947,7 +984,7 @@ async def set_current_slide(request: Request):
 
 
 # ============================================
-# 반응 API (동시성 — Lock 사용)
+# 반응 API (동시성 - Lock 사용)
 # ============================================
 @app.post("/reactions")
 async def add_reaction(request: Request):
@@ -1016,7 +1053,7 @@ async def health():
 
 
 # ============================================
-# React 빌드 파일 서빙 (SPA fallback — 맨 마지막)
+# React 빌드 파일 서빙 (SPA fallback - 맨 마지막)
 # ============================================
 from fastapi.staticfiles import StaticFiles
 
@@ -1033,7 +1070,7 @@ if _frontend_dist.exists():
             from fastapi.responses import FileResponse
             return FileResponse(str(f))
 
-    # SPA fallback — 모든 나머지 경로에서 index.html 반환
+    # SPA fallback - 모든 나머지 경로에서 index.html 반환
     @app.get("/", response_class=HTMLResponse)
     async def spa_root(request: Request):
         return HTMLResponse((_frontend_dist / "index.html").read_text(encoding="utf-8"))
