@@ -86,13 +86,16 @@ PROMPT_TEST_CASES = [
 # ============================================
 # LLM 호출 (동시성 고려 — 상태 없음, thread-safe)
 # ============================================
-def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config: dict) -> dict:
+async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config: dict) -> dict:
     """수강생 프롬프트 + 입력 데이터로 LLM 호출 → JSON 파싱"""
+    import asyncio, functools
+
     if not llm_config.get("base_url"):
         return {"error": "LLM이 설정되지 않았습니다."}
 
     try:
-        resp = requests.post(
+        _call = functools.partial(
+            requests.post,
             f"{llm_config['base_url']}/chat/completions",
             headers={
                 "Authorization": f"Bearer {llm_config.get('api_key', '')}",
@@ -111,6 +114,7 @@ def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config: dict
             timeout=180,
             proxies={"http": None, "https": None},
         )
+        resp = await asyncio.to_thread(_call)
 
         if resp.status_code != 200:
             return {"error": f"LLM HTTP {resp.status_code}"}

@@ -13,11 +13,26 @@
 import json
 import time
 import os
+import asyncio
+import functools
 from datetime import datetime
 from pathlib import Path
 
 import requests
 import urllib3
+
+
+# ============================================
+# 동기 requests를 비동기로 실행하는 헬퍼
+# (이벤트 루프를 블로킹하지 않음)
+# ============================================
+async def async_post(url, **kwargs):
+    """requests.post를 threadpool에서 실행"""
+    return await asyncio.to_thread(functools.partial(requests.post, url, **kwargs))
+
+async def async_get(url, **kwargs):
+    """requests.get을 threadpool에서 실행"""
+    return await asyncio.to_thread(functools.partial(requests.get, url, **kwargs))
 import uuid
 from urllib.parse import urlencode
 from fastapi import FastAPI, Request, HTTPException
@@ -71,7 +86,6 @@ questions_lock = Lock()
 questions_data: list[dict] = []  # [{slide, user, text, timestamp}]
 
 # 성공자 저장 (메모리 — 서버 재시작 시 초기화)
-# {challenge_id: [{name, dept, email, timestamp}, ...]}
 completions: dict[str, list[dict]] = {cid: [] for cid in CHALLENGES}
 
 # 예시 답안 공개 상태 (메모리)
@@ -81,7 +95,7 @@ unlocked_answers: set[str] = set()
 # ============================================
 # LLM 채점 함수
 # ============================================
-def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
+async def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
     """
     LLM에게 정답 평가를 요청합니다.
     하드코딩 검증 대신 LLM이 미션 조건에 맞는지 판단합니다.
@@ -116,7 +130,7 @@ def llm_evaluate(challenge_id: str, mission: dict, answer: dict) -> dict:
 {{"passed": true/false, "message": "한줄 요약", "details": ["세부 평가 1", "세부 평가 2"]}}"""
 
     try:
-        resp = requests.post(
+        resp = await async_post(
             f"{llm_config['base_url']}/chat/completions",
             headers={
                 "Authorization": f"Bearer {llm_config['api_key']}",
@@ -172,7 +186,7 @@ async def update_settings(request: Request):
 
     # 연결 테스트
     try:
-        resp = requests.post(
+        resp = await async_post(
             f"{new_url}/chat/completions",
             headers={"Authorization": f"Bearer {new_key}", "Content-Type": "application/json"},
             json={"model": new_model, "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
@@ -191,7 +205,7 @@ async def update_settings(request: Request):
 # ============================================
 # 토큰으로 사용자 정보 확인 (인증 서버에 위임)
 # ============================================
-def get_user_from_token(token: str) -> dict | None:
+async def get_user_from_token(token: str) -> dict | None:
     """
     인증 서버의 /oidc/userinfo에 토큰을 보내서 사용자 정보를 확인합니다.
     DEV_MODE=true이면 토큰 검증 없이 더미 사용자 반환.
@@ -199,10 +213,8 @@ def get_user_from_token(token: str) -> dict | None:
     if DEV_MODE:
         return {"sub": "syngha.han", "name": "한승하", "dept": "S/W혁신팀", "email": "syngha.han@samsung.com"}
     url = f"{AUTH_SERVER}/oidc/userinfo"
-    print(f"[AUTH] 토큰 검증 요청: {url}")
-    print(f"[AUTH] 토큰 앞 30자: {token[:30]}...")
     try:
-        resp = requests.get(
+        resp = await async_get(
             url,
             headers={"Authorization": f"Bearer {token}"},
             verify=False,
@@ -249,7 +261,7 @@ async def auth_callback(request: Request, code: str = "", state: str = ""):
 
     # token 교환
     try:
-        resp = requests.post(
+        resp = await async_post(
             f"{AUTH_SERVER}/oidc/token",
             auth=("cli-default", ""),
             data={
@@ -286,7 +298,7 @@ async def auth_me(request: Request):
     token = request.cookies.get("challenge_token", "")
     if not token:
         return JSONResponse({"logged_in": False}, status_code=401)
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"logged_in": False, "error": "토큰 만료"}, status_code=401)
     return {"logged_in": True, "user": user, "token": token}
@@ -354,7 +366,7 @@ async def tool_use_get_secret(request: Request):
     if not token and not DEV_MODE:
         return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
 
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
 
@@ -403,7 +415,7 @@ async def submit_answer(challenge_id: str, request: Request):
     if not token:
         token = request.cookies.get("challenge_token", "")
 
-    user = get_user_from_token(token) if token else None
+    user = (await get_user_from_token(token)) if token else None
 
     if not user:
         return JSONResponse(
@@ -422,7 +434,7 @@ async def submit_answer(challenge_id: str, request: Request):
 
     # 2. 정답 검증 (LLM 설정 시 LLM 채점, 미설정 시 하드코딩 검증)
     challenge = CHALLENGES[challenge_id]
-    result = llm_evaluate(challenge_id, challenge["mission"], answer)
+    result = await llm_evaluate(challenge_id, challenge["mission"], answer)
 
     if not result["passed"]:
         return JSONResponse({
@@ -476,7 +488,7 @@ async def reset_completions(request: Request):
     """대시보드 초기화 — 강사(syngha.han)만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user or user.get("sub") != "syngha.han":
         return JSONResponse({"error": "강사만 초기화할 수 있습니다."}, status_code=403)
 
@@ -507,7 +519,7 @@ async def answers_toggle(request: Request):
     """답안 공개/잠금 토글 — 강사(syngha.han)만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user or user.get("sub") != "syngha.han":
         return JSONResponse({"error": "강사만 변경할 수 있습니다."}, status_code=403)
 
@@ -530,7 +542,7 @@ async def agent_loop_start_api(request: Request):
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
         return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
     return agent_loop_start(user["sub"])
@@ -543,7 +555,7 @@ async def agent_loop_step_api(step_num: int, request: Request):
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
         return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
     if step_num < 1 or step_num > 10:
@@ -558,7 +570,7 @@ async def agent_loop_end_api(request: Request):
     token = request.query_params.get("token", "") or request.cookies.get("challenge_token", "")
     if not token and not DEV_MODE:
         return JSONResponse({"error": "token이 필요합니다."}, status_code=401)
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"error": "유효하지 않은 토큰입니다."}, status_code=401)
     return agent_loop_end(user["sub"])
@@ -703,7 +715,7 @@ async def prompt_test(request: Request):
         return JSONResponse({"error": f"테스트 케이스 {case_id}를 찾을 수 없습니다."}, status_code=404)
 
     # LLM 호출
-    result = call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
+    result = await call_llm(prompt, tc["input"], list(tc["expected"].keys()), llm)
 
     if "error" in result:
         return {"case_id": case_id, "pass": False, "error": result["error"], "raw": result.get("raw", "")}
@@ -737,7 +749,7 @@ async def prompt_submit(request: Request):
         return JSONResponse({"status": "FAIL", "message": "prompt가 없습니다."}, status_code=400)
 
     # 사용자 확인
-    user = get_user_from_token(token)
+    user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"status": "FAIL", "message": "토큰이 유효하지 않습니다."}, status_code=401)
 
@@ -829,7 +841,7 @@ async def add_llm_endpoint(request: Request):
 
     # 연결 테스트
     try:
-        resp = requests.post(
+        resp = await async_post(
             f"{llm_endpoints[eid]['base_url']}/chat/completions",
             headers={"Authorization": f"Bearer {llm_endpoints[eid]['api_key']}", "Content-Type": "application/json"},
             json={"model": llm_endpoints[eid]["model"], "messages": [{"role": "user", "content": "test"}], "max_tokens": 5},
@@ -920,7 +932,7 @@ async def set_current_slide(request: Request):
     # 강사만 변경 가능 (syngha.han)
     token = request.cookies.get("challenge_token", "")
     if not DEV_MODE:
-        user = get_user_from_token(token) if token else None
+        user = (await get_user_from_token(token)) if token else None
         if not user or user.get("sub") != "syngha.han":
             return JSONResponse({"error": "강사만 슬라이드를 변경할 수 있습니다."}, status_code=403)
     current_slide["slide"] = body.get("slide", 1)
@@ -962,7 +974,7 @@ async def add_question(request: Request):
         return JSONResponse({"error": "text 필요"}, status_code=400)
     # 사용자 정보 (쿠키에서)
     token = request.cookies.get("challenge_token", "")
-    user = get_user_from_token(token) if token else None
+    user = (await get_user_from_token(token)) if token else None
     with questions_lock:
         questions_data.append({
             "slide": slide,
