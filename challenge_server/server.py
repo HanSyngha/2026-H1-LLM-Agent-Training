@@ -229,6 +229,7 @@ async def update_settings(request: Request):
         resp = await async_post(
             f"{new_url}/chat/completions",
             headers={"Authorization": f"Bearer {new_key}", "Content-Type": "application/json"},
+            json={"model": new_model, "messages": [{"role": "user", "content": "test"}]},
         )
         if resp.status_code == 200:
             llm_config["base_url"] = new_url
@@ -796,6 +797,7 @@ async def fewshot_test(request: Request):
             resp = await async_post(
                 f"{llm['base_url']}/chat/completions",
                 headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+                json={"model": llm.get("model", ""), "messages": messages, "temperature": 0},
                 verify=False, timeout=30, proxies={"http": None, "https": None},
             )
             if resp.status_code != 200:
@@ -1581,6 +1583,7 @@ async def add_llm_endpoint(request: Request):
         resp = await async_post(
             f"{llm_endpoints[eid]['base_url']}/chat/completions",
             headers={"Authorization": f"Bearer {llm_endpoints[eid]['api_key']}", "Content-Type": "application/json"},
+            json={"model": llm_endpoints[eid]["model"], "messages": [{"role": "user", "content": "test"}]},
             verify=False, timeout=15, proxies={"http": None, "https": None},
         )
         ok = resp.status_code == 200
