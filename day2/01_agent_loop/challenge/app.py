@@ -250,14 +250,8 @@ def call_llm(messages):
 def run_agentic_loop(messages):
     """LLM을 반복 호출하여 tool_calls를 처리합니다."""
 
-    # 기본 동작: 단순 1회 호출 (TODO 완성 전)
-    result, error = call_llm(messages)
-    if error:
-        return None, error
-    msg = result["choices"][0]["message"]
-    if msg.get("tool_calls"):
-        return "⚠️ LLM이 Tool을 호출하려 합니다! TODO를 구현하세요.", None
-    return msg.get("content", ""), None
+    # TODO를 구현하기 전에는 에러 반환
+    return None, "❌ run_agentic_loop()가 구현되지 않았습니다. TODO를 채워주세요!"
 
 
 # ============================================
