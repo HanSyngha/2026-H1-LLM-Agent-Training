@@ -28,8 +28,11 @@ function relativeTime(ts) {
 
 /* ── build overall leaderboard ─────────────────────── */
 
+// 순위에서 제외할 과제 (연습/워밍업용)
+const EXCLUDED_FROM_RANKING = ['sso_oidc', 'prompt'];
+
 function buildLeaderboard(challenges) {
-  const ids = Object.keys(challenges);
+  const ids = Object.keys(challenges).filter(id => !EXCLUDED_FROM_RANKING.includes(id));
   const userMap = {}; // sub -> { name, dept, count, latestTimestamp }
 
   ids.forEach((id) => {
@@ -438,10 +441,11 @@ export default function Dashboard() {
 
     const ch = data.challenges || {};
     const cids = Object.keys(ch);
+    const rankedIds = cids.filter(id => !EXCLUDED_FROM_RANKING.includes(id));
     let total = 0;
     const users = new Set();
 
-    cids.forEach((id) => {
+    rankedIds.forEach((id) => {
       (ch[id].completions || []).forEach((c) => {
         total++;
         users.add(c.sub);
