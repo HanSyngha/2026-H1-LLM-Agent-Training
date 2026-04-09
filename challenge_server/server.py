@@ -1166,12 +1166,19 @@ async def dashboard_api_costs():
 @app.post("/dashboard-challenge/submit")
 async def dashboard_submit(request: Request):
     """대시보드 스크린샷 제출 — VL 모델로 채점"""
-    body = await request.json()
+    try:
+        body = await request.json()
+    except Exception as e:
+        print(f"[DASHBOARD] JSON 파싱 실패: {e}")
+        return JSONResponse({"error": f"요청 파싱 실패: {str(e)[:100]}"}, status_code=400)
+
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     image_data = body.get("image", "")  # base64 image
 
     if not image_data:
-        return JSONResponse({"error": "이미지가 없습니다."}, status_code=400)
+        return JSONResponse({"error": "이미지가 없습니다. 스크린샷을 붙여넣으세요."}, status_code=400)
+
+    print(f"[DASHBOARD] 이미지 수신: {len(image_data)} chars")
 
     user = await get_user_from_token(token or "no-token")
     if not user:
