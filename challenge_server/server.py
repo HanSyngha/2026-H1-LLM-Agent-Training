@@ -687,6 +687,78 @@ async def context_test(request: Request):
 
 
 # ============================================
+# Day2 과제 1b: 채팅 기록 핵심 정보 추출
+# ============================================
+CHAT_EXTRACT_CHECKS = [
+    {"item": "ASML EUV 미팅 일정 (3/25 화요일)", "keywords": ["ASML", "25"]},
+    {"item": "클린룸 업그레이드 승인 (4/1 착공)", "keywords": ["클린룸", "4월"]},
+    {"item": "그래핀 TIM 샘플 도착 (4/10)", "keywords": ["그래핀", "TIM"]},
+    {"item": "범프 접합 불량 원인 (리플로우 온도)", "keywords": ["범프", "리플로우"]},
+    {"item": "PIM 회의록 배포 마감 (수요일)", "keywords": ["PIM", "회의록"]},
+]
+
+
+@app.post("/challenges/chat_extract/test")
+async def chat_extract_test(request: Request):
+    body = await request.json()
+    summary = body.get("summary", "")
+    if not summary:
+        return JSONResponse({"error": "요약이 없습니다."}, status_code=400)
+    if len(summary) > 350:
+        return {"pass": False, "message": f"300자 이내로 요약하세요. (현재 {len(summary)}자)", "checks": []}
+
+    llm_id = challenge_llm_map.get("chat_extract")
+    llm = llm_endpoints.get(llm_id, llm_config) if llm_id else llm_config
+    if not llm.get("base_url"):
+        return JSONResponse({"error": "LLM이 설정되지 않았습니다."}, status_code=400)
+
+    prompt = f"""아래는 팀 대화 요약입니다. 이 요약에 다음 5가지 핵심 정보가 포함되어 있는지 확인하세요.
+각 항목에 대해 포함 여부를 JSON으로 답하세요.
+
+요약:
+{summary}
+
+확인 항목:
+1. ASML EUV 미팅 일정
+2. 클린룸 업그레이드 착공 일정
+3. 그래핀 TIM 샘플 관련 정보
+4. 범프 접합 불량 원인
+5. PIM 회의록 배포 관련
+
+반드시 이 형식으로만 응답: {{"1": true/false, "2": true/false, "3": true/false, "4": true/false, "5": true/false}}"""
+
+    try:
+        resp = await async_post(
+            f"{llm['base_url']}/chat/completions",
+            headers={"Authorization": f"Bearer {llm.get('api_key', '')}", "Content-Type": "application/json"},
+            json={"model": llm.get("model", ""), "messages": [{"role": "user", "content": prompt}],
+                  "temperature": 0, "max_tokens": 200},
+            verify=False, timeout=60, proxies={"http": None, "https": None},
+        )
+        resp_json = resp.json()
+        if "choices" not in resp_json:
+            return {"pass": False, "message": "LLM 응답 형식 오류", "checks": [], "raw": json.dumps(resp_json, ensure_ascii=False)[:300]}
+
+        content = (resp_json["choices"][0]["message"].get("content") or "").strip()
+
+        # 키워드 기반 직접 검증 (LLM 판단보다 안정적)
+        checks = []
+        for c in CHAT_EXTRACT_CHECKS:
+            matched = all(any(kw in summary for kw in [k]) for k in c["keywords"])
+            checks.append({"item": c["item"], "matched": matched})
+
+        passed = sum(1 for c in checks if c["matched"])
+        return {
+            "pass": passed == 5,
+            "message": f"{passed}/5 핵심 정보 포함",
+            "checks": checks,
+            "raw": content[:200],
+        }
+    except Exception as e:
+        return {"pass": False, "message": str(e), "checks": []}
+
+
+# ============================================
 # Day2 과제 2: Few-shot 최적화
 # ============================================
 FEWSHOT_TEST_CASES = [

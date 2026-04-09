@@ -82,7 +82,7 @@ export default function Slide81_ContextTask() {
             </div>
             <textarea
               value={compressed} onChange={e => setCompressed(e.target.value)}
-              placeholder="핵심만 남겨서 500자 이내로 압축하세요..."
+              placeholder="핵심만 남겨서 200자 이내로 압축하세요..."
               style={{
                 width: '100%', height: 200, padding: 12, borderRadius: 8,
                 border: `1.5px solid ${compressed.length > 200 ? '#ef4444' : '#d1d5db'}`,

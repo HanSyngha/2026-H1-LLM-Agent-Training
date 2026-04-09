@@ -664,6 +664,13 @@ CHALLENGES = {
             "details": [],
         },
     },
+    "chat_extract": {
+        "name": "채팅 정보 추출",
+        "description": "팀 대화에서 일정/할일/결정사항을 빠짐없이 추출하세요.",
+        "mission": {"description": "장문 채팅 기록에서 핵심 정보 5개 추출"},
+        "submit_schema": '{"summary": "요약 텍스트"}',
+        "validate": lambda a: {"passed": True, "message": "슬라이드에서 직접 테스트", "details": []},
+    },
     "context": {
         "name": "Context Blindness (압축 프롬프트)",
         "description": "5000자 회의록을 500자로 압축하여 AI가 다음 행동을 예측하게 하세요.",

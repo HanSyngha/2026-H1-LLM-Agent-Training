@@ -61,6 +61,7 @@ import Slide54_AIToolCompare from './Slide54_AIToolCompare';
 import Slide11b_PythonSetup from './Slide11b_PythonSetup';
 import Slide01b_NoRightAnswer from './Slide01b_NoRightAnswer';
 import Slide01c_TechChoices from './Slide01c_TechChoices';
+import Slide81b_ChatExtractTask from './Slide81b_ChatExtractTask';
 import SectionContextEng from './SectionContextEng';
 import Slide80_ContextBlindness from './Slide80_ContextBlindness';
 import Slide81_ContextTask from './Slide81_ContextTask';
@@ -175,6 +176,7 @@ const SLIDES = [
   { id: 0, component: SectionContextEng, title: '#8 Context Engineering', day: 2 },
   { id: 0, component: Slide80_ContextBlindness, title: 'Context Blindness', day: 2 },
   { id: 0, component: Slide81_ContextTask, title: '압축 프롬프트 과제', day: 2 },
+  { id: 0, component: Slide81b_ChatExtractTask, title: '채팅 정보 추출 과제', day: 2 },
   { id: 0, component: Slide82_FewshotTheory, title: 'Few-shot Learning', day: 2 },
   { id: 0, component: Slide83_FewshotTask, title: 'Few-shot 과제', day: 2 },
   { id: 0, component: Slide84_DefenseTheory, title: 'Prompt Injection', day: 2 },
