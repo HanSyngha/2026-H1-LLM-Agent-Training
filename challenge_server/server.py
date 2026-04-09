@@ -750,9 +750,8 @@ async def chat_extract_test(request: Request):
         passed = sum(1 for c in checks if c["matched"])
         return {
             "pass": passed == 5,
-            "message": f"{passed}/5 핵심 정보 포함",
+            "message": f"{passed}/5 핵심 정보 {'포함 — 통과!' if passed == 5 else '포함 — 누락된 정보를 추가하세요'}",
             "checks": checks,
-            "raw": content[:200],
         }
     except Exception as e:
         return {"pass": False, "message": str(e), "checks": []}
