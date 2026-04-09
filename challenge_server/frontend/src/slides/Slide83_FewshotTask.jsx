@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import { Badge, SlideH2, Divider, Box, BoxTitle, CodeBlock } from './SlideLayout';
 import { postJSON } from '../api';
+import AnswerButton from './AnswerButton';
 
 export default function Slide83_FewshotTask() {
   const [prompt, setPrompt] = useState('고객 문의를 "만족", "불만", "문의" 중 하나로 분류하세요. 카테고리만 답하세요.');
@@ -105,6 +106,19 @@ export default function Slide83_FewshotTask() {
             )}
           </motion.div>
         )}
+
+        <AnswerButton answerId="fewshot">
+          <div>
+            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안 (10/10 통과)</h3>
+            <CodeBlock lang="text">{`System Prompt:
+"고객 문의를 '만족', '불만', '문의' 중 하나로만 분류하세요. 카테고리만 답하세요."
+
+Few-shot 예시 3개:
+1. "너무 좋아요 감사합니다" → 만족
+2. "이게 뭐야 돈 아까워" → 불만
+3. "배송 현황 알려주세요" → 문의`}</CodeBlock>
+          </div>
+        </AnswerButton>
       </div>
     </div>
   );

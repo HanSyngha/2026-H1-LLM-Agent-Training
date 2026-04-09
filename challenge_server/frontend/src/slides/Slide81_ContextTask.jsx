@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { postJSON } from '../api';
+import AnswerButton from './AnswerButton';
+import { CodeBlock } from './SlideLayout';
 
 const LONG_DOC = `[반도체 사업부 2026년 상반기 전략 회의록]
 일시: 2026-03-15 | 참석: 최현우 부사장, 박영수 상무, 김태호 팀장, 오정훈 팀장 외
@@ -101,6 +103,16 @@ export default function Slide81_ContextTask() {
             )}
           </motion.div>
         )}
+
+        <AnswerButton answerId="context">
+          <div>
+            <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 압축 프롬프트 (3/3 통과)</h3>
+            <CodeBlock lang="text">{`HBM4: 16단 샘플 완성, 열 문제로 양산 지연. 그래핀 TIM 전환하여 Q3 양산 목표.
+DRAM 1c: 1b 수율 91.2% 안정화. EUV 더블패터닝 도입, 4월 파일럿→7월 양산. EUV 장비 2대 추가(8000억).
+PIM: 시장 $4B. 로직 인력 부족(50→200명). 외부 파운드리 활용, 하반기 100명 채용.
+핵심 실행: HBM4 양산, 1c 전환, PIM 사업, 원가 8% 절감.`}</CodeBlock>
+          </div>
+        </AnswerButton>
       </div>
     </div>
   );
