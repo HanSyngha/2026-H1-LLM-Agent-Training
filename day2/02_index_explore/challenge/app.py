@@ -285,7 +285,7 @@ if "current_file" not in st.session_state:
 # AI 계층적 검색 함수
 # ============================================
 def ai_hierarchical_search(question, files):
-    """AI가 MEMORY.md + 하위 파일을 읽고 질문에 답변합니다."""
+    """MEMORY.md만 먼저 보여주고, LLM이 read_file tool로 필요한 파일만 선택적으로 읽게 한다."""
     memory_md = files.get("MEMORY.md", "")
     if not memory_md.strip():
         return "MEMORY.md가 비어있습니다.", []
@@ -301,36 +301,101 @@ def ai_hierarchical_search(question, files):
         return f"MEMORY.md가 {len(memory_md)}자입니다. 인덱스는 500자 이내로 작성하세요. (raw 데이터를 넣지 마세요!)", []
 
     trace = []
-    trace.append({"step": "MEMORY.md 읽기", "content": memory_md[:200]})
+    trace.append({"step": "MEMORY.md 읽기", "content": memory_md[:300]})
 
-    # 전체 문서 context 구성 (MEMORY.md 기반 계층 구조)
-    ctx = f"## MEMORY.md (인덱스)\n{memory_md}\n"
-    for fname in sub_files:
-        content = files[fname]
-        if content.strip():
-            ctx += f"\n## {fname}\n{content}\n"
-            trace.append({"step": f"{fname} 로드", "content": content[:100]})
+    # Tool 정의 — LLM이 필요한 파일만 선택적으로 읽을 수 있게
+    tools = [{
+        "type": "function",
+        "function": {
+            "name": "read_file",
+            "description": "특정 .md 파일의 전체 내용을 읽는다. MEMORY.md 인덱스를 보고 질문과 관련 있는 파일만 골라서 읽어야 한다. 불필요한 파일은 절대 읽지 말 것.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "filename": {"type": "string", "description": f"읽을 파일명. 가능한 파일: {', '.join(sub_files)}"},
+                },
+                "required": ["filename"],
+            },
+        },
+    }]
 
-    prompt = f"""{ctx}
+    system_prompt = f"""당신은 사내 지식 베이스를 탐색하는 에이전트입니다.
 
-위 문서를 참고하여 질문에 답하세요.
-문서에 있는 수치와 용어를 그대로 사용하여 간결하게 답하세요.
+먼저 MEMORY.md 인덱스를 보고, 질문과 관련 있는 파일만 read_file tool로 선택적으로 읽으세요.
+필요한 파일만 최소한으로 읽고, 답을 찾으면 바로 답변하세요.
+불필요한 파일을 읽으면 감점됩니다.
 
-질문: {question}"""
+사용 가능한 파일 목록: {', '.join(sub_files)}
 
+MEMORY.md 인덱스:
+```
+{memory_md}
+```
+
+답변은 문서에 있는 수치와 용어를 그대로 사용하여 간결하게 작성하세요."""
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": question},
+    ]
+
+    max_iterations = 8
     try:
-        resp = requests.post(
-            f"{LLM_GATEWAY}/chat/completions",
-            headers={"Content-Type": "application/json", "x-service-id": SERVICE_ID, "x-user-id": USER_ID},
-            json={"model": "testmodel", "messages": [{"role": "user", "content": prompt}], "max_tokens": 200},
-            timeout=120,
-        )
-        if resp.status_code != 200:
-            return f"LLM 오류: {resp.status_code}", trace
+        for iteration in range(max_iterations):
+            resp = requests.post(
+                f"{LLM_GATEWAY}/chat/completions",
+                headers={"Content-Type": "application/json", "x-service-id": SERVICE_ID, "x-user-id": USER_ID},
+                json={"model": "testmodel", "messages": messages, "tools": tools},
+                timeout=120,
+            )
+            if resp.status_code != 200:
+                return f"LLM 오류: {resp.status_code} - {resp.text[:200]}", trace
 
-        answer = resp.json()["choices"][0]["message"]["content"].strip()
-        trace.append({"step": "AI 답변", "content": answer})
-        return answer, trace
+            msg = resp.json()["choices"][0]["message"]
+            messages.append({
+                "role": "assistant",
+                "content": msg.get("content") or "",
+                "tool_calls": msg.get("tool_calls", []),
+            })
+
+            tool_calls = msg.get("tool_calls") or []
+
+            # tool_calls가 없으면 최종 답변
+            if not tool_calls:
+                answer = (msg.get("content") or "").strip()
+                if not answer:
+                    answer = (msg.get("reasoning_content") or "").strip()
+                trace.append({"step": "AI 최종 답변", "content": answer[:300]})
+                return answer, trace
+
+            # tool 실행 (LLM이 요청한 파일만 읽어서 돌려준다)
+            for tc in tool_calls:
+                fn_name = tc.get("function", {}).get("name", "")
+                try:
+                    fn_args = json.loads(tc.get("function", {}).get("arguments") or "{}")
+                except Exception:
+                    fn_args = {}
+
+                if fn_name == "read_file":
+                    filename = fn_args.get("filename", "").strip()
+                    if filename in files and filename != "MEMORY.md":
+                        content = files[filename]
+                        trace.append({"step": f"📖 {filename} 읽음", "content": content[:150]})
+                        tool_result = content if content.strip() else "[빈 파일입니다]"
+                    else:
+                        trace.append({"step": f"❌ {filename} 없음", "content": f"사용 가능한 파일: {', '.join(sub_files)}"})
+                        tool_result = f"파일 '{filename}'을 찾을 수 없습니다. 사용 가능한 파일: {', '.join(sub_files)}"
+                else:
+                    tool_result = f"[unknown tool: {fn_name}]"
+
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc.get("id", ""),
+                    "content": tool_result,
+                })
+
+        trace.append({"step": "⚠️ 반복 한도 초과", "content": f"{max_iterations}회 반복 후 종료"})
+        return "반복 한도 초과 — LLM이 답을 결정하지 못했습니다.", trace
     except Exception as e:
         return f"LLM 연결 실패: {e}", trace
 
