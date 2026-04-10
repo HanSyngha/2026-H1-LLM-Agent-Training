@@ -33,8 +33,12 @@ MODEL = "testmodel"
 # ============================================
 # 본인 정보 입력
 # ============================================
-TOKEN = ""   # SSO access_token
-USER_ID = "" # SSO user ID
+# TOKEN 획득 방법:
+#   1. 브라우저에서 http://a2g.samsungds.net:47777 접속 (SSO 로그인)
+#   2. 개발자도구(F12) → Application → Cookies → challenge_token 값 복사
+#   3. 또는 이전 실습(SSO 과제)에서 받은 access_token 사용
+TOKEN = ""   # SSO access_token (위 방법으로 획득)
+USER_ID = "" # SSO user ID (본인 사번/ID)
 
 # ============================================
 # Tool 정의 (제공됨)
