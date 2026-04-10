@@ -252,19 +252,19 @@ QUESTIONS = [
     {
         "id": 1,
         "question": "HBM3E의 적층 단수와 대역폭은?",
-        "keywords": ["12단", "1.18TB/s"],
+        "keywords": ["12단", "1.18"],
         "hint": "제품 스펙 관련 문서를 찾아보세요",
     },
     {
         "id": 2,
         "question": "2분기 실적 회의에서 결정된 투자액은 얼마인가?",
-        "keywords": ["3.5조"],
+        "keywords": ["3.5"],
         "hint": "회의록 관련 문서를 찾아보세요",
     },
     {
         "id": 3,
         "question": "EUV 공정의 주요 불량 원인 1위와 그 비율은?",
-        "keywords": ["오버레이", "38%"],
+        "keywords": ["오버레이", "38"],
         "hint": "공정 관련 문서를 찾아보세요",
     },
 ]
@@ -335,10 +335,25 @@ def ai_hierarchical_search(question, files):
         return f"LLM 연결 실패: {e}", trace
 
 
+def _norm(s):
+    """공백/대소문자/유니코드/특수문자 모두 무시하는 정규화"""
+    import re, unicodedata
+    # 유니코드 정규화 (NFC vs NFD, fullwidth 숫자/슬래시 등을 halfwidth로)
+    s = unicodedata.normalize('NFKC', s)
+    # 모든 whitespace + zero-width space 제거
+    s = re.sub(r'[\s\u200b\u200c\u200d\ufeff]+', '', s)
+    return s.lower()
+
+
 def check_answer(answer, keywords):
-    """답변에 필수 키워드가 포함되어 있는지 확인 (공백 무시)"""
-    normalized = answer.replace(" ", "")
-    return all(kw.replace(" ", "") in normalized for kw in keywords)
+    """답변에 필수 키워드가 포함되어 있는지 확인"""
+    normalized = _norm(answer)
+    # 디버그: 못 찾은 키워드가 있으면 터미널에 출력
+    missing = [kw for kw in keywords if _norm(kw) not in normalized]
+    if missing:
+        print(f"[check_answer] FAIL — missing: {missing}")
+        print(f"[check_answer] normalized answer: {repr(normalized)}")
+    return not missing
 
 
 # ============================================

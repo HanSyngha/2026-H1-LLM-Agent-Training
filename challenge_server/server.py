@@ -1743,6 +1743,7 @@ async def download_challenge(challenge_id: str):
         "index_explore": "day2/02_index_explore/challenge",
         "bash_tool": "day2/04_bash_tool/challenge",
         "agent_v2": "day2/03_agent_v2/challenge",
+        "rag_chatbot": "day2/05_rag_chatbot/challenge",
     }
 
     target = dirs.get(challenge_id)
