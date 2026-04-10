@@ -123,7 +123,7 @@ def _save_state():
 _saved = _load_state()
 
 # 슬라이드 동기화 (강사가 넘기면 수강생도 따라감)
-current_slide = {"slide": 1}
+current_slide = {"slide": 1, "locked": True}
 
 # 반응/질문 저장 (동시성 고려 - Lock 사용)
 from threading import Lock
@@ -1783,6 +1783,19 @@ async def set_current_slide(request: Request):
         if not user or user.get("sub") != "syngha.han":
             return JSONResponse({"error": "강사만 슬라이드를 변경할 수 있습니다."}, status_code=403)
     current_slide["slide"] = body.get("slide", 1)
+    return current_slide
+
+
+@app.post("/slides/lock")
+async def set_slide_lock(request: Request):
+    """강사 전용: 수강생 슬라이드를 잠금/해제. locked=True면 수강생이 강사 화면 강제 동기화."""
+    body = await request.json()
+    token = request.cookies.get("challenge_token", "")
+    if not DEV_MODE:
+        user = (await get_user_from_token(token)) if token else None
+        if not user or user.get("sub") != "syngha.han":
+            return JSONResponse({"error": "강사만 잠금을 변경할 수 있습니다."}, status_code=403)
+    current_slide["locked"] = bool(body.get("locked", True))
     return current_slide
 
 

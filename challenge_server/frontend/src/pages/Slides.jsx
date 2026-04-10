@@ -91,6 +91,7 @@ function FloatingQuestion({ text, user, id, lane, onDone }) {
 
 export default function Slides({ user }) {
   const [currentSlide, setCurrentSlide] = useState(1);
+  const [locked, setLocked] = useState(true);   // 강사 슬라이드 잠금 여부 (기본 잠김)
   const [reactions, setReactions] = useState({});
   const [questionText, setQuestionText] = useState('');
   const [questionSent, setQuestionSent] = useState(false);
@@ -110,18 +111,42 @@ export default function Slides({ user }) {
   const isPresenter = user?.sub === 'syngha.han';
   const totalSlides = SLIDES.length;
 
-  // 수강생: 슬라이드 동기화
+  // 수강생: 슬라이드 동기화 (locked일 때만) + lock 상태 polling
   useEffect(() => {
     if (isPresenter) return;
     const sync = () => {
       fetchJSON('/slides/current').then(d => {
-        if (d.slide && Number(d.slide) !== currentSlide) setCurrentSlide(Number(d.slide));
+        if (typeof d.locked === 'boolean') setLocked(d.locked);
+        // 잠긴 상태일 때만 강사 슬라이드를 강제로 따라감
+        if (d.locked && d.slide) {
+          setCurrentSlide(Number(d.slide));   // 동일값이면 React가 재렌더 스킵
+        }
       }).catch(() => {});
     };
     sync();
     const interval = setInterval(sync, 2000);
     return () => clearInterval(interval);
   }, [isPresenter]);
+
+  // 강사: lock 상태 초기 로드 (서버 재시작 후 동기화)
+  useEffect(() => {
+    if (!isPresenter) return;
+    fetchJSON('/slides/current').then(d => {
+      if (typeof d.locked === 'boolean') setLocked(d.locked);
+    }).catch(() => {});
+  }, [isPresenter]);
+
+  // 강사: lock 토글
+  const toggleLock = useCallback(async () => {
+    if (!isPresenter) return;
+    const next = !locked;
+    setLocked(next);
+    try {
+      await postJSON('/slides/lock', { locked: next });
+    } catch {
+      setLocked(locked);   // 실패 시 롤백
+    }
+  }, [isPresenter, locked]);
 
   // 반응 카운트 가져오기
   useEffect(() => {
@@ -170,9 +195,9 @@ export default function Slides({ user }) {
     if (isPresenter) postJSON('/slides/current', { slide: next });
   }, [isPresenter, totalSlides]);
 
-  // 키보드 (강사만)
+  // 키보드 (강사는 항상, 수강생은 unlock 상태일 때)
   useEffect(() => {
-    if (!isPresenter) return;
+    if (!isPresenter && locked) return;
     const handler = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(currentSlide + 1); }
@@ -180,7 +205,7 @@ export default function Slides({ user }) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isPresenter, currentSlide, goTo]);
+  }, [isPresenter, locked, currentSlide, goTo]);
 
   // 반응 보내기 + 이모지 뿅
   const sendReaction = async (type, emoji) => {
@@ -244,8 +269,8 @@ export default function Slides({ user }) {
           {SlideComponent && <SlideComponent key={currentSlide} />}
         </AnimatePresence>
 
-        {/* 사이드바 토글 버튼 (강사만) */}
-        {isPresenter && (
+        {/* 사이드바 토글 버튼 (강사 항상, 수강생은 unlock 시) */}
+        {(isPresenter || !locked) && (
           <button
             onClick={() => setShowSidebar(prev => !prev)}
             style={{
@@ -261,6 +286,21 @@ export default function Slides({ user }) {
           </button>
         )}
 
+        {/* 수강생용 잠금 상태 인디케이터 */}
+        {!isPresenter && (
+          <div style={{
+            position: 'absolute', top: 12, right: 12, zIndex: 60,
+            padding: '6px 12px', borderRadius: 20,
+            background: locked ? '#fef3c7' : '#dcfce7',
+            color: locked ? '#92400e' : '#166534',
+            border: `1px solid ${locked ? '#fde68a' : '#86efac'}`,
+            fontSize: '.75em', fontWeight: 700,
+            boxShadow: '0 2px 8px rgba(0,0,0,.06)',
+          }}>
+            {locked ? '🔒 강사 화면 따라감' : '🔓 자유 탐색 중'}
+          </div>
+        )}
+
         {/* 슬라이드 카운터 */}
         <div style={{
           position: 'absolute', bottom: 8, right: 16, fontSize: '.8em', color: '#94a3b8', fontFamily: 'monospace',
@@ -268,8 +308,8 @@ export default function Slides({ user }) {
           {currentSlide} / {totalSlides}
         </div>
 
-        {/* 사이드바 (강사만) */}
-        {isPresenter && showSidebar && (
+        {/* 사이드바 (강사 항상, 수강생은 unlock 시) */}
+        {(isPresenter || !locked) && showSidebar && (
           <motion.div
             initial={{ opacity: 0, x: -280 }} animate={{ opacity: 1, x: 0 }}
             style={{
@@ -291,13 +331,14 @@ export default function Slides({ user }) {
               const num = i + 1;
               const isCurrent = num === currentSlide;
               const isSection = s.title.startsWith('#') || s.title === 'Day 1' || s.title === 'Day 2' || s.title === '종합 실습' || s.title === 'Day 1 실습' || s.title === '마무리';
+              const canNav = isPresenter || !locked;
               return (
                 <div
                   key={num}
-                  onClick={() => { if (isPresenter) goTo(num); setShowSidebar(false); }}
+                  onClick={() => { if (canNav) { goTo(num); setShowSidebar(false); } }}
                   style={{
                     padding: isSection ? '8px 16px 4px' : '6px 16px 6px 28px',
-                    cursor: isPresenter ? 'pointer' : 'default',
+                    cursor: canNav ? 'pointer' : 'default',
                     background: isCurrent ? '#eff6ff' : 'transparent',
                     borderLeft: isCurrent ? '3px solid #2563eb' : '3px solid transparent',
                     transition: 'background .15s',
@@ -361,16 +402,30 @@ export default function Slides({ user }) {
         display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
         boxShadow: '0 -2px 12px rgba(0,0,0,.04)',
       }}>
-        {/* 강사 컨트롤 (강사만) */}
-        {isPresenter && (
+        {/* 네비게이션 컨트롤 (강사 항상, 수강생은 unlock 시) */}
+        {(isPresenter || !locked) && (
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginRight: 8 }}>
             <button onClick={() => goTo(currentSlide - 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>←</button>
             <span style={{ fontSize: '.8em', color: '#64748b', fontFamily: 'monospace', minWidth: 50, textAlign: 'center' }}>{currentSlide}/{SLIDES.length}</span>
             <button onClick={() => goTo(currentSlide + 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>→</button>
-            <button onClick={() => setShowHistory(prev => !prev)}
-              style={{ padding: '6px 10px', border: '1px solid #dbeafe', borderRadius: 8, background: '#eff6ff', cursor: 'pointer', fontSize: '.78em', color: '#2563eb' }}>
-              💬{allQuestions.length > 0 ? ` ${allQuestions.length}` : ''}
-            </button>
+            {isPresenter && (
+              <>
+                <button onClick={toggleLock}
+                  title={locked ? '수강생 자유 탐색 허용' : '수강생을 강사 화면으로 잠금'}
+                  style={{
+                    padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: '.78em', fontWeight: 700,
+                    border: `1px solid ${locked ? '#fde68a' : '#86efac'}`,
+                    background: locked ? '#fef3c7' : '#dcfce7',
+                    color: locked ? '#92400e' : '#166534',
+                  }}>
+                  {locked ? '🔒 잠김' : '🔓 해제'}
+                </button>
+                <button onClick={() => setShowHistory(prev => !prev)}
+                  style={{ padding: '6px 10px', border: '1px solid #dbeafe', borderRadius: 8, background: '#eff6ff', cursor: 'pointer', fontSize: '.78em', color: '#2563eb' }}>
+                  💬{allQuestions.length > 0 ? ` ${allQuestions.length}` : ''}
+                </button>
+              </>
+            )}
             <div style={{ width: 1, height: 24, background: '#e2e8f0' }} />
           </div>
         )}
