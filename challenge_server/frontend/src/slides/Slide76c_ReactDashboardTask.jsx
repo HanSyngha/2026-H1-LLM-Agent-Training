@@ -1,14 +1,25 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
-import { postJSON } from '../api';
+import { postJSON, fetchJSON } from '../api';
 
 export default function Slide76c_ReactDashboardTask() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [ranking, setRanking] = useState([]);
   const pasteRef = useRef(null);
+
+  useEffect(() => {
+    const load = () => fetchJSON('/completions').then(d => {
+      const comps = d.challenges?.react_dashboard?.completions || [];
+      setRanking([...comps].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10));
+    }).catch(() => {});
+    load();
+    const interval = setInterval(load, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePaste = (e) => {
     const items = e.clipboardData?.items;
@@ -144,6 +155,28 @@ export default function Slide76c_ReactDashboardTask() {
             )}
           </Box>
         </motion.div>
+
+        {ranking.length > 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+            <Box color="yellow" style={{ marginTop: 8, padding: '14px 20px' }}>
+              <BoxTitle color="#d97706">🏆 Top 10 순위 (5초 갱신)</BoxTitle>
+              <div style={{ fontSize: '.82em', marginTop: 6 }}>
+                {ranking.map((r, i) => (
+                  <div key={r.sub} style={{
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0',
+                    borderBottom: '1px solid #f1f5f9',
+                  }}>
+                    <span style={{ width: 24, fontWeight: 900, color: i < 3 ? '#d97706' : '#94a3b8' }}>
+                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`}
+                    </span>
+                    <span style={{ flex: 1, fontWeight: 600 }}>{r.name}</span>
+                    <span style={{ fontWeight: 900, color: '#2563eb', fontSize: '1.1em' }}>{r.score}점</span>
+                  </div>
+                ))}
+              </div>
+            </Box>
+          </motion.div>
+        )}
       </div>
     </div>
   );
