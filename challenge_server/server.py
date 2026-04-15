@@ -1884,12 +1884,10 @@ async def download_lecture_html(request: Request):
 
 
 @app.get("/downloads/{challenge_id}")
-async def download_challenge(challenge_id: str, request: Request):
-    """과제별 실습 코드를 zip으로 다운로드합니다."""
+async def download_challenge(challenge_id: str):
+    """과제별 실습 코드를 zip으로 다운로드합니다. (잠금/해제 무관하게 항상 허용)"""
     import zipfile
     import io
-
-    await _ensure_download_access(request)
 
     # 과제별 디렉토리 매핑
     dirs = {

@@ -29,21 +29,12 @@ export default function LabDownloadButton({
   slideRuntime,
   style,
 }) {
-  const downloadsEnabled = slideRuntime ? slideRuntime.downloadsEnabled : true;
   const offlineArchive = slideRuntime?.offlineArchive ?? false;
 
   if (offlineArchive) {
     return (
       <div style={noticeStyle}>
         오프라인 보관본에서는 실습 코드 다운로드가 비활성화됩니다.
-      </div>
-    );
-  }
-
-  if (!downloadsEnabled) {
-    return (
-      <div style={noticeStyle}>
-        강사가 자유 탐색을 열면 다운로드 버튼이 표시됩니다.
       </div>
     );
   }
