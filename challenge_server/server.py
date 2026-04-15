@@ -1908,9 +1908,15 @@ async def download_challenge(challenge_id: str):
     if not target:
         raise HTTPException(404, f"과제 '{challenge_id}' 코드를 찾을 수 없습니다")
 
-    base = Path(__file__).resolve().parent.parent / target
-    if not base.exists():
-        raise HTTPException(404, f"디렉토리 없음: {target}")
+    # Docker(/app/day1)와 로컬(/.../Lecture/day1) 양쪽에서 동작
+    server_dir = Path(__file__).resolve().parent
+    candidates = [
+        server_dir / target,          # Docker: /app/server.py → /app/day1/...
+        server_dir.parent / target,   # 로컬: challenge_server/server.py → ../day1/...
+    ]
+    base = next((p for p in candidates if p.exists()), None)
+    if base is None:
+        raise HTTPException(404, f"디렉토리 없음: {target} (searched: {[str(p) for p in candidates]})")
 
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as zf:
