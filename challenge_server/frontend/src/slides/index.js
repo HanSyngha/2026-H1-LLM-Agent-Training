@@ -46,7 +46,6 @@ import Slide37_MCP1 from './Slide37_MCP1';
 import Slide38_MCPArch from './Slide38_MCPArch';
 import Slide39_FastMCP from './Slide39_FastMCP';
 import Slide40_MCPFlow from './Slide40_MCPFlow';
-import Slide41_MCPTask from './Slide41_MCPTask';
 import SectionBrowser from './SectionBrowser';
 import Slide43_BrowserCompare from './Slide43_BrowserCompare';
 import Slide44_CDP from './Slide44_CDP';
@@ -157,111 +156,111 @@ const Slide22_PromptIdea = createIdeaTakeawaySlide({
 const Slide30_EndpointIdea = createIdeaTakeawaySlide({
   badge: 'Endpoint 회고',
   title: 'OpenAI Compatible 실습의 핵심 아이디어',
-  lead: 'OpenAI Compatible의 가치는 특정 SDK가 아니라, LLM 호출 계약을 표준화해 백엔드 교체 비용을 낮추는 데 있습니다.',
+  lead: '이 실습의 핵심은 LLM이 이미 잘 알고 있는 OpenAI Compatible 개념을 활용하면, 바이브코딩으로도 LLM 연동을 매우 빠르게 도입할 수 있다는 점입니다.',
   ideaPoints: [
-    '앱은 모델 벤더가 아니라 messages/tools 같은 표준 계약에 붙어야 합니다.',
-    '게이트웨이는 인증, 정책, 로깅, 모델 교체를 한곳에서 흡수합니다.',
-    '표준 인터페이스를 지키면 사내 모델과 외부 모델을 더 쉽게 교체할 수 있습니다.',
+    'LLM은 messages, model, tools, base_url 같은 OpenAI Compatible 개념을 이미 학습하고 있습니다.',
+    '그래서 개발자는 표준 계약을 설명하고 환경 정보만 주면 바이브코딩으로 빠르게 붙일 수 있습니다.',
+    '대부분의 오픈소스 LLM 서버도 OpenAI Compatible API를 지원하므로 도입 장벽이 낮습니다.',
   ],
   antiPoints: [
-    '벤더 예제를 그대로 복붙하면 조직 종속성이 빠르게 커집니다.',
-    'SDK 문법을 배우는 것 자체가 목표가 아닙니다.',
-    '모든 커스텀을 앱 코드에 박아 넣으면 게이트웨이 계층의 의미가 사라집니다.',
+    '특정 벤더 SDK를 외우는 것이 실습의 핵심은 아닙니다.',
+    '새 모델을 붙일 때마다 처음부터 다른 API를 배워야 한다고 생각할 필요가 없습니다.',
+    'OpenAI Compatible이라고 해서 조직별 헤더나 인증 차이까지 자동으로 해결되는 것은 아닙니다.',
   ],
   applyPoints: [
-    '앱에서는 표준 요청/응답만 유지하고, 인증·헤더·라우팅은 게이트웨이로 밀어내세요.',
-    '사내 환경에서는 "교체 가능한 계약"을 남기는 것이 가장 큰 자산입니다.',
-    '기술 선택보다 인터페이스 설계가 먼저라는 점을 반복해서 강조하세요.',
+    '사내 게이트웨이든 오픈소스 LLM이든 먼저 OpenAI Compatible endpoint부터 확인하세요.',
+    '프롬프트에는 base_url, header, model, messages 구조만 명확히 주고 나머지는 바이브코딩으로 붙이세요.',
+    '핵심은 프레임워크가 아니라 "LLM이 이미 이해하는 표준 개념 위에 얹는 것"이라고 설명하세요.',
   ],
-  closing: 'OpenAI Compatible의 핵심은 프레임워크가 아니라, 교체 가능한 인터페이스 계약입니다.',
+  closing: 'OpenAI Compatible의 힘은 복잡한 프레임워크가 아니라, LLM이 이미 아는 표준 개념 위에 사내 환경과 오픈소스 모델을 쉽게 연결할 수 있다는 데 있습니다.',
 });
 
 const Slide36_ToolIdea = createIdeaTakeawaySlide({
-  badge: 'Tool Use 회고',
+  badge: 'Structured Output 회고',
   title: 'Structured Output 실습의 핵심 아이디어',
-  lead: '이 실습의 본질은 자연어 판단과 실제 실행을 분리하는 것입니다. LLM은 결정하고, 시스템은 구조화된 계약에 따라 실행합니다.',
+  lead: '더 강력한 output formatting을 사용하세요. LLM의 예상치 못한 output을 제어하는 것은 생각보다 훨씬 어렵고, 실제 제품에서는 출력 이후의 검증까지 같이 설계해야 합니다.',
   ideaPoints: [
-    'Tool schema는 "모델이 무엇을 요청할 수 있는지"를 명확히 제한하는 실행 계약입니다.',
-    '자연어를 바로 부작용으로 연결하지 않고, 구조화된 요청으로 변환하는 것이 핵심입니다.',
-    '작고 명확한 tool을 조합할수록 agent는 더 예측 가능해집니다.',
+    '자유형 텍스트보다 schema가 강한 output formatting을 쓸수록 LLM의 흔들림을 줄일 수 있습니다.',
+    '핵심은 "예쁘게 출력시키기"가 아니라, 시스템이 다룰 수 있는 형태로 강하게 제한하는 것입니다.',
+    'Structured Output은 프롬프트 기술이 아니라 제품 신뢰성을 높이는 제어 장치입니다.',
   ],
   antiPoints: [
-    '모든 동작을 하나의 거대한 tool로 묶으면 디버깅과 제어가 어려워집니다.',
-    '자유형 텍스트 응답에 실행 권한을 주면 품질과 보안이 동시에 무너집니다.',
-    '프레임워크 마법처럼 생각하면 실제 contract 설계를 놓치게 됩니다.',
+    'JSON처럼 보인다고 원하는 output이라고 착각하면 안 됩니다.',
+    '파싱만 되면 끝이라고 생각하면 값의 누락, 타입 오류, 의미 충돌을 놓치게 됩니다.',
+    '출력이 틀렸을 때 재시도 조건과 사용자 경험을 준비하지 않으면 서비스 품질이 바로 무너집니다.',
   ],
   applyPoints: [
-    '작은 tool, 좁은 파라미터, 명확한 반환값부터 시작하세요.',
-    '실패했을 때 무엇을 다시 물어볼지까지 schema 설계에 포함시키세요.',
-    '핵심은 function calling 문법이 아니라 "의사결정과 실행 분리"입니다.',
+    '이 output이 정말 원하는 형태인지 자동으로 탐지할 수 있는 방법이 있는지 먼저 생각해보세요.',
+    '어떤 조건에서 retry할지, 몇 번 retry할지, retry할 때 무엇을 바꿀지 정의해보세요.',
+    '원하는 output이 아닐 경우 사용자에게 어떤 메시지와 UX를 줄지, 그리고 값의 정합성을 어떻게 검증할지까지 같이 설계해보세요.',
   ],
-  closing: 'Tool Calling은 기능이 아니라 통제 방식입니다. 모델에게는 선택권만 주고, 실행은 시스템이 책임지세요.',
+  closing: 'Structured Output의 핵심은 JSON 문법이 아니라, 예상치 못한 출력을 어떻게 탐지하고, 재시도하고, 검증하고, 사용자 경험까지 안전하게 설계할 것인가입니다.',
 });
 
 const Slide42_MCPIdea = createIdeaTakeawaySlide({
-  badge: 'MCP 회고',
-  title: 'MCP 실습의 핵심 아이디어',
-  lead: 'MCP의 핵심은 REST API의 표준화 아이디어를 agent 세계로 확장해, "무엇을 할 수 있는가"뿐 아니라 "실행까지 맡겨버리는 계약"을 만든다는 점입니다.',
+  badge: 'MCP 경고',
+  title: 'MCP 사용하지 마세요',
+  lead: 'MCP보다 훨씬 안정적인 표준인 REST API가 있습니다. MCP는 생각보다 제약적이고, 어떤 AI 서비스에든 범용적으로 도입할 수 있는 방식이 아닙니다.',
   ideaPoints: [
-    'REST API가 endpoint 계약을 표준화했다면, MCP는 tool/resource/prompt 실행 계약을 표준화합니다.',
-    'LLM 앱마다 integration을 새로 짜는 대신, 실행 가능한 capability를 한 번 정의해 재사용합니다.',
-    '핵심은 새 프레임워크가 아니라 "실행 위임 인터페이스"를 표준화하는 발상입니다.',
+    '대부분의 제품 환경에서는 MCP보다 REST API가 훨씬 안정적이고 검증된 표준입니다.',
+    'MCP는 transport, client 지원 범위, 인터랙션 형태가 생각보다 제약적입니다.',
+    '도구 연결 자체보다 중요한 것은 상황에 맞는 UX를 극대화하는 integration 방법론입니다.',
   ],
   antiPoints: [
-    'MCP 서버를 쓴다는 사실 자체가 목표가 아닙니다.',
-    '모든 내부 시스템을 MCP로 바꾸는 과잉 설계는 오히려 복잡도를 키웁니다.',
-    '프로토콜 이름만 안다고 연결 비용이 줄어들지는 않습니다.',
+    '모든 AI 서비스에 공통으로 넣을 수 있는 범용 해법이라고 생각하면 안 됩니다.',
+    'MCP를 지원한다는 이유만으로 제품 UX와 운영성이 좋아지지는 않습니다.',
+    '프로토콜 유행을 따라가는 것이 integration 전략이 될 수는 없습니다.',
   ],
   applyPoints: [
-    '반복 integration 비용이 큰 도메인부터 작은 surface area로 시작하세요.',
-    '도구 설명, 입력 스키마, 실행 결과를 재사용 가능한 계약으로 관리하세요.',
-    'MCP를 도입하더라도 우리 조직에서 필요한 capability만 얇게 노출하세요.',
+    '기본 선택지는 REST API로 두고, 필요한 경우에만 더 특수한 연결 방식을 검토하세요.',
+    'AI 서비스별 사용자 경험이 극대화되도록 tool 호출, 승인, 결과 표현 방식을 따로 설계하세요.',
+    '핵심은 MCP 채택이 아니라, 상황에 맞는 tool 지원 integrate 방법론을 선택하는 것입니다.',
   ],
-  closing: 'MCP는 새 프레임워크가 아니라, 실행 가능한 capability를 재사용하는 표준화 아이디어입니다.',
+  closing: '프로토콜 이름보다 중요한 것은 범용성, 안정성, 그리고 사용자 경험입니다. 대부분의 경우 MCP보다 REST API가 더 좋은 기본값입니다.',
 });
 
 const Slide48_BrowserIdea = createIdeaTakeawaySlide({
   badge: '브라우저 회고',
   title: '브라우저 자동화 실습의 핵심 아이디어',
-  lead: '웹 자동화의 본질은 Playwright를 외우는 것이 아니라, HTML만으로 안 보이는 상태를 어떤 채널로 관찰하고 조작할지 선택하는 데 있습니다.',
+  lead: '사내에서는 검색, 외부 API, Jira/Confluence API 연동도 제한적인 경우가 많습니다. 이런 환경에서는 브라우저 자동화를 적극 활용하는 것이 훨씬 실용적입니다.',
   ideaPoints: [
-    'requests로 안 되면 DOM, JS 실행 결과, iframe, CDP 같은 다른 관찰 채널이 필요합니다.',
-    '브라우저 제어는 "보이는 화면"이 아니라 "실제 렌더링 상태"를 읽기 위한 방법입니다.',
-    '동적 렌더링 페이지에서는 네트워크 응답보다 상위 레벨의 실행 환경이 중요합니다.',
+    '사내망에서는 필요한 정보가 웹 UI 뒤에만 있고 공식 API가 없거나 막혀 있는 경우가 많습니다.',
+    '브라우저 자동화는 검색, 사내 포털 조회, Jira/Confluence 같은 도구 연동의 현실적인 우회 수단이 됩니다.',
+    '결국 중요한 것은 API 유무보다, 실제로 필요한 정보를 가장 안정적으로 가져오는 방법을 고르는 것입니다.',
   ],
   antiPoints: [
-    '브라우저 자동화를 단순 크롤링의 확장판으로만 보면 실패합니다.',
-    '도구 이름에 집착하면 어떤 계층을 제어해야 하는지 판단을 놓칩니다.',
-    '사람처럼 클릭만 흉내 내면 재현성과 안정성이 떨어집니다.',
+    'API가 없으면 못 한다고 바로 포기할 필요는 없습니다.',
+    '브라우저 자동화를 단순 데모 기술 정도로 보면 사내 활용 기회를 놓치게 됩니다.',
+    '무조건 외부 API 연동만 정석이라고 생각하면 실제 현업 제약을 반영하지 못합니다.',
   ],
   applyPoints: [
-    '문제마다 HTTP, DOM, JS, CDP 중 어느 계층이 정답인지 먼저 판단하세요.',
-    '최소 제어 계층으로 해결하고, 필요할 때만 더 무거운 자동화로 올라가세요.',
-    '핵심은 Playwright 사용법이 아니라 "실행된 상태를 읽는 사고방식"입니다.',
+    '검색, 포털 조회, 티켓 시스템, 위키 시스템처럼 UI 접근이 가능한 도메인부터 자동화를 검토하세요.',
+    '상황마다 requests, DOM 제어, Playwright 중 무엇이 가장 안정적인지 판단하세요.',
+    '핵심은 프레임워크가 아니라, 제약이 많은 사내 환경에서 실질적으로 데이터를 가져오는 실행력입니다.',
   ],
-  closing: '브라우저 자동화의 가치는 프레임워크가 아니라, 렌더링된 상태를 읽고 제어하는 관점에 있습니다.',
+  closing: '사내에서 공식 API 연동이 제한적일수록 브라우저 자동화의 가치가 커집니다. 필요한 정보를 가져올 수 있다면 적극 활용하는 편이 맞습니다.',
 });
 
 const Slide81_ContextIdea = createIdeaTakeawaySlide({
   badge: 'Context 회고',
   title: 'Context Engineering 실습의 핵심 아이디어',
-  lead: 'Context Engineering은 많이 넣는 기술이 아니라, 지금 답을 만드는 데 필요한 정보만 남기는 기술입니다.',
+  lead: '핵심은 "원하는 것을 뽑아내는 것의 모호성"입니다. User가 무엇을 원하느냐에 따라 같은 원문에서도 핵심 정보는 달라질 수 있습니다.',
   ideaPoints: [
-    '회의록 압축과 채팅 요약은 모두 "무엇을 버리고 무엇을 남길지" 결정하는 문제입니다.',
-    '컨텍스트 품질은 길이가 아니라 선택과 구조화의 정확도로 결정됩니다.',
-    '좋은 요약은 사람이 보기 좋기보다, 다음 LLM 행동을 정확히 유도해야 합니다.',
+    '같은 대화 기록이라도 User가 원하는 것이 일정인지, 할 일인지, 리스크인지에 따라 뽑아야 할 정보가 달라집니다.',
+    '문제는 많이 넣는 것이 아니라, 상황마다 가장 좋은 정보를 골라내는 것입니다.',
+    'Context Engineering은 요약 기술이 아니라 "무엇을 핵심으로 볼 것인가"를 설계하는 기술입니다.',
   ],
   antiPoints: [
-    '긴 원문을 그대로 넣는 것은 정직한 전달이 아니라 책임 회피일 수 있습니다.',
-    '요약을 예쁘게 쓰는 것과 행동 가능한 정보를 남기는 것은 다릅니다.',
-    '컨텍스트를 무조건 늘리면 성능이 좋아진다고 생각하면 안 됩니다.',
+    '원문 안에 다 들어 있으니 LLM이 알아서 뽑아줄 거라고 생각하면 안 됩니다.',
+    '모든 상황에 통하는 하나의 요약 포맷이 있다고 생각하면 실패합니다.',
+    '겉보기엔 그럴듯한 요약이라도 User가 원하는 정보가 아니면 좋은 컨텍스트가 아닙니다.',
   ],
   applyPoints: [
-    '다음 단계 의사결정에 필요한 슬롯을 먼저 정의하고 그 슬롯만 채우세요.',
-    '일정, 액션 아이템, 최신 결정사항처럼 agent가 써먹을 구조로 압축하세요.',
-    'Context Engineering을 요약 기술이 아니라 의사결정 입력 설계로 설명하세요.',
+    '먼저 User가 정말 원하는 것이 일정, 액션 아이템, 의사결정, 리스크 중 무엇인지 정의하세요.',
+    '상황에 따라 가장 좋은 정보를 어떻게 뽑아낼지 슬롯, 우선순위, 포맷을 설계하는 노하우를 쌓으세요.',
+    '좋은 Context Engineering은 요약문 작성이 아니라, 목적에 맞는 정보 선택 규칙을 만드는 것입니다.',
   ],
-  closing: '컨텍스트 엔지니어링의 핵심은 많이 주는 것이 아니라, 다음 행동에 필요한 정보만 정확히 남기는 것입니다.',
+  closing: 'Context Engineering의 본질은 압축이 아니라 선택입니다. User가 원하는 것이 무엇인지에 따라 가장 좋은 정보를 뽑아내는 설계 감각이 중요합니다.',
   accent: '#7c3aed',
   day2: true,
 });
@@ -491,8 +490,7 @@ const SLIDES = [
   { id: 43, component: Slide38_MCPArch, title: 'MCP 아키텍처', day: 1 },
   { id: 44, component: Slide39_FastMCP, title: 'FastMCP 코드', day: 1 },
   { id: 45, component: Slide40_MCPFlow, title: 'MCP+LLM 연동', day: 1 },
-  { id: 0, component: Slide41_MCPTask, title: 'MCP 과제', day: 1 },
-  { id: 0, component: Slide42_MCPIdea, title: 'MCP의 핵심 아이디어', day: 1 },
+  { id: 0, component: Slide42_MCPIdea, title: 'MCP 사용하지 마세요', day: 1 },
   // 브라우저
   { id: 48, component: SectionBrowser, title: '#7 브라우저', day: 1 },
   { id: 49, component: Slide43_BrowserCompare, title: '브라우저 비교', day: 1 },

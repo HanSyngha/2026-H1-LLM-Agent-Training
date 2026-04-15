@@ -284,11 +284,12 @@ export default function Slides({ user }) {
         {/* 사이드바 토글 버튼 (강사 항상, 수강생은 unlock 시) */}
         {(isPresenter || !locked) && (
           <button
+            type="button"
             onClick={() => setShowSidebar(prev => !prev)}
             className="presentation-sidebar-toggle"
             style={{
-              position: 'absolute', top: 12, left: 12,
-              width: 42, height: 42, zIndex: 60,
+              position: 'fixed', top: 16, left: 16,
+              width: 42, height: 42, zIndex: 260,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -319,13 +320,13 @@ export default function Slides({ user }) {
             initial={{ opacity: 0, x: -280 }} animate={{ opacity: 1, x: 0 }}
             className="presentation-sidebar"
             style={{
-              position: 'absolute', top: 0, left: 0, bottom: 0, width: 280,
-              overflowY: 'auto', zIndex: 55, padding: '12px 0',
+              position: 'fixed', top: 0, left: 0, bottom: 0, width: 280,
+              overflowY: 'auto', zIndex: 250, padding: '12px 0',
             }}
           >
             <div className="presentation-sidebar-header" style={{ padding: '8px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontWeight: 700, fontSize: '.9em', color: '#1e293b' }}>슬라이드 목록</span>
-              <button onClick={() => setShowSidebar(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1em' }}>✕</button>
+              <button type="button" onClick={() => setShowSidebar(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1em' }}>✕</button>
             </div>
             {isOfflineArchive ? (
               <div className="presentation-sidebar-links" style={{ display: 'flex', gap: 6, padding: '8px 16px' }}>

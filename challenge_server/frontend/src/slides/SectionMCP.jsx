@@ -11,7 +11,7 @@ export default function SectionMCP() {
           MCP (Model Context Protocol)
         </motion.div>
         <motion.div className="section-subtitle" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}>
-          2026 업계 표준 프로토콜
+          알아는 두되, 기본 선택지로 권장하지 않음
         </motion.div>
         <motion.div className="section-time" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.5 }}>
           14:20 - 15:00

@@ -806,12 +806,21 @@ async def context_test(request: Request):
 # Day2 과제 1b: 채팅 기록 핵심 정보 추출
 # ============================================
 CHAT_EXTRACT_CHECKS = [
-    {"item": "ASML EUV 미팅 일정 (3/25 화요일)", "keywords": ["ASML", "25"]},
-    {"item": "클린룸 업그레이드 승인 (4/1 착공)", "keywords": ["클린룸"]},
-    {"item": "그래핀 TIM 샘플 도착 (4/10)", "keywords": ["그래핀", "TIM"]},
-    {"item": "범프 접합 불량 원인 (리플로우 온도)", "keywords": ["범프", "리플로우"]},
-    {"item": "PIM 회의록 배포 마감 (수요일)", "keywords": ["PIM", "회의록"]},
+    {"item": "ASML EUV 미팅 일정 (3/25 화요일)", "keyword_groups": [["ASML"], ["25"]]},
+    {"item": "클린룸 업그레이드 승인 (4/1 착공)", "keyword_groups": [["클린룸"]]},
+    {"item": "그래핀 TIM 샘플 도착 (4/10)", "keyword_groups": [["그래핀"], ["TIM"], ["4/10", "4월 10일", "4월10일"]]},
+    {"item": "범프 접합 불량 원인 (리플로우 온도)", "keyword_groups": [["범프"], ["리플로우"]]},
+    {"item": "PIM 회의록 배포 마감 (수요일)", "keyword_groups": [["PIM"], ["회의록"]]},
 ]
+
+
+def _matches_chat_extract_check(summary: str, check: dict) -> bool:
+    groups = check.get("keyword_groups")
+    if groups:
+        return all(any(keyword in summary for keyword in group) for group in groups)
+
+    keywords = check.get("keywords", [])
+    return all(keyword in summary for keyword in keywords)
 
 
 @app.post("/challenges/chat_extract/test")
@@ -859,7 +868,7 @@ async def chat_extract_test(request: Request):
         # 키워드 기반 직접 검증 (LLM 판단보다 안정적)
         checks = []
         for c in CHAT_EXTRACT_CHECKS:
-            matched = all(any(kw in summary for kw in [k]) for k in c["keywords"])
+            matched = _matches_chat_extract_check(summary, c)
             checks.append({"item": c["item"], "matched": matched})
 
         passed = sum(1 for c in checks if c["matched"])
