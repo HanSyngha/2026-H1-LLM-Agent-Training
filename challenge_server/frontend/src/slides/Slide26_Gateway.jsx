@@ -1,104 +1,90 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Box } from './SlideLayout';
 
-function AnimatedBox({ x, y, w, h, fill, stroke, delay, children }) {
+function StageCard({ title, subtitle, color, delay, children }) {
   return (
-    <motion.g initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay, duration: 0.4 }}>
-      <rect x={x} y={y} width={w} height={h} rx={12} fill={fill} stroke={stroke} strokeWidth={2} />
-      {children}
-    </motion.g>
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.4 }}
+      style={{
+        flex: 1,
+        minHeight: 220,
+        borderRadius: 24,
+        padding: '24px 22px',
+        background: `${color}10`,
+        border: `1px solid ${color}33`,
+        boxShadow: '0 18px 44px rgba(15, 23, 42, 0.08)',
+      }}
+    >
+      <div style={{ fontSize: '.78em', fontWeight: 800, letterSpacing: '.08em', color, textTransform: 'uppercase' }}>{title}</div>
+      <div style={{ marginTop: 8, fontSize: '1.18em', fontWeight: 800, color: '#0f172a', lineHeight: 1.35 }}>{subtitle}</div>
+      <div style={{ marginTop: 16, display: 'grid', gap: 10, color: '#334155', lineHeight: 1.65, fontSize: '.95em' }}>
+        {children}
+      </div>
+    </motion.div>
   );
 }
 
-function AnimatedLine({ d, stroke, delay, isPath }) {
-  if (isPath) {
-    return (
-      <motion.path
-        d={d} stroke={stroke} strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ delay, duration: 0.6 }}
-      />
-    );
-  }
-  return null;
+function FlowArrow({ delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.3 }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#2563eb',
+        fontSize: '1.9em',
+        fontWeight: 800,
+        width: 36,
+      }}
+    >
+      →
+    </motion.div>
+  );
 }
 
 export default function Slide26_Gateway() {
-  const llms = [
-    { y: 10, label: 'OpenAI GPT-4o', color: '#10b981' },
-    { y: 68, label: 'Claude Sonnet', color: '#ea580c' },
-    { y: 126, label: 'Gemini', color: '#0891b2' },
-    { y: 184, label: 'Llama / Local', color: '#d97706' },
-  ];
-
   return (
     <div className="slide-container">
       <div className="slide-inner">
         <Badge variant="day1">OpenAI Compatible</Badge>
-        <SlideH2>OpenAI Compatible 표준이란?</SlideH2>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          style={{ color: '#475569' }}
-        >
-          OpenAI가 정의한 API 인터페이스를 <strong style={{ color: '#2563eb' }}>다른 모델/서비스</strong>도 동일하게 지원
-        </motion.p>
+        <SlideH2>Gateway 구조</SlideH2>
+        <p style={{ color: '#475569', maxWidth: 920 }}>
+          OpenAI Compatible은 <strong style={{ color: '#2563eb' }}>요청 형식의 표준</strong>이고, Gateway는 그 표준 요청 위에
+          <strong style={{ color: '#7c3aed' }}> 사내 인증·정책·라우팅</strong>을 얹는 계층입니다.
+        </p>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} style={{ marginTop: 16 }}>
-          <svg viewBox="0 0 900 230" width="900" height="230" className="diagram-svg">
-            <defs>
-              <marker id="arrowBlue26" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
-              </marker>
-              <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed" />
-              </marker>
-            </defs>
+        <div style={{ display: 'flex', alignItems: 'stretch', gap: 14, marginTop: 18 }}>
+          <StageCard title="1. Client" subtitle="코드는 표준 SDK 그대로" color="#2563eb" delay={0.1}>
+            <div><strong>OpenAI SDK</strong>나 REST 호출을 그대로 사용합니다.</div>
+            <div><code>messages</code>, <code>model</code>, <code>temperature</code> 같은 표준 필드를 보냅니다.</div>
+            <div>개발자는 서비스 기능에 집중하고, 모델별 특수 계약은 최소화합니다.</div>
+          </StageCard>
 
-            {/* Your Code */}
-            <AnimatedBox x={20} y={70} w={180} h={80} fill="rgba(37,99,235,.08)" stroke="rgba(37,99,235,.5)" delay={0.4}>
-              <text x={110} y={104} textAnchor="middle" fill="#1d4ed8" fontWeight={700} fontSize={15}>동일한 코드</text>
-              <text x={110} y={124} textAnchor="middle" fill="#475569" fontSize={13}>base_url 만 변경</text>
-            </AnimatedBox>
+          <FlowArrow delay={0.18} />
 
-            {/* Gateway */}
-            <AnimatedBox x={290} y={55} w={190} h={110} fill="rgba(124,58,237,.08)" stroke="rgba(124,58,237,.5)" delay={0.6}>
-              <text x={385} y={94} textAnchor="middle" fill="#6d28d9" fontWeight={700} fontSize={15}>Gateway</text>
-              <text x={385} y={114} textAnchor="middle" fill="#475569" fontSize={13}>OpenAI Compatible</text>
-              <text x={385} y={132} textAnchor="middle" fill="#475569" fontSize={13}>인터페이스</text>
-            </AnimatedBox>
+          <StageCard title="2. Gateway" subtitle="사내 요구사항을 여기서 처리" color="#7c3aed" delay={0.26}>
+            <div><strong>x-service-id</strong>, <strong>x-user-id</strong> 같은 사내 헤더를 검사합니다.</div>
+            <div>허용된 모델인지 확인하고, 로깅·권한·운영 정책을 한 곳에서 통제합니다.</div>
+            <div>실제 호출 대상 OpenAI, vLLM, 내부 LLM으로 요청을 라우팅합니다.</div>
+          </StageCard>
 
-            {/* Arrow: Code → Gateway */}
-            <motion.line
-              x1={202} y1={110} x2={288} y2={110}
-              stroke="#2563eb" strokeWidth={2} markerEnd="url(#arrowBlue26)"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
-            />
+          <FlowArrow delay={0.34} />
 
-            {/* LLMs */}
-            {llms.map((llm, i) => (
-              <AnimatedBox key={i} x={590} y={llm.y} w={180} h={45} fill="rgba(51,65,85,.06)" stroke="rgba(100,116,139,.25)" delay={0.8 + i * 0.12}>
-                <text x={680} y={llm.y + 28} textAnchor="middle" fill={llm.color} fontWeight={600} fontSize={14}>{llm.label}</text>
-              </AnimatedBox>
-            ))}
+          <StageCard title="3. Models" subtitle="뒤에는 어떤 모델이 와도 됨" color="#0f766e" delay={0.42}>
+            <div>OpenAI, 사내 배포 모델, 오픈소스 LLM을 같은 계약으로 교체할 수 있습니다.</div>
+            <div>앞단 코드는 유지하고, 운영 측에서 모델 선택과 전환을 관리할 수 있습니다.</div>
+            <div>핵심은 framework가 아니라 <strong>표준 요청 + 중앙 라우팅</strong>입니다.</div>
+          </StageCard>
+        </div>
 
-            {/* Arrows: Gateway → LLMs */}
-            <motion.path d="M482,88 Q530,38 588,32" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
-              initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.2, duration: 0.5 }} />
-            <motion.path d="M482,100 L588,90" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
-              initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.3, duration: 0.5 }} />
-            <motion.path d="M482,115 L588,148" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
-              initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.4, duration: 0.5 }} />
-            <motion.path d="M482,128 Q530,185 588,206" stroke="#7c3aed" strokeWidth={2} fill="none" markerEnd="url(#arrowPurple)"
-              initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 1.5, duration: 0.5 }} />
-          </svg>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0 }}>
-          <Box color="blue" style={{ marginTop: 8, fontSize: '.92em' }}>
-            <strong>핵심 가치:</strong> 모델을 바꿔도 코드 변경이 최소화됩니다. <code>base_url</code>만 변경하면 됩니다.
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+          <Box color="blue" style={{ marginTop: 18, fontSize: '.95em' }}>
+            <strong>강조할 메시지:</strong> OpenAI Compatible은 "모양을 맞추는 표준"이고, Gateway는 "사내 환경에 맞게 실행시키는 운영 계층"입니다.
           </Box>
         </motion.div>
       </div>
