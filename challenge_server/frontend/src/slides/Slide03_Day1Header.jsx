@@ -25,16 +25,17 @@ export default function Slide03_Day1Header() {
         <motion.div
           className="day-sub"
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          style={{ background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+          style={{ color: '#9bd0cb' }}
         >
           LLM 제어 + Tool 개념
         </motion.div>
 
-        <motion.div style={{ width: 80, height: 3, background: 'linear-gradient(90deg, #3b82f6, #06b6d4)', margin: '20px auto', borderRadius: 2 }}
+        <motion.div style={{ width: 96, height: 6, background: 'linear-gradient(90deg, #1d4ed8, #0f766e)', margin: '22px auto', borderRadius: 999 }}
           initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.5 }} />
 
         <motion.div className="day-desc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-          각 기술이 <strong style={{ color: '#60a5fa' }}>왜 만들어졌는지</strong> 이해하고, 핵심 아이디어를 추출하는 능력을 기릅니다
+          각 기술이 <strong style={{ color: '#f5f2ea' }}>왜 만들어졌는지</strong> 이해하고,
+          아이디어만 추출해 사내 시스템에 경량 구현하는 감각을 익힙니다.
         </motion.div>
 
         <motion.div className="day-tags" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
@@ -51,10 +52,10 @@ export default function Slide03_Day1Header() {
       <motion.div
         style={{
           position: 'absolute', top: 0, left: '-100%', width: '100%', height: '100%',
-          background: 'linear-gradient(105deg, transparent 40%, rgba(96,165,250,.04) 45%, rgba(167,139,250,.06) 50%, transparent 60%)',
+          background: 'linear-gradient(105deg, transparent 40%, rgba(29,78,216,.04) 45%, rgba(15,118,110,.07) 50%, transparent 60%)',
           zIndex: 0, pointerEvents: 'none',
         }}
-        animate={{ left: ['−100%', '100%'] }}
+        animate={{ left: ['-100%', '100%'] }}
         transition={{ delay: 0.3, duration: 1.8, ease: 'easeOut' }}
       />
     </div>

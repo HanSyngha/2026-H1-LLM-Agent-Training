@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle, CodeBlock } from './SlideLayout';
 import { postJSON } from '../api';
 import AnswerButton from './AnswerButton';
+import LabDownloadButton from './LabDownloadButton';
 
-export default function Slide62_AgentV2Task() {
+export default function Slide62_AgentV2Task({ slideRuntime }) {
   const [code, setCode] = useState('');
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -29,11 +30,12 @@ export default function Slide62_AgentV2Task() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Box color="blue">
             <BoxTitle>1단계: 스크립트 다운로드</BoxTitle>
-            <a href="/downloads/agent_v2" download
-              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
-                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 6 }}>
-              📦 solve.py 다운로드
-            </a>
+            <LabDownloadButton
+              href="/downloads/agent_v2"
+              label="📦 solve.py 다운로드"
+              slideRuntime={slideRuntime}
+              style={{ marginBottom: 6 }}
+            />
             <div style={{ fontSize: '.88em', color: '#64748b' }}>
               바이브 코딩 도구에게 이 파일을 주고 <strong>"이 미로를 푸는 에이전트를 만들어줘"</strong>
             </div>

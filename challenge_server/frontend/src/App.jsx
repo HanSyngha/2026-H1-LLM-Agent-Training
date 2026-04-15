@@ -36,6 +36,7 @@ function HoverNavbar({ user }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isOfflineArchive = typeof window !== 'undefined' && Boolean(window.__OFFLINE_ARCHIVE__);
 
   useEffect(() => {
     getMe().then(data => {
@@ -54,15 +55,21 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <HoverNavbar user={user} />
-      <Routes>
-        <Route path="/" element={<Dashboard user={user} />} />
-        <Route path="/slides" element={<Slides user={user} />} />
-        <Route path="/challenges/prompt" element={<PromptChallenge user={user} />} />
-        <Route path="/questions" element={<Questions />} />
-        <Route path="/feedback" element={<Feedback />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
+      {!isOfflineArchive && <HoverNavbar user={user} />}
+      {isOfflineArchive ? (
+        <Routes>
+          <Route path="*" element={<Slides user={user} />} />
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Dashboard user={user} />} />
+          <Route path="/slides" element={<Slides user={user} />} />
+          <Route path="/challenges/prompt" element={<PromptChallenge user={user} />} />
+          <Route path="/questions" element={<Questions />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }

@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import AnswerButton from './AnswerButton';
+import LabDownloadButton from './LabDownloadButton';
 import Slide15_SSOAnswer from './Slide15_SSOAnswer';
 
-export default function Slide12_SSOTask1() {
+export default function Slide12_SSOTask1({ slideRuntime }) {
   return (
     <div className="slide-container">
       <div className="slide-inner">
@@ -15,11 +16,7 @@ export default function Slide12_SSOTask1() {
           <Box color="blue">
             <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <a href="/downloads/sso" download
-                style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
-                  textDecoration: 'none', fontWeight: 600, fontSize: '.9em', flexShrink: 0 }}>
-                📦 다운로드
-              </a>
+              <LabDownloadButton href="/downloads/sso" label="📦 다운로드" slideRuntime={slideRuntime} />
               <code style={{ fontSize: '.9em' }}>
                 pip install streamlit requests PyJWT && streamlit run app.py --server.port 3000
               </code>

@@ -58,12 +58,12 @@ function releaseLane(lane) {
 function FloatingQuestion({ text, user, id, lane, onDone }) {
   const y = 5 + lane * LANE_HEIGHT; // 줄 번호 → % 높이
   const duration = 13 + Math.random() * 5; // 13~18초
-  const colors = ['#dc2626', '#2563eb', '#7c3aed', '#059669', '#d97706', '#0891b2', '#be185d'];
+  const colors = ['#1d4ed8', '#0f766e', '#b45309', '#0b5cad', '#8a5b24'];
   const color = colors[id % colors.length];
   const styleVariants = [
-    { background: color, color: '#fff', borderRadius: 24, padding: '8px 22px' },
-    { background: 'transparent', color, border: `2px solid ${color}`, borderRadius: 24, padding: '6px 20px' },
-    { background: `${color}15`, color, borderRadius: 8, padding: '8px 20px' },
+    { background: `${color}E8`, color: '#fff', borderRadius: 999, padding: '10px 18px' },
+    { background: 'rgba(255,255,255,.92)', color, border: `1px solid ${color}40`, borderRadius: 999, padding: '9px 18px' },
+    { background: `${color}18`, color, border: `1px solid ${color}26`, borderRadius: 18, padding: '10px 18px' },
   ];
   const style = styleVariants[id % styleVariants.length];
 
@@ -77,8 +77,8 @@ function FloatingQuestion({ text, user, id, lane, onDone }) {
       style={{
         position: 'absolute', top: `${y}%`,
         ...style,
-        fontSize: '1em', fontWeight: 600,
-        boxShadow: '0 2px 12px rgba(0,0,0,.1)',
+        fontSize: '.92em', fontWeight: 700,
+        boxShadow: '0 16px 30px rgba(23,34,51,.12)',
         pointerEvents: 'none', zIndex: 50,
         whiteSpace: 'nowrap',
       }}
@@ -109,6 +109,7 @@ export default function Slides({ user }) {
   const seenQuestionTimestamps = useRef(new Set());
 
   const isPresenter = user?.sub === 'syngha.han';
+  const isOfflineArchive = typeof window !== 'undefined' && Boolean(window.__OFFLINE_ARCHIVE__);
   const totalSlides = SLIDES.length;
 
   // 수강생: 슬라이드 동기화 (locked일 때만) + lock 상태 polling
@@ -150,23 +151,26 @@ export default function Slides({ user }) {
 
   // 반응 카운트 가져오기
   useEffect(() => {
+    if (isOfflineArchive) return;
     const load = () => fetchJSON(`/reactions?slide=${currentSlide}`).then(setReactions).catch(() => {});
     load();
     const interval = setInterval(load, 3000);
     return () => clearInterval(interval);
-  }, [currentSlide]);
+  }, [currentSlide, isOfflineArchive]);
 
   // 강사: 전체 질문 히스토리 로드
   useEffect(() => {
+    if (isOfflineArchive) return;
     if (!isPresenter) return;
     const load = () => fetchJSON('/questions?slide=0').then(setAllQuestions).catch(() => {});
     load();
     const interval = setInterval(load, 5000);
     return () => clearInterval(interval);
-  }, [isPresenter]);
+  }, [isPresenter, isOfflineArchive]);
 
   // 새 질문 감지 → 떠다니게 표시
   useEffect(() => {
+    if (isOfflineArchive) return;
     const load = () => {
       fetchJSON(`/questions?slide=${currentSlide}`).then(qs => {
         qs.forEach(q => {
@@ -184,7 +188,7 @@ export default function Slides({ user }) {
     load();
     const interval = setInterval(load, 3000);
     return () => clearInterval(interval);
-  }, [currentSlide]);
+  }, [currentSlide, isOfflineArchive]);
 
   // 강사: 슬라이드 변경
   const goTo = useCallback((n) => {
@@ -209,6 +213,7 @@ export default function Slides({ user }) {
 
   // 반응 보내기 + 이모지 뿅
   const sendReaction = async (type, emoji) => {
+    if (isOfflineArchive) return;
     const id = emojiIdRef.current++;
     setFloatingEmojis(prev => [...prev, { emoji, id }]);
     await postJSON('/reactions', { slide: currentSlide, type });
@@ -227,6 +232,7 @@ export default function Slides({ user }) {
 
   // 질문 전송 — 보내자마자 바로 화면에 표시
   const sendQuestion = async () => {
+    if (isOfflineArchive) return;
     if (!questionText.trim()) return;
     const text = questionText;
     setQuestionText('');
@@ -247,9 +253,15 @@ export default function Slides({ user }) {
 
   const slideData = SLIDES[currentSlide - 1];
   const SlideComponent = slideData?.component;
+  const slideRuntime = {
+    locked,
+    isPresenter,
+    downloadsEnabled: isPresenter || !locked,
+    offlineArchive: isOfflineArchive,
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div className="presentation-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* 떠오르는 이모지 */}
       <AnimatePresence>
         {floatingEmojis.map(e => (
@@ -258,7 +270,7 @@ export default function Slides({ user }) {
       </AnimatePresence>
 
       {/* 슬라이드 영역 — 반응바와 독립, 질문은 이 안에서만 흐름 */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', minHeight: 0 }}>
+      <div className="presentation-stage" style={{ flex: 1, position: 'relative', overflow: 'hidden', minHeight: 0 }}>
         {/* 떠다니는 질문 (슬라이드 영역 내) */}
         <AnimatePresence>
           {floatingQuestions.map(q => (
@@ -266,20 +278,18 @@ export default function Slides({ user }) {
           ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
-          {SlideComponent && <SlideComponent key={currentSlide} />}
+          {SlideComponent && <SlideComponent key={currentSlide} slideRuntime={slideRuntime} />}
         </AnimatePresence>
 
         {/* 사이드바 토글 버튼 (강사 항상, 수강생은 unlock 시) */}
         {(isPresenter || !locked) && (
           <button
             onClick={() => setShowSidebar(prev => !prev)}
+            className="presentation-sidebar-toggle"
             style={{
               position: 'absolute', top: 12, left: 12,
-              width: 36, height: 36, borderRadius: 8,
-              border: '1px solid #e2e8f0', background: '#fff',
-              cursor: 'pointer', fontSize: '1em', zIndex: 60,
+              width: 42, height: 42, zIndex: 60,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,.06)',
             }}
           >
             ☰
@@ -288,21 +298,16 @@ export default function Slides({ user }) {
 
         {/* 수강생용 잠금 상태 인디케이터 */}
         {!isPresenter && (
-          <div style={{
+          <div className="presentation-lock-badge" style={{
             position: 'absolute', top: 12, right: 12, zIndex: 60,
-            padding: '6px 12px', borderRadius: 20,
-            background: locked ? '#fef3c7' : '#dcfce7',
-            color: locked ? '#92400e' : '#166534',
-            border: `1px solid ${locked ? '#fde68a' : '#86efac'}`,
             fontSize: '.75em', fontWeight: 700,
-            boxShadow: '0 2px 8px rgba(0,0,0,.06)',
           }}>
             {locked ? '🔒 강사 화면 따라감' : '🔓 자유 탐색 중'}
           </div>
         )}
 
         {/* 슬라이드 카운터 */}
-        <div style={{
+        <div className="presentation-counter" style={{
           position: 'absolute', bottom: 8, right: 16, fontSize: '.8em', color: '#94a3b8', fontFamily: 'monospace',
         }}>
           {currentSlide} / {totalSlides}
@@ -312,21 +317,26 @@ export default function Slides({ user }) {
         {(isPresenter || !locked) && showSidebar && (
           <motion.div
             initial={{ opacity: 0, x: -280 }} animate={{ opacity: 1, x: 0 }}
+            className="presentation-sidebar"
             style={{
               position: 'absolute', top: 0, left: 0, bottom: 0, width: 280,
-              background: '#fff', borderRight: '1px solid #e2e8f0',
-              boxShadow: '4px 0 20px rgba(0,0,0,.06)',
               overflowY: 'auto', zIndex: 55, padding: '12px 0',
             }}
           >
-            <div style={{ padding: '8px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9' }}>
+            <div className="presentation-sidebar-header" style={{ padding: '8px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontWeight: 700, fontSize: '.9em', color: '#1e293b' }}>슬라이드 목록</span>
               <button onClick={() => setShowSidebar(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1.1em' }}>✕</button>
             </div>
-            <div style={{ display: 'flex', gap: 6, padding: '8px 16px', borderBottom: '1px solid #f1f5f9' }}>
-              <a href="/" style={{ padding: '4px 12px', borderRadius: 8, background: '#f1f5f9', color: '#475569', fontSize: '.78em', textDecoration: 'none', fontWeight: 600 }}>대시보드</a>
-              <a href="/challenges/prompt" style={{ padding: '4px 12px', borderRadius: 8, background: '#f1f5f9', color: '#475569', fontSize: '.78em', textDecoration: 'none', fontWeight: 600 }}>프롬프트 과제</a>
-            </div>
+            {isOfflineArchive ? (
+              <div className="presentation-sidebar-links" style={{ display: 'flex', gap: 6, padding: '8px 16px' }}>
+                <span className="presentation-sidebar-link" style={{ cursor: 'default' }}>오프라인 보관본</span>
+              </div>
+            ) : (
+              <div className="presentation-sidebar-links" style={{ display: 'flex', gap: 6, padding: '8px 16px' }}>
+                <a href="/" className="presentation-sidebar-link">대시보드</a>
+                <a href="/challenges/prompt" className="presentation-sidebar-link">프롬프트 과제</a>
+              </div>
+            )}
             {SLIDES.map((s, i) => {
               const num = i + 1;
               const isCurrent = num === currentSlide;
@@ -336,20 +346,21 @@ export default function Slides({ user }) {
                 <div
                   key={num}
                   onClick={() => { if (canNav) { goTo(num); setShowSidebar(false); } }}
+                  className="presentation-slide-row"
                   style={{
                     padding: isSection ? '8px 16px 4px' : '6px 16px 6px 28px',
                     cursor: canNav ? 'pointer' : 'default',
-                    background: isCurrent ? '#eff6ff' : 'transparent',
-                    borderLeft: isCurrent ? '3px solid #2563eb' : '3px solid transparent',
+                    background: isCurrent ? 'rgba(29,78,216,.08)' : 'transparent',
+                    borderLeft: isCurrent ? '3px solid #1d4ed8' : '3px solid transparent',
                     transition: 'background .15s',
                     fontSize: isSection ? '.78em' : '.82em',
                     fontWeight: isSection ? 700 : 400,
-                    color: isSection ? '#2563eb' : isCurrent ? '#1e293b' : '#64748b',
+                    color: isSection ? '#1d4ed8' : isCurrent ? '#182230' : '#55606f',
                     textTransform: isSection ? 'uppercase' : 'none',
                     letterSpacing: isSection ? '.5px' : 0,
                     marginTop: isSection ? 8 : 0,
                   }}
-                  onMouseEnter={e => { if (!isCurrent) e.currentTarget.style.background = '#f8fafc'; }}
+                  onMouseEnter={e => { if (!isCurrent) e.currentTarget.style.background = 'rgba(255,255,255,.54)'; }}
                   onMouseLeave={e => { if (!isCurrent) e.currentTarget.style.background = 'transparent'; }}
                 >
                   {!isSection && <span style={{ color: '#94a3b8', marginRight: 8, fontFamily: 'monospace', fontSize: '.85em' }}>{num}</span>}
@@ -366,10 +377,9 @@ export default function Slides({ user }) {
         {isPresenter && showHistory && (
           <motion.div
             initial={{ opacity: 0, x: 300 }} animate={{ opacity: 1, x: 0 }}
+            className="presentation-history"
             style={{
               position: 'absolute', top: 0, right: 0, bottom: 0, width: 360,
-              background: '#fff', borderLeft: '1px solid #e2e8f0',
-              boxShadow: '-4px 0 20px rgba(0,0,0,.08)',
               overflowY: 'auto', padding: 20, zIndex: 50,
             }}
           >
@@ -395,22 +405,20 @@ export default function Slides({ user }) {
       </div>
 
       {/* 하단 반응/질문 바 */}
-      <div style={{
-        borderTop: '1px solid #e2e8f0',
-        background: 'linear-gradient(180deg, #f8fafc, #fff)',
+      <div className="presentation-dock" style={{
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
-        boxShadow: '0 -2px 12px rgba(0,0,0,.04)',
       }}>
         {/* 네비게이션 컨트롤 (강사 항상, 수강생은 unlock 시) */}
         {(isPresenter || !locked) && (
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginRight: 8 }}>
-            <button onClick={() => goTo(currentSlide - 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>←</button>
+          <div className="presentation-nav" style={{ display: 'flex', gap: 6, alignItems: 'center', marginRight: 8 }}>
+            <button className="presentation-nav-btn" onClick={() => goTo(currentSlide - 1)} style={{ padding: '6px 10px', fontSize: '.85em' }}>←</button>
             <span style={{ fontSize: '.8em', color: '#64748b', fontFamily: 'monospace', minWidth: 50, textAlign: 'center' }}>{currentSlide}/{SLIDES.length}</span>
-            <button onClick={() => goTo(currentSlide + 1)} style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', cursor: 'pointer', fontSize: '.85em' }}>→</button>
+            <button className="presentation-nav-btn" onClick={() => goTo(currentSlide + 1)} style={{ padding: '6px 10px', fontSize: '.85em' }}>→</button>
             {isPresenter && (
               <>
                 <button onClick={toggleLock}
+                  className="presentation-state-btn"
                   title={locked ? '수강생 자유 탐색 허용' : '수강생을 강사 화면으로 잠금'}
                   style={{
                     padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: '.78em', fontWeight: 700,
@@ -421,6 +429,7 @@ export default function Slides({ user }) {
                   {locked ? '🔒 잠김' : '🔓 해제'}
                 </button>
                 <button onClick={() => setShowHistory(prev => !prev)}
+                  className="presentation-state-btn"
                   style={{ padding: '6px 10px', border: '1px solid #dbeafe', borderRadius: 8, background: '#eff6ff', cursor: 'pointer', fontSize: '.78em', color: '#2563eb' }}>
                   💬{allQuestions.length > 0 ? ` ${allQuestions.length}` : ''}
                 </button>
@@ -430,73 +439,114 @@ export default function Slides({ user }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          {REACTIONS.map(r => (
-            <button
-              key={r.type}
-              onClick={() => sendReaction(r.type, r.emoji)}
+        {!locked && !isOfflineArchive && (
+          <>
+            <a
+              href="/downloads/lecture/html"
+              download
+              className="presentation-state-btn"
               style={{
-                width: 48, height: 48,
-                border: '1px solid #e2e8f0', borderRadius: 14,
-                background: '#fff', fontSize: '1.3em',
-                cursor: 'pointer', transition: 'all .15s',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 1px 3px rgba(0,0,0,.04)',
-                position: 'relative',
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '10px 14px',
+                border: '1px solid rgba(37,99,235,.18)',
+                borderRadius: 12,
+                background: 'linear-gradient(180deg, #ffffff 0%, #eff6ff 100%)',
+                color: '#1d4ed8',
+                textDecoration: 'none',
+                fontSize: '.82em',
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+                boxShadow: '0 10px 24px rgba(37,99,235,.12)',
               }}
-              onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = '#f1f5f9'; }}
-              onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = '#fff'; }}
+              title="오프라인 열람용 HTML 강의안 다운로드"
             >
-              {r.emoji}
-              {reactions[r.type] > 0 && (
-                <span style={{
-                  position: 'absolute', top: -6, right: -6,
-                  fontSize: '.5em', fontWeight: 700, color: '#fff',
-                  background: '#2563eb', borderRadius: 10,
-                  padding: '1px 5px', minWidth: 16, textAlign: 'center',
-                }}>{reactions[r.type]}</span>
+              강의안 다운로드
+            </a>
+            <div style={{ width: 1, height: 32, background: 'rgba(88,72,49,.12)', flexShrink: 0 }} />
+          </>
+        )}
+
+        {isOfflineArchive ? (
+          <>
+            <div style={{ width: 1, height: 32, background: 'rgba(88,72,49,.12)', flexShrink: 0 }} />
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 4px',
+              color: '#55606f',
+              fontSize: '.84em',
+              fontWeight: 700,
+            }}>
+              오프라인 보관본에서는 질문, 반응, 실시간 동기화, 실습 제출이 비활성화됩니다.
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="presentation-reactions" style={{ display: 'flex', gap: 8 }}>
+              {REACTIONS.map(r => (
+                <button
+                  key={r.type}
+                  onClick={() => sendReaction(r.type, r.emoji)}
+                  className="presentation-reaction-btn"
+                  style={{
+                    width: 48, height: 48,
+                    fontSize: '1.2em',
+                    cursor: 'pointer', transition: 'all .15s',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    position: 'relative',
+                  }}
+                  onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.9)'; }}
+                  onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+                >
+                  {r.emoji}
+                  {reactions[r.type] > 0 && (
+                    <span style={{
+                      position: 'absolute', top: -6, right: -6,
+                      fontSize: '.5em', fontWeight: 700, color: '#fff',
+                      background: '#2563eb', borderRadius: 10,
+                      padding: '1px 5px', minWidth: 16, textAlign: 'center',
+                    }}>{reactions[r.type]}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ width: 1, height: 32, background: 'rgba(88,72,49,.12)', flexShrink: 0 }} />
+
+            <div style={{ flex: 1, display: 'flex', gap: 8, alignItems: 'center' }}>
+              <input
+                value={questionText}
+                onChange={e => setQuestionText(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && sendQuestion()}
+                placeholder="💬 질문을 입력하세요..."
+                className="presentation-question-input"
+                style={{
+                  flex: 1, padding: '12px 18px',
+                  fontSize: '.92em',
+                }}
+              />
+              <button
+                onClick={sendQuestion}
+                className="presentation-submit-btn"
+                style={{
+                  padding: '12px 20px', borderRadius: 12,
+                  fontSize: '.88em', fontWeight: 600, cursor: 'pointer',
+                  transition: 'all .15s', whiteSpace: 'nowrap',
+                }}
+              >
+                전송
+              </button>
+              {questionSent && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
+                  style={{ fontSize: '1.2em' }}
+                >✅</motion.span>
               )}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ width: 1, height: 32, background: '#e2e8f0', flexShrink: 0 }} />
-
-        <div style={{ flex: 1, display: 'flex', gap: 8, alignItems: 'center' }}>
-          <input
-            value={questionText}
-            onChange={e => setQuestionText(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && sendQuestion()}
-            placeholder="💬 질문을 입력하세요..."
-            style={{
-              flex: 1, padding: '12px 18px',
-              border: '1px solid #e2e8f0', borderRadius: 12,
-              fontSize: '.92em', background: '#f8fafc',
-              outline: 'none', transition: 'border-color .2s',
-            }}
-            onFocus={e => e.target.style.borderColor = '#2563eb'}
-            onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-          />
-          <button
-            onClick={sendQuestion}
-            style={{
-              padding: '12px 20px', borderRadius: 12,
-              background: '#2563eb', color: '#fff', border: 'none',
-              fontSize: '.88em', fontWeight: 600, cursor: 'pointer',
-              transition: 'all .15s', whiteSpace: 'nowrap',
-            }}
-            onMouseDown={e => e.currentTarget.style.background = '#1d4ed8'}
-            onMouseUp={e => e.currentTarget.style.background = '#2563eb'}
-          >
-            전송
-          </button>
-          {questionSent && (
-            <motion.span
-              initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
-              style={{ fontSize: '1.2em' }}
-            >✅</motion.span>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

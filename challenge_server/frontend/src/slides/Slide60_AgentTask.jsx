@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
 import { postJSON } from '../api';
 import AnswerButton from './AnswerButton';
+import LabDownloadButton from './LabDownloadButton';
 import Slide61_AgentAnswer from './Slide61_AgentAnswer';
 
-export default function Slide60_AgentTask() {
+export default function Slide60_AgentTask({ slideRuntime }) {
   const [code, setCode] = useState('');
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -32,11 +33,7 @@ export default function Slide60_AgentTask() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Box color="blue">
             <BoxTitle>1단계: 코드 다운로드 & 실행</BoxTitle>
-            <a href="/downloads/agent_loop" download
-              style={{ display: 'inline-block', padding: '8px 20px', borderRadius: 8, background: '#2563eb', color: '#fff',
-                textDecoration: 'none', fontWeight: 600, fontSize: '.9em', marginBottom: 8 }}>
-              📦 실습 코드 다운로드
-            </a>
+            <LabDownloadButton href="/downloads/agent_loop" label="📦 실습 코드 다운로드" slideRuntime={slideRuntime} style={{ marginBottom: 8 }} />
             <code style={{ display: 'block', fontSize: '1em', lineHeight: 1.8 }}>
               pip install streamlit requests PyJWT<br />
               streamlit run app.py --server.port 3000

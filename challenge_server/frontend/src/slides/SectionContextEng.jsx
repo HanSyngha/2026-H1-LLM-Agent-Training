@@ -5,7 +5,7 @@ export default function SectionContextEng() {
     <div className="slide-container" style={{ background: '#0f172a', '--section-color': '#f59e0b' }}>
       <div className="slide-inner" style={{ textAlign: 'center', justifyContent: 'center' }}>
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
-          <div style={{ fontSize: '1.2em', color: '#f59e0b', fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>#8</div>
+          <div style={{ fontSize: '1.2em', color: '#f59e0b', fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>#9</div>
           <h1 style={{ fontSize: '2.4em', fontWeight: 900, color: '#f1f5f9', lineHeight: 1.2, marginBottom: 16 }}>
             Context Engineering
           </h1>

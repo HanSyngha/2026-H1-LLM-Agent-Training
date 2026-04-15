@@ -7,7 +7,7 @@ export default function Slide54_Trend() {
       <div className="slide-inner">
         <Badge variant="day2">트렌드</Badge>
         <SlideH2 day2>Multi-Agent에서 Single Agent로</SlideH2>
-        <p>프레임워크를 통째로 쓰지 않고, 아이디어만 가져와서 경량 구현합니다</p>
+        <p>프레임워크를 통째로 쓰지 않고, history/loop/orchestration 아이디어만 가져와서 경량 구현합니다</p>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Grid cols={2} gap={20}>

@@ -71,62 +71,117 @@ function buildLeaderboard(challenges) {
 
 const S = {
   page: {
-    maxWidth: 1100,
+    maxWidth: 1240,
     margin: '0 auto',
-    padding: '32px 20px 64px',
+    padding: '42px 24px 72px',
   },
   header: {
-    textAlign: 'center',
-    marginBottom: 32,
+    position: 'relative',
+    overflow: 'hidden',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: 24,
+    marginBottom: 28,
+    padding: '34px 36px',
+    borderRadius: 32,
+    border: '1px solid rgba(88,72,49,.12)',
+    background: 'linear-gradient(145deg, rgba(255,255,255,.9), rgba(255,251,244,.82))',
+    boxShadow: '0 24px 60px rgba(23,34,51,.12)',
   },
   title: {
-    fontSize: '2rem',
+    fontSize: 'clamp(2.3rem, 4vw, 3.25rem)',
     fontWeight: 900,
-    color: '#0f172a',
-    letterSpacing: '-0.02em',
+    color: '#182230',
+    letterSpacing: '-0.05em',
+    lineHeight: 1,
   },
   subtitle: {
-    color: '#94a3b8',
-    fontSize: '0.95rem',
-    marginTop: 6,
+    color: '#55606f',
+    fontSize: '0.96rem',
+    marginTop: 14,
+    lineHeight: 1.7,
+    maxWidth: 620,
   },
   refreshDot: {
     display: 'inline-block',
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: '50%',
-    background: '#22c55e',
+    background: '#0f766e',
     marginRight: 8,
     animation: 'pulse-dot 2s ease-in-out infinite',
+  },
+  heroGlow: {
+    position: 'absolute',
+    width: 260,
+    height: 260,
+    right: -100,
+    top: -100,
+    borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(15,118,110,.12), transparent 68%)',
+    pointerEvents: 'none',
+  },
+  heroActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    zIndex: 1,
+  },
+  heroChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '10px 14px',
+    borderRadius: 999,
+    border: '1px solid rgba(88,72,49,.12)',
+    background: 'rgba(255,255,255,.72)',
+    color: '#55606f',
+    fontSize: '.84rem',
+    fontWeight: 700,
+  },
+  resetButton: {
+    padding: '12px 18px',
+    borderRadius: 999,
+    border: '1px solid rgba(180,35,24,.18)',
+    background: 'rgba(255,244,242,.94)',
+    color: '#b42318',
+    fontWeight: 800,
+    fontSize: '.84rem',
+    cursor: 'pointer',
+    boxShadow: '0 12px 24px rgba(180,35,24,.08)',
   },
 
   /* stats bar */
   statsBar: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: 14,
+    gap: 16,
     marginBottom: 32,
   },
   statCard: {
-    background: '#fff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 14,
-    padding: '20px 16px',
-    textAlign: 'center',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+    background: 'linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,252,246,.82))',
+    border: '1px solid rgba(88,72,49,.12)',
+    borderRadius: 28,
+    padding: '24px 22px',
+    textAlign: 'left',
+    boxShadow: '0 18px 44px rgba(23,34,51,.08)',
   },
   statNum: {
-    fontSize: '2.2rem',
+    fontSize: '2.35rem',
     fontWeight: 900,
     lineHeight: 1.1,
+    letterSpacing: '-0.05em',
   },
   statLabel: {
-    fontSize: '0.78rem',
-    color: '#94a3b8',
-    marginTop: 4,
+    fontSize: '0.74rem',
+    color: '#7a8697',
+    marginTop: 12,
     textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    fontWeight: 600,
+    letterSpacing: '.12em',
+    fontWeight: 800,
   },
 
   /* leaderboard */
@@ -134,96 +189,97 @@ const S = {
     marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: '1.15rem',
-    fontWeight: 800,
-    color: '#1e293b',
-    marginBottom: 14,
+    fontSize: '1.1rem',
+    fontWeight: 900,
+    color: '#182230',
+    marginBottom: 16,
     display: 'flex',
     alignItems: 'center',
     gap: 8,
+    letterSpacing: '-0.03em',
   },
   leaderboardCard: {
-    background: '#fff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 14,
+    background: 'linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,252,246,.82))',
+    border: '1px solid rgba(88,72,49,.12)',
+    borderRadius: 28,
     overflow: 'hidden',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+    boxShadow: '0 18px 46px rgba(23,34,51,.08)',
   },
   topThree: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gap: 0,
-    borderBottom: '1px solid #e2e8f0',
+    borderBottom: '1px solid rgba(88,72,49,.12)',
   },
   podium: (rank) => ({
-    padding: '24px 16px',
+    padding: '28px 18px',
     textAlign: 'center',
-    borderRight: rank < 2 ? '1px solid #e2e8f0' : 'none',
-    background: rank === 0 ? 'linear-gradient(180deg, #fffbeb 0%, #fff 100%)' : '#fff',
+    borderRight: rank < 2 ? '1px solid rgba(88,72,49,.12)' : 'none',
+    background: rank === 0 ? 'linear-gradient(180deg, rgba(255,247,229,.98) 0%, rgba(255,255,255,.92) 100%)' : 'rgba(255,255,255,.72)',
   }),
   podiumMedal: {
-    fontSize: '2.2rem',
+    fontSize: '2rem',
     marginBottom: 6,
   },
   podiumName: {
-    fontSize: '1rem',
-    fontWeight: 800,
-    color: '#1e293b',
+    fontSize: '1.02rem',
+    fontWeight: 900,
+    color: '#182230',
   },
   podiumDept: {
     fontSize: '0.78rem',
-    color: '#94a3b8',
-    marginTop: 2,
+    color: '#7a8697',
+    marginTop: 4,
   },
   podiumCount: (rank) => ({
-    marginTop: 8,
+    marginTop: 10,
     display: 'inline-block',
-    padding: '3px 12px',
-    borderRadius: 20,
+    padding: '6px 12px',
+    borderRadius: 999,
     fontSize: '0.8rem',
-    fontWeight: 700,
-    background: rank === 0 ? '#fef3c7' : rank === 1 ? '#f1f5f9' : rank === 2 ? '#fef3c7' : '#f1f5f9',
-    color: rank === 0 ? '#92400e' : rank === 1 ? '#475569' : rank === 2 ? '#92400e' : '#475569',
+    fontWeight: 800,
+    background: rank === 0 ? 'rgba(180,83,9,.1)' : rank === 1 ? 'rgba(29,78,216,.08)' : 'rgba(15,118,110,.08)',
+    color: rank === 0 ? '#b45309' : rank === 1 ? '#1d4ed8' : '#0f766e',
   }),
   leaderRow: (isEven) => ({
     display: 'flex',
     alignItems: 'center',
-    padding: '12px 20px',
+    padding: '14px 22px',
     gap: 14,
-    background: isEven ? '#fafbfc' : '#fff',
-    borderBottom: '1px solid #f1f5f9',
+    background: isEven ? 'rgba(255,255,255,.5)' : 'rgba(255,255,255,.76)',
+    borderBottom: '1px solid rgba(88,72,49,.08)',
     fontSize: '0.9rem',
   }),
   leaderRank: {
     width: 32,
     textAlign: 'center',
     fontWeight: 800,
-    color: '#94a3b8',
+    color: '#7a8697',
     fontSize: '0.85rem',
     flexShrink: 0,
   },
 
   /* challenge cards */
   challengeCard: (isOpen) => ({
-    background: '#fff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 14,
+    background: 'linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,252,246,.82))',
+    border: '1px solid rgba(88,72,49,.12)',
+    borderRadius: 26,
     overflow: 'hidden',
-    boxShadow: isOpen ? '0 4px 20px rgba(0,0,0,0.07)' : '0 1px 3px rgba(0,0,0,0.04)',
-    transition: 'box-shadow 0.2s',
+    boxShadow: isOpen ? '0 24px 56px rgba(23,34,51,.12)' : '0 16px 38px rgba(23,34,51,.08)',
+    transition: 'box-shadow 0.2s, transform .2s',
     cursor: 'pointer',
   }),
   challengeHeader: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '18px 22px',
+    padding: '20px 24px',
     gap: 12,
   },
   challengeName: {
     fontSize: '1rem',
-    fontWeight: 700,
-    color: '#1e293b',
+    fontWeight: 900,
+    color: '#182230',
     flex: 1,
   },
   challengeMeta: {
@@ -233,17 +289,17 @@ const S = {
     flexShrink: 0,
   },
   countBadge: (hasComps) => ({
-    padding: '3px 12px',
-    borderRadius: 20,
+    padding: '6px 12px',
+    borderRadius: 999,
     fontSize: '0.78rem',
-    fontWeight: 700,
-    background: hasComps ? '#dcfce7' : '#f1f5f9',
-    color: hasComps ? '#166534' : '#64748b',
+    fontWeight: 800,
+    background: hasComps ? 'rgba(15,118,110,.08)' : 'rgba(29,78,216,.06)',
+    color: hasComps ? '#0f766e' : '#55606f',
   }),
   topCompleter: {
     fontSize: '0.82rem',
-    color: '#64748b',
-    fontWeight: 600,
+    color: '#55606f',
+    fontWeight: 700,
     maxWidth: 120,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -252,30 +308,30 @@ const S = {
   chevron: (isOpen) => ({
     width: 20,
     height: 20,
-    color: '#94a3b8',
+    color: '#7a8697',
     transition: 'transform 0.25s',
     transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
     flexShrink: 0,
   }),
   expandedBody: {
-    borderTop: '1px solid #e2e8f0',
-    background: '#fafbfc',
+    borderTop: '1px solid rgba(88,72,49,.12)',
+    background: 'rgba(255,255,255,.46)',
   },
   completionRow: (rank) => ({
     display: 'flex',
     alignItems: 'center',
-    padding: '12px 22px',
+    padding: '14px 22px',
     gap: 14,
-    borderBottom: '1px solid #f1f5f9',
-    background: rank < 3 ? (rank === 0 ? '#fffbeb' : '#fff') : '#fafbfc',
+    borderBottom: '1px solid rgba(88,72,49,.08)',
+    background: rank < 3 ? (rank === 0 ? 'rgba(255,247,229,.7)' : 'rgba(255,255,255,.68)') : 'rgba(255,255,255,.42)',
   }),
   rankBadge: (rank) => {
     const colors = {
-      0: { bg: '#fef3c7', color: '#92400e' },
-      1: { bg: '#f1f5f9', color: '#475569' },
-      2: { bg: '#fed7aa', color: '#9a3412' },
+      0: { bg: 'rgba(180,83,9,.12)', color: '#b45309' },
+      1: { bg: 'rgba(29,78,216,.08)', color: '#1d4ed8' },
+      2: { bg: 'rgba(15,118,110,.08)', color: '#0f766e' },
     };
-    const c = colors[rank] || { bg: '#f1f5f9', color: '#94a3b8' };
+    const c = colors[rank] || { bg: 'rgba(88,72,49,.08)', color: '#7a8697' };
     return {
       width: 30,
       height: 30,
@@ -292,14 +348,14 @@ const S = {
   },
   emptyState: {
     textAlign: 'center',
-    padding: '28px 16px',
-    color: '#94a3b8',
-    fontSize: '0.88rem',
+    padding: '34px 18px',
+    color: '#7a8697',
+    fontSize: '0.9rem',
   },
   cardsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-    gap: 14,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+    gap: 16,
   },
 };
 
@@ -317,7 +373,7 @@ if (typeof document !== 'undefined' && !document.getElementById(styleId)) {
     @media (max-width: 768px) {
       .dash-stats-bar { grid-template-columns: repeat(2, 1fr) !important; }
       .dash-top-three { grid-template-columns: 1fr !important; }
-      .dash-top-three > div { border-right: none !important; border-bottom: 1px solid #e2e8f0; }
+      .dash-top-three > div { border-right: none !important; border-bottom: 1px solid rgba(88,72,49,.12); }
       .dash-cards-grid { grid-template-columns: 1fr !important; }
     }
     @media (max-width: 480px) {
@@ -364,9 +420,9 @@ function ChallengeCard({ name, completions, isAdmin, challengeId, onReset }) {
           </span>
           {isAdmin && comps.length > 0 && (
             <button onClick={(e) => { e.stopPropagation(); onReset(challengeId); }}
-              style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #ef4444',
-                background: 'transparent', color: '#ef4444', fontSize: '.7em', cursor: 'pointer',
-                fontWeight: 600 }}>
+              style={{ padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(180,35,24,.18)',
+                background: 'rgba(255,244,242,.9)', color: '#b42318', fontSize: '.72em', cursor: 'pointer',
+                fontWeight: 800 }}>
               초기화
             </button>
           )}
@@ -394,18 +450,18 @@ function ChallengeCard({ name, completions, isAdmin, challengeId, onReset }) {
                       {i < 3 ? medal(i) : i + 1}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#1e293b' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#182230' }}>
                         {c.name}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#7a8697' }}>
                         {c.dept}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: '#475569', fontWeight: 600 }}>
+                      <div style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: '#55606f', fontWeight: 700 }}>
                         {timeAgo(c.timestamp)}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#7a8697' }}>
                         {relativeTime(c.timestamp)}
                       </div>
                     </div>
@@ -497,28 +553,30 @@ export default function Dashboard() {
     <div style={S.page}>
       {/* ── Header ── */}
       <div style={S.header}>
-        <h1 style={S.title}>Challenge Dashboard</h1>
-        <p style={S.subtitle}>
-          <span style={S.refreshDot} />
-          5초마다 자동으로 갱신됩니다
-        </p>
-        {isAdmin && (
-          <button
-            onClick={handleReset}
-            disabled={resetting}
-            style={{
-              marginTop: 12, padding: '8px 20px', borderRadius: 8,
-              border: '1.5px solid #ef4444', background: resetting ? '#fecaca' : '#fff',
-              color: '#ef4444', fontWeight: 700, fontSize: '.85rem',
-              cursor: resetting ? 'not-allowed' : 'pointer',
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={e => { e.target.style.background = '#fef2f2'; }}
-            onMouseLeave={e => { e.target.style.background = '#fff'; }}
-          >
-            {resetting ? '초기화 중...' : '🔄 전체 초기화'}
-          </button>
-        )}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ fontSize: '.8rem', color: '#b45309', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 10 }}>
+            Lecture Operations
+          </div>
+          <h1 style={S.title}>Challenge Dashboard</h1>
+          <p style={S.subtitle}>
+            <span style={S.refreshDot} />
+            실습 진행도, 종합 순위, 과제별 완료 현황을 한 화면에서 확인합니다. 강의 중 운영 판단이 빠르게 되도록 설계했습니다.
+          </p>
+        </div>
+        <div style={S.heroActions}>
+          <span style={S.heroChip}>A2G Intranet</span>
+          <span style={S.heroChip}>5초 자동 갱신</span>
+          {isAdmin && (
+            <button
+              onClick={handleReset}
+              disabled={resetting}
+              style={{ ...S.resetButton, opacity: resetting ? 0.7 : 1 }}
+            >
+              {resetting ? '초기화 중...' : '전체 초기화'}
+            </button>
+          )}
+        </div>
+        <div style={S.heroGlow} />
       </div>
 
       {/* ── Stats Bar ── */}
@@ -528,15 +586,15 @@ export default function Dashboard() {
           <div style={S.statLabel}>총 챌린지</div>
         </motion.div>
         <motion.div style={S.statCard} whileHover={{ y: -2 }}>
-          <div style={{ ...S.statNum, color: '#059669' }}>{totalCompletions}</div>
+          <div style={{ ...S.statNum, color: '#0f766e' }}>{totalCompletions}</div>
           <div style={S.statLabel}>총 완료</div>
         </motion.div>
         <motion.div style={S.statCard} whileHover={{ y: -2 }}>
-          <div style={{ ...S.statNum, color: '#7c3aed' }}>{allUsers.size}</div>
+          <div style={{ ...S.statNum, color: '#b45309' }}>{allUsers.size}</div>
           <div style={S.statLabel}>참여자</div>
         </motion.div>
         <motion.div style={S.statCard} whileHover={{ y: -2 }}>
-          <div style={{ ...S.statNum, color: '#d97706', fontSize: '1.4rem' }}>
+          <div style={{ ...S.statNum, color: '#182230', fontSize: '1.4rem', lineHeight: 1.3 }}>
             {champion ? `👑 ${champion.name} (${champion.totalScore}점)` : '—'}
           </div>
           <div style={S.statLabel}>현재 1위</div>
@@ -577,16 +635,16 @@ export default function Dashboard() {
               <div key={u.sub} style={S.leaderRow(idx % 2 === 0)}>
                 <div style={S.leaderRank}>{idx + 4}</div>
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{u.name}</span>
-                  <span style={{ color: '#94a3b8', fontSize: '0.8rem', marginLeft: 8 }}>{u.dept}</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#182230' }}>{u.name}</span>
+                  <span style={{ color: '#7a8697', fontSize: '0.8rem', marginLeft: 8 }}>{u.dept}</span>
                 </div>
                 <span style={{
-                  padding: '3px 12px',
-                  borderRadius: 20,
+                  padding: '6px 12px',
+                  borderRadius: 999,
                   fontSize: '0.78rem',
-                  fontWeight: 700,
-                  background: '#f1f5f9',
-                  color: '#475569',
+                  fontWeight: 800,
+                  background: 'rgba(29,78,216,.06)',
+                  color: '#1d4ed8',
                 }}>
                   {u.totalScore}점
                 </span>

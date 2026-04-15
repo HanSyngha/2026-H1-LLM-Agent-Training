@@ -8,21 +8,25 @@ const variants = {
 
 export default function SlideLayout({ children, day, className = '' }) {
   const dayColors = {
-    0: { accent: '#2563eb', bg: '#f8fafc' },
-    1: { accent: '#2563eb', bg: '#f8fafc' },
-    2: { accent: '#7c3aed', bg: '#f8fafc' },
+    0: { accent: '#1d4ed8', accent2: '#0f766e', bg: '#f8f4eb' },
+    1: { accent: '#1d4ed8', accent2: '#0f766e', bg: '#f8f4eb' },
+    2: { accent: '#0f766e', accent2: '#b45309', bg: '#f8f4eb' },
   };
   const colors = dayColors[day] || dayColors[0];
 
   return (
     <motion.div
-      className={`slide-container ${className}`}
+      className={`slide-container day-${day ?? 0} ${className}`}
       variants={variants}
       initial="enter"
       animate="center"
       exit="exit"
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      style={{ '--day-accent': colors.accent }}
+      style={{
+        '--day-accent': colors.accent,
+        '--day-accent-2': colors.accent2,
+        '--slide-bg': colors.bg,
+      }}
     >
       <div className="slide-inner">
         {children}

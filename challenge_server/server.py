@@ -85,6 +85,113 @@ def llm_headers(llm=None):
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
 challenge_llm_map: dict[str, str] = {}
 
+
+async def _is_presenter_request(request: Request) -> bool:
+    """현재 요청이 강사 계정인지 확인"""
+    token = request.cookies.get("challenge_token", "")
+    if not token and not DEV_MODE:
+        return False
+    user = await get_user_from_token(token) if token or DEV_MODE else None
+    return bool(user and user.get("sub") == "syngha.han")
+
+
+async def _ensure_download_access(request: Request):
+    """강사가 자유 탐색을 열었을 때만 다운로드 허용. 강사는 항상 접근 가능."""
+    if not current_slide.get("locked", True):
+        return
+    if await _is_presenter_request(request):
+        return
+    raise HTTPException(403, "강사가 페이지 이동을 열었을 때만 다운로드할 수 있습니다")
+
+
+def _offline_archive_readme() -> str:
+    return """# LLM Agent 교육 강의안 보관본
+
+이 압축 파일은 오프라인 열람용 HTML 아카이브입니다.
+
+## 열기 방법
+1. 압축을 풉니다.
+2. 압축을 푼 폴더에서 아래 명령으로 간단한 로컬 서버를 띄웁니다.
+
+```bash
+python -m http.server 8000
+```
+
+3. 브라우저에서 `http://127.0.0.1:8000/` 을 엽니다.
+
+## 포함 내용
+- `/slides/` : 강의 슬라이드 열람용 SPA
+- `/assets/` : 슬라이드 렌더링에 필요한 정적 파일
+
+## 오프라인 보관본 제한사항
+- 질문, 반응, 실시간 동기화, 실습 제출, 실습 코드 다운로드는 비활성화됩니다.
+- 최신 운영 환경과 동일한 기능은 사내망의 `a2g.samsungds.net` 원본에서만 제공됩니다.
+- 이 보관본은 강의 내용을 다시 읽고 복습하는 용도로 권장합니다.
+"""
+
+
+def _offline_archive_root_index() -> str:
+    return """<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=./slides/" />
+    <title>LLM Agent 교육 강의안</title>
+  </head>
+  <body style="font-family: sans-serif; padding: 24px;">
+    <p>강의안으로 이동 중입니다. 자동 이동이 되지 않으면 <a href="./slides/">여기</a>를 클릭하세요.</p>
+    <script>window.location.replace('./slides/');</script>
+  </body>
+</html>
+"""
+
+
+def _offline_slides_index_html(index_html: str) -> str:
+    bootstrap = """
+    <script>
+      window.__OFFLINE_ARCHIVE__ = true;
+      (() => {
+        const jsonResponse = (data) => Promise.resolve(new Response(JSON.stringify(data), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }));
+        const originalFetch = window.fetch.bind(window);
+
+        window.fetch = (input, init = {}) => {
+          const url = typeof input === 'string' ? input : (input && input.url) || '';
+          const method = (init.method || 'GET').toUpperCase();
+
+          if (url.includes('/auth/me')) {
+            return jsonResponse({
+              logged_in: true,
+              user: { sub: 'offline.viewer', name: '오프라인 열람', dept: 'Archive' },
+            });
+          }
+          if (url.includes('/slides/current')) return jsonResponse({ slide: 1, locked: false });
+          if (url.includes('/reactions?')) return jsonResponse({});
+          if (url.includes('/questions/all')) return jsonResponse({ questions: [], total: 0 });
+          if (url.includes('/questions?')) return jsonResponse([]);
+          if (url.includes('/feedback')) return jsonResponse({ feedback: [], total: 0 });
+          if (url.includes('/questions') && method === 'POST') return jsonResponse({ status: 'ok' });
+          if (url.includes('/reactions') && method === 'POST') return jsonResponse({ status: 'ok' });
+          if (url.includes('/completions')) return jsonResponse({ challenges: {} });
+          if (url.includes('/challenges')) return jsonResponse([]);
+          if (url.includes('/settings/llm-endpoints')) return jsonResponse({ endpoints: {}, challenge_map: {} });
+          if (url.includes('/settings/challenge-llm') && method === 'POST') return jsonResponse({ status: 'ok' });
+          return originalFetch(input, init).catch(() => jsonResponse({}));
+        };
+      })();
+    </script>
+    """.strip()
+
+    return (
+        index_html
+        .replace('href="/favicon.svg"', 'href="../favicon.svg"')
+        .replace('src="/assets/', 'src="../assets/')
+        .replace('href="/assets/', 'href="../assets/')
+        .replace("</head>", f"{bootstrap}\n  </head>")
+    )
+
 # ============================================
 # 영속 저장소 - JSON 파일 (서버 재시작해도 유지)
 # ============================================
@@ -1725,11 +1832,55 @@ async def set_challenge_llm(request: Request):
 # ============================================
 # 실습 코드 다운로드
 # ============================================
+@app.get("/downloads/lecture/html")
+async def download_lecture_html(request: Request):
+    """오프라인 열람용 강의안 HTML 아카이브 다운로드"""
+    import io
+    import zipfile
+
+    await _ensure_download_access(request)
+
+    dist_dir = Path(__file__).parent / "frontend" / "dist"
+    if not dist_dir.exists():
+        raise HTTPException(404, "강의안 빌드 결과를 찾을 수 없습니다")
+
+    slides_index = dist_dir / "index.html"
+    if not slides_index.exists():
+        raise HTTPException(404, "강의안 index.html을 찾을 수 없습니다")
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("README.md", _offline_archive_readme())
+        zf.writestr("index.html", _offline_archive_root_index())
+        zf.writestr("slides/index.html", _offline_slides_index_html(slides_index.read_text(encoding="utf-8")))
+
+        for name in ("favicon.svg", "icons.svg"):
+            target = dist_dir / name
+            if target.exists():
+                zf.write(target, name)
+
+        assets_dir = dist_dir / "assets"
+        if assets_dir.exists():
+            for asset in assets_dir.rglob("*"):
+                if asset.is_file():
+                    zf.write(asset, asset.relative_to(dist_dir))
+
+    buf.seek(0)
+    from fastapi.responses import StreamingResponse
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="llm-agent-lecture-html.zip"'},
+    )
+
+
 @app.get("/downloads/{challenge_id}")
-async def download_challenge(challenge_id: str):
+async def download_challenge(challenge_id: str, request: Request):
     """과제별 실습 코드를 zip으로 다운로드합니다."""
     import zipfile
     import io
+
+    await _ensure_download_access(request)
 
     # 과제별 디렉토리 매핑
     dirs = {
@@ -1750,7 +1901,7 @@ async def download_challenge(challenge_id: str):
     if not target:
         raise HTTPException(404, f"과제 '{challenge_id}' 코드를 찾을 수 없습니다")
 
-    base = Path(__file__).parent / target
+    base = Path(__file__).resolve().parent.parent / target
     if not base.exists():
         raise HTTPException(404, f"디렉토리 없음: {target}")
 

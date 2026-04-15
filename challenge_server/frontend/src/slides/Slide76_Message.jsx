@@ -12,9 +12,9 @@ export default function Slide76_Message() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Quote borderColor="#7c3aed">
-            "오픈소스를 통째로 도입할 필요성은 줄어들고 있습니다.<br />
-            <strong style={{ color: '#3b82f6' }}>왜 만들었는지</strong> 고민하시고,<br />
-            <strong style={{ color: '#8b5cf6' }}>아이디어만 경량화로 도입</strong>하세요."
+            "MCP, Harness Engineering, OpenAI Compatible, Agent Framework 모두 같습니다.<br />
+            <strong style={{ color: '#3b82f6' }}>왜 이 아이디어가 나왔는지</strong> 먼저 이해하고,<br />
+            <strong style={{ color: '#8b5cf6' }}>프레임워크가 아니라 아이디어만 경량 구현</strong>하세요."
           </Quote>
         </motion.div>
 
@@ -22,15 +22,15 @@ export default function Slide76_Message() {
           <Grid cols={3} gap={20}>
             <Card borderColor="#2563eb">
               <h4>평가</h4>
-              <p style={{ fontSize: '.92em' }}>기술이 <strong>왜</strong> 만들어졌는지<br />고민하고, 우리 조직에<br />맞는지 판단하세요</p>
+              <p style={{ fontSize: '.92em' }}>기술이 <strong>왜</strong> 만들어졌는지<br />보고, 남길 아이디어와<br />버릴 복잡도를 구분하세요</p>
             </Card>
             <Card borderColor="#10b981">
               <h4 style={{ color: '#10b981' }}>추출</h4>
-              <p style={{ fontSize: '.92em' }}>통째로 도입하지 말고<br /><strong>핵심 아이디어만</strong><br />경량화로 가져오세요</p>
+              <p style={{ fontSize: '.92em' }}>REST의 표준화, history 관리,<br />loop 관리처럼 <strong>핵심 아이디어만</strong><br />가져오세요</p>
             </Card>
             <Card borderColor="#8b5cf6">
               <h4 style={{ color: '#8b5cf6' }}>단순화</h4>
-              <p style={{ fontSize: '.92em' }}>하나의 유능한 Agent +<br />효율적 Tool 호출이<br />답입니다</p>
+              <p style={{ fontSize: '.92em' }}>우리 조직 문제에 맞게<br />작게 구현하고, 필요할 때만<br />구조를 추가하세요</p>
             </Card>
           </Grid>
         </motion.div>

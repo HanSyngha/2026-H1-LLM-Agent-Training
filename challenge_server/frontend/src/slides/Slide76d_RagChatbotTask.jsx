@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Badge, SlideH2, Divider, Box, BoxTitle } from './SlideLayout';
+import LabDownloadButton from './LabDownloadButton';
 
-export default function Slide76d_RagChatbotTask() {
+export default function Slide76d_RagChatbotTask({ slideRuntime }) {
   return (
     <div className="slide-container" style={{ padding: '20px 40px' }}>
       <div className="slide-inner">
@@ -18,14 +19,12 @@ export default function Slide76d_RagChatbotTask() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Box color="blue" style={{ fontSize: '.82em', padding: '12px 18px' }}>
             <BoxTitle>📦 문서 & 가이드 다운로드</BoxTitle>
-            <a href="/downloads/rag_chatbot" download
-              style={{
-                display: 'inline-block', padding: '8px 20px', borderRadius: 8,
-                background: '#2563eb', color: '#fff',
-                textDecoration: 'none', fontWeight: 600, fontSize: '.95em', marginTop: 4,
-              }}>
-              📥 rag_chatbot.zip (문서 25개 + README + 예시 질문)
-            </a>
+            <LabDownloadButton
+              href="/downloads/rag_chatbot"
+              label="📥 rag_chatbot.zip (문서 25개 + README + 예시 질문)"
+              slideRuntime={slideRuntime}
+              style={{ marginTop: 4, fontSize: '.95em' }}
+            />
             <div style={{ marginTop: 6, color: '#475569' }}>
               압축 풀면 <code>challenge/docs/</code> 폴더에 25개 markdown 문서,
               <code>README.md</code>에 상세 가이드, <code>questions.md</code>에 예시 질문 10개가 있습니다.

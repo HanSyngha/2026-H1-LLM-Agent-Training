@@ -19,23 +19,24 @@ export default function Slide50_Day2Header() {
         </motion.div>
 
         <motion.div className="day-title" initial={{ opacity: 0, scale: 0.85, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }}
-          style={{ background: 'linear-gradient(135deg, #a78bfa, #10b981, #06b6d4)', backgroundSize: '200% 200%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          style={{ color: '#f5f2ea' }}>
           Agent 아키텍처
         </motion.div>
 
         <motion.div
           className="day-sub"
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          style={{ background: 'linear-gradient(135deg, #10b981, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+          style={{ color: '#f3be7a' }}
         >
           실전 구현
         </motion.div>
 
-        <motion.div style={{ width: 80, height: 3, background: 'linear-gradient(90deg, #8b5cf6, #10b981)', margin: '20px auto', borderRadius: 2 }}
+        <motion.div style={{ width: 96, height: 6, background: 'linear-gradient(90deg, #0f766e, #b45309)', margin: '22px auto', borderRadius: 999 }}
           initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.5 }} />
 
         <motion.div className="day-desc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-          프레임워크를 직접 써보고, <strong style={{ color: '#34d399' }}>핵심 아이디어만 추출</strong>하여 경량 구현합니다
+          Framework는 답이 아니라 참고서입니다.
+          <strong style={{ color: '#f5f2ea' }}> history, loop, orchestration 아이디어만 추출</strong>해서 경량 구현합니다.
         </motion.div>
 
         <motion.div className="day-tags" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
@@ -52,7 +53,7 @@ export default function Slide50_Day2Header() {
       <motion.div
         style={{
           position: 'absolute', top: 0, left: '-100%', width: '100%', height: '100%',
-          background: 'linear-gradient(105deg, transparent 40%, rgba(167,139,250,.04) 45%, rgba(16,185,129,.06) 50%, transparent 60%)',
+          background: 'linear-gradient(105deg, transparent 40%, rgba(15,118,110,.05) 45%, rgba(180,83,9,.08) 50%, transparent 60%)',
           zIndex: 0, pointerEvents: 'none',
         }}
         animate={{ left: ['-100%', '100%'] }}

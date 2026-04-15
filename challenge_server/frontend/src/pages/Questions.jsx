@@ -11,40 +11,42 @@ export default function Questions() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!data) return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>로딩 중...</div>;
+  if (!data) return <div className="loading">질문을 불러오는 중입니다...</div>;
+  const questions = Array.isArray(data.questions) ? data.questions : [];
+  const total = typeof data.total === 'number' ? data.total : questions.length;
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 20px' }}>
-      <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0f172a', marginBottom: 8 }}>
-        질문 게시판
-      </h1>
-      <p style={{ color: '#94a3b8', fontSize: '.9rem', marginBottom: 24 }}>
-        총 {data.total}개 질문 | 5초마다 자동 갱신
-      </p>
+    <div className="page-shell" style={{ maxWidth: 920 }}>
+      <div className="page-hero">
+        <div className="page-eyebrow">Live Questions</div>
+        <h1 className="page-title">질문 게시판</h1>
+        <p className="page-copy">
+          수업 중 올라온 질문을 시간순으로 확인할 수 있습니다. 발표 흐름을 끊지 않으면서도
+          핵심 질문을 빠르게 훑어볼 수 있게 구성했습니다.
+        </p>
+        <div className="page-meta">
+          <span className="page-chip">총 {total}개 질문</span>
+          <span className="page-chip">5초마다 자동 갱신</span>
+        </div>
+      </div>
 
-      {data.questions.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>아직 질문이 없습니다</div>
-      ) : (
-        [...data.questions].reverse().map((q, i) => (
-          <div key={i} style={{
-            padding: '16px 20px', marginBottom: 8, borderRadius: 12,
-            background: '#fff', border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px rgba(0,0,0,.04)',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <span style={{ fontWeight: 700, fontSize: '.9em', color: '#1e293b' }}>
-                {q.user}
-              </span>
-              <span style={{ fontSize: '.78em', color: '#94a3b8' }}>
-                슬라이드 {q.slide} | {new Date(q.timestamp).toLocaleTimeString('ko-KR')}
-              </span>
+      <div className="list-card">
+        {questions.length === 0 ? (
+          <div className="empty-state">아직 질문이 없습니다.</div>
+        ) : (
+          [...questions].reverse().map((q, i) => (
+            <div key={i} className="list-row">
+              <div className="list-row-head">
+                <span className="list-row-title">{q.user}</span>
+                <span className="list-row-meta">
+                  슬라이드 {q.slide} · {new Date(q.timestamp).toLocaleTimeString('ko-KR')}
+                </span>
+              </div>
+              <div className="list-row-body">{q.text}</div>
             </div>
-            <div style={{ fontSize: '1em', color: '#334155', lineHeight: 1.6 }}>
-              {q.text}
-            </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 }

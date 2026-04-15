@@ -29,7 +29,8 @@ export default function Slide53_FrameworkCompare() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Box color="yellow" style={{ marginTop: '0.8em', fontSize: '.9em' }}>
-            <strong>핵심:</strong> 프레임워크는 도구일 뿐입니다. <strong style={{ color: '#3b82f6' }}>Agentic Loop의 원리</strong>를 이해하면 어떤 프레임워크든 사용할 수 있습니다.
+            <strong>핵심:</strong> Agent Framework의 진짜 가치는 <strong style={{ color: '#3b82f6' }}>history 관리법, loop 관리법, multi-agent 관리법</strong>입니다.
+            프레임워크를 통째로 가져오기보다, 이 아이디어를 우리 환경에 맞게 경량 구현하세요.
           </Box>
         </motion.div>
       </div>
