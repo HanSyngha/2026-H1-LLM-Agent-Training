@@ -18,6 +18,7 @@ import Slide15_SSOAnswer from './Slide15_SSOAnswer';
 import SectionAI from './SectionAI';
 import Slide16_AILearning1 from './Slide16_AILearning1';
 import Slide17_AILearning2 from './Slide17_AILearning2';
+import Slide17b_ImageDocFraming from './Slide17b_ImageDocFraming';
 import SectionPrompt from './SectionPrompt';
 import Slide18_Prompt1 from './Slide18_Prompt1';
 import Slide19_Prompt2 from './Slide19_Prompt2';
@@ -458,6 +459,7 @@ const SLIDES = [
   { id: 16, component: SectionAI, title: '#2 AI 학습이란?', day: 1 },
   { id: 17, component: Slide16_AILearning1, title: '학습의 모호성', day: 1 },
   { id: 18, component: Slide17_AILearning2, title: '사내에서의 AI 활용', day: 1 },
+  { id: 0, component: Slide17b_ImageDocFraming, title: '문제 정의가 솔루션을 결정한다', day: 1 },
   // 프롬프트
   { id: 0, component: Slide21a_Poll, title: 'PE 시대는 끝났다?', day: 1 },
   { id: 19, component: SectionPrompt, title: '#3 프롬프트', day: 1 },
