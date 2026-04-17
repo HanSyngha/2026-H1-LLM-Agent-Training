@@ -24,7 +24,7 @@ Tool 2 - submit_secret_key:
 
 == TODO 2: execute_tool(tool_name, arguments) 함수 구현 ==
 코드 상단에 token 변수(SSO access_token)와
-CHALLENGE_SERVER 변수(http://a2g.samsungds.net:47777)가 이미 있음.
+CHALLENGE_SERVER 변수(http://challenge.example.com:47777)가 이미 있음.
 
 get_secret_key 호출 시:
   requests.get(f"{CHALLENGE_SERVER}/challenges/tool_use/secret", params={"token": token})

@@ -3,9 +3,9 @@ FROM node:24-alpine AS frontend
 
 WORKDIR /app/frontend
 
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-RUN npm config set strict-ssl false && \
-    npm config set registry https://repo.samsungds.net/artifactory/api/npm/npm-remote/
+# 사내 레지스트리를 쓰려면 NPM_REGISTRY 빌드 인자로 주입
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+RUN npm config set registry "$NPM_REGISTRY"
 
 COPY frontend/package*.json ./
 RUN npm install --include=dev
@@ -22,11 +22,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# 사내 PyPI 미러를 쓰려면 PIP_INDEX_URL 빌드 인자로 주입
+ARG PIP_INDEX_URL=https://pypi.org/simple
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt \
-    -i http://repo.samsungds.net/artifactory/api/pypi/pypi-remote/simple \
-    --trusted-host repo.samsungds.net \
-    || pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt -i "$PIP_INDEX_URL"
 
 COPY server.py challenges.py prompt_challenge.py ./
 COPY dashboard.html prompt_page.html settings_page.html ./

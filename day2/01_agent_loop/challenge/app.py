@@ -26,9 +26,9 @@ st.set_page_config(page_title="Agentic Loop 실습", page_icon="🔄", layout="c
 # ============================================
 # 서버 정보
 # ============================================
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
-AUTH_SERVER = "http://a2g.samsungds.net:8090"
-LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
+AUTH_SERVER = "https://auth.example.com"
+LLM_GATEWAY = "https://llm-gateway.example.com/v1"
 SERVICE_ID = "test-service"
 
 # OIDC 설정

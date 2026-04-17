@@ -44,7 +44,7 @@ export default function Slide47_BrowserTask() {
             <BoxTitle>과제</BoxTitle>
             아래 페이지에 숨겨진 <strong>비밀 키</strong>를 프로그래밍으로 추출하세요.<br />
             <code style={{ display: 'block', margin: '10px 0', padding: '8px 14px', background: 'rgba(0,0,0,.05)', borderRadius: 6, fontSize: '.95em' }}>
-              http://a2g.samsungds.net:47777/browser-target
+              http://challenge.example.com:47777/browser-target
             </code>
             키는 DOM에 숨겨져 있습니다 — 눈에 보이지 않습니다!<br />
             <span style={{ fontSize: '.85em', color: '#64748b', marginTop: 4, display: 'block' }}>

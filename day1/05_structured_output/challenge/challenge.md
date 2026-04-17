@@ -6,9 +6,9 @@
 
 | 항목 | 값 |
 |------|---|
-| Challenge 서버 | `http://a2g.samsungds.net:47777` |
-| 미션 조회 | `GET http://a2g.samsungds.net:47777/challenges/structured/mission` |
-| 정답 제출 | `POST http://a2g.samsungds.net:47777/challenges/structured/submit` |
+| Challenge 서버 | `http://challenge.example.com:47777` |
+| 미션 조회 | `GET http://challenge.example.com:47777/challenges/structured/mission` |
+| 정답 제출 | `POST http://challenge.example.com:47777/challenges/structured/submit` |
 
 ## 과제
 
@@ -43,10 +43,10 @@
 ```
 Python으로 LLM의 Structured Output 기능을 사용해서 뉴스 기사를 분석하는 코드를 만들어줘.
 
-1. GET http://a2g.samsungds.net:47777/challenges/structured/mission 에서 뉴스 기사 받기
+1. GET http://challenge.example.com:47777/challenges/structured/mission 에서 뉴스 기사 받기
 2. LLM에게 response_format으로 JSON Schema를 지정해서 분석 요청
    필요한 필드: title, category(기술/경제/정치/사회/스포츠), sentiment(긍정/부정/중립), keywords(3~5개 배열), summary(2문장)
-3. POST http://a2g.samsungds.net:47777/challenges/structured/submit 에 제출
+3. POST http://challenge.example.com:47777/challenges/structured/submit 에 제출
    형식: {"token": "SSO토큰", "answer": {title, category, sentiment, keywords, summary}}
 
 OpenAI Compatible의 response_format: {"type": "json_object"} 사용.

@@ -24,9 +24,16 @@ chromadb_data/
 
 # Playwright
 playwright-report/
+.playwright-mcp/
+
+# IDE / Tool meta
+.codex
 
 # Logs
 *.log
 agent_log*.jsonl
 challenge_server/frontend/node_modules/
 challenge_server/frontend/dist/
+
+# Persistent runtime state (deployment-specific)
+challenge_server/data/state.json

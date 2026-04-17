@@ -95,7 +95,7 @@ export default function Settings() {
       <div className="content-card stack" style={{ marginBottom: 18 }}>
         <h3>VL 모델 설정 (대시보드 채점용)</h3>
         <p className="subtle">React 대시보드 과제 스크린샷을 평가하는 Vision-Language 모델입니다.</p>
-        <input placeholder="Base URL (예: http://a2g.samsungds.net:8090/v1)" value={vlForm.base_url}
+        <input placeholder="Base URL (예: https://llm-gateway.example.com/v1)" value={vlForm.base_url}
           onChange={e => setVlForm({ ...vlForm, base_url: e.target.value })}
           style={{ fontFamily: 'JetBrains Mono, monospace' }} />
         <div className="form-grid">
@@ -132,7 +132,7 @@ export default function Settings() {
                   <td>
                     <select value={challengeMap[c.id] || ''} onChange={e => setMapping(c.id, e.target.value)}
                       style={{ minWidth: 220 }}>
-                      <option value="">(기본) testmodel — 12.81.222.45:8090</option>
+                      <option value="">(기본) testmodel — llm.example.com</option>
                       {Object.entries(endpoints).map(([id, e]) => (
                         <option key={id} value={id}>{e.name} ({e.model})</option>
                       ))}

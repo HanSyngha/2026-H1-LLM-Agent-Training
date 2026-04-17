@@ -25,7 +25,7 @@ export default function Slide28_GatewayCode() {
 
 # 사내 LLM Gateway (OpenAI Compatible + 커스텀 헤더)
 resp = requests.post(
-    "http://a2g.samsungds.net:8090/v1/chat/completions",
+    "https://llm-gateway.example.com/v1/chat/completions",
     headers={
         "Content-Type": "application/json",
         "x-service-id": "test-service",   # 서비스 ID

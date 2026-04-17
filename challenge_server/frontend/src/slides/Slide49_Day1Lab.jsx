@@ -23,9 +23,9 @@ export default function Slide49_Day1Lab() {
             <Box color="green" style={{ padding: '24px 28px' }}>
               <BoxTitle color="#059669">서버 정보</BoxTitle>
               <div style={{ fontSize: '.95em', lineHeight: 2, textAlign: 'left' }}>
-                <div><strong>Challenge:</strong> <code style={{ color: '#2563eb' }}>a2g.samsungds.net:47777</code></div>
-                <div><strong>인증(SSO):</strong> <code style={{ color: '#2563eb' }}>a2g.samsungds.net:8090</code></div>
-                <div><strong>대시보드:</strong> <code style={{ color: '#2563eb' }}>a2g.samsungds.net:47777</code></div>
+                <div><strong>Challenge:</strong> <code style={{ color: '#2563eb' }}>challenge.example.com:47777</code></div>
+                <div><strong>인증(SSO):</strong> <code style={{ color: '#2563eb' }}>auth.example.com</code></div>
+                <div><strong>대시보드:</strong> <code style={{ color: '#2563eb' }}>challenge.example.com:47777</code></div>
                 <div><strong>정답 제출:</strong> <code>POST /challenges/{'{id}'}/submit</code></div>
               </div>
             </Box>

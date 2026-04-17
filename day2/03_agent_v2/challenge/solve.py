@@ -25,8 +25,8 @@ import json
 # ============================================
 # 서버 정보
 # ============================================
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
-LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
+LLM_GATEWAY = "https://llm-gateway.example.com/v1"
 SERVICE_ID = "test-service"
 MODEL = "testmodel"
 
@@ -34,7 +34,7 @@ MODEL = "testmodel"
 # 본인 정보 입력
 # ============================================
 # TOKEN 획득 방법:
-#   1. 브라우저에서 http://a2g.samsungds.net:47777 접속 (SSO 로그인)
+#   1. 브라우저에서 http://challenge.example.com:47777 접속 (SSO 로그인)
 #   2. 개발자도구(F12) → Application → Cookies → challenge_token 값 복사
 #   3. 또는 이전 실습(SSO 과제)에서 받은 access_token 사용
 TOKEN = ""   # SSO access_token (위 방법으로 획득)

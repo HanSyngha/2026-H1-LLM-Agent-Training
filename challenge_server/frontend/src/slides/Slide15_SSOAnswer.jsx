@@ -12,9 +12,9 @@ export default function Slide15_SSOAnswer() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <CodeBlock lang="prompt">{`이 Streamlit 앱(app.py)에 OIDC 로그인을 연동해줘.
 
-인증 서버: http://a2g.samsungds.net:8090
-Authorize: GET http://a2g.samsungds.net:8090/oidc/authorize
-Token: POST http://a2g.samsungds.net:8090/oidc/token
+인증 서버: https://auth.example.com
+Authorize: GET https://auth.example.com/oidc/authorize
+Token: POST https://auth.example.com/oidc/token
 client_id: cli-default
 client_secret: 빈 문자열 (Basic Auth에서 password 비움)
 redirect_uri: http://localhost:3000
@@ -33,7 +33,7 @@ claims의 name이 한글 이름, dept가 한글 부서명.
 - st.session_state.method = "oidc"
 
 앱 내 "Challenge 서버에 제출" 버튼으로
-POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit
+POST http://challenge.example.com:47777/challenges/sso_oidc/submit
 에 {"token":"access_token","answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}
 형태로 제출되게 해줘.`}</CodeBlock>
         </motion.div>

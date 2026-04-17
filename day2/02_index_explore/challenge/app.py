@@ -19,8 +19,8 @@ st.set_page_config(page_title="Index Explore 실습", page_icon="📂", layout="
 # ============================================
 # 서버 정보
 # ============================================
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
-LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
+LLM_GATEWAY = "https://llm-gateway.example.com/v1"
 SERVICE_ID = "test-service"
 USER_ID = "student"
 
@@ -224,7 +224,7 @@ ISSUE-2025-063: EUV 포토레지스트 불량
     "raw_10_교육.txt": """[사내 교육 프로그램 2025]
 
 AI/ML 교육:
-- "LLM Agent 개발 실습" (2일, 한승하 강사) — 7월 예정
+- "LLM Agent 개발 실습" (2일, 강사) — 7월 예정
 - "MLOps 파이프라인 구축" (3일, 외부 강사)
 - "AI 반도체를 위한 딥러닝 기초" (5일, 온라인)
 

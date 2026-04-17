@@ -12,7 +12,7 @@ export default function AnswerButton({ answerId, children }) {
   const [isPresenter, setIsPresenter] = useState(false);
 
   useEffect(() => {
-    getMe().then(u => { if (u?.user?.sub === 'syngha.han') setIsPresenter(true); });
+    getMe().then(u => { if (u?.is_presenter) setIsPresenter(true); });
   }, []);
   const [unlocked, setUnlocked] = useState(false);
   const [showModal, setShowModal] = useState(false);

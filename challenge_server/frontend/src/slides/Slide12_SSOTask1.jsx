@@ -30,8 +30,8 @@ export default function Slide12_SSOTask1({ slideRuntime }) {
             <table style={{ fontSize: '.92em', margin: '6px 0 0', width: '100%' }}>
               <tbody>
                 {[
-                  ['Authorize', 'GET http://a2g.samsungds.net:8090/oidc/authorize'],
-                  ['Token', 'POST http://a2g.samsungds.net:8090/oidc/token'],
+                  ['Authorize', 'GET https://auth.example.com/oidc/authorize'],
+                  ['Token', 'POST https://auth.example.com/oidc/token'],
                   ['client_id', 'cli-default'],
                   ['client_secret', '빈 문자열 (Basic Auth에서 password 비움)'],
                   ['redirect_uri', 'http://localhost:3000'],

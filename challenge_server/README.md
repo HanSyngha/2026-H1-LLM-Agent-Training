@@ -2,12 +2,12 @@
 
 ## 개요
 
-강사가 `a2g.samsungds.net:47777`에 띄워두면, 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
+강사가 `challenge.example.com:47777`에 띄워두면, 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
 
 | 구성요소 | 주소 | 역할 |
 |---------|------|------|
-| 인증 서버 | `a2g.samsungds.net:8090` | SSO/OIDC 토큰 발급, 사용자 정보 |
-| Challenge 서버 | `a2g.samsungds.net:47777` | 과제 미션 제공, 정답 검증, 성공자 대시보드 |
+| 인증 서버 | `auth.example.com` | SSO/OIDC 토큰 발급, 사용자 정보 |
+| Challenge 서버 | `challenge.example.com:47777` | 과제 미션 제공, 정답 검증, 성공자 대시보드 |
 
 ## 1. Docker 배포 (권장)
 
@@ -53,7 +53,7 @@ python server.py
 ============================================================
   LLM Agent 교육 Challenge 서버
   http://0.0.0.0:47777
-  인증 서버: http://a2g.samsungds.net:8090
+  인증 서버: https://auth.example.com
   과제 수: 7개
 ============================================================
 ```
@@ -81,13 +81,13 @@ curl http://localhost:47777/health
 ### 4-2. 대시보드
 
 ```
-브라우저에서 http://a2g.samsungds.net:47777
+브라우저에서 http://challenge.example.com:47777
 ```
 
 ### 4-3. LLM 채점 설정
 
 ```
-브라우저에서 http://a2g.samsungds.net:47777/settings
+브라우저에서 http://challenge.example.com:47777/settings
 → LLM Base URL, API Key, Model 입력 → 저장 및 테스트
 ```
 
@@ -118,8 +118,8 @@ curl -X POST http://localhost:47777/challenges/endpoint/submit \
 ```json
 {
   "status": "SUCCESS",
-  "user": "한승하",
-  "message": "🎉 한승하님, LLM Endpoint 연결 통과!"
+  "user": "Admin",
+  "message": "🎉 Admin님, LLM Endpoint 연결 통과!"
 }
 ```
 
@@ -136,7 +136,7 @@ curl http://localhost:47777/api/wiki-data
 ### 4-7. 대시보드에서 성공자 확인
 
 ```
-브라우저에서 http://a2g.samsungds.net:47777
+브라우저에서 http://challenge.example.com:47777
 → 제출 성공 시 이름/부서가 실시간 표시됩니다
 ```
 

@@ -108,7 +108,7 @@ export default function Slides({ user }) {
   const questionIdRef = useRef(0);
   const seenQuestionTimestamps = useRef(new Set());
 
-  const isPresenter = user?.sub === 'syngha.han';
+  const isPresenter = user?.is_presenter;
   const isOfflineArchive = typeof window !== 'undefined' && Boolean(window.__OFFLINE_ARCHIVE__);
   const totalSlides = SLIDES.length;
 

@@ -97,8 +97,8 @@ export default function Slide62_AgentV2Task({ slideRuntime }) {
             <h3 style={{ color: '#1e293b', marginBottom: 8 }}>예시 답안 코드 (LLM + Agentic Loop)</h3>
             <CodeBlock lang="python">{`import requests, json
 
-SERVER = "http://a2g.samsungds.net:47777"
-LLM = "http://a2g.samsungds.net:8090/v1"
+SERVER = "http://challenge.example.com:47777"
+LLM = "https://llm-gateway.example.com/v1"
 TOKEN = "YOUR_TOKEN"
 USER_ID = "YOUR_ID"
 # tools, execute_tool, SYSTEM_PROMPT는 solve.py에 제공됨

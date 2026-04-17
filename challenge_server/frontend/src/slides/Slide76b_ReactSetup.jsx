@@ -17,9 +17,9 @@ export default function Slide76b_ReactSetup() {
 node --version   # v22.x.x
 npm --version    # 10.x.x
 
-# 사내망이라 npm registry 변경 필요:
-npm config set registry https://repo.samsungds.net/artifactory/api/npm/npm-remote/
-npm config set strict-ssl false`}</CodeBlock>
+# 사내 네트워크면 registry를 사내 미러로 바꿔주세요
+# npm config set registry https://<your-mirror>/
+# npm config set strict-ssl false`}</CodeBlock>
           </Box>
         </motion.div>
 
@@ -39,7 +39,7 @@ npm run dev
           <Box color="purple" style={{ marginTop: 8, fontSize: '.82em', padding: '14px 20px' }}>
             <BoxTitle color="#7c3aed">3. LLM 챗봇으로 확장</BoxTitle>
             <CodeBlock lang="javascript">{`// src/App.jsx에서 LLM 호출 예시
-const resp = await fetch("http://a2g.samsungds.net:8090/v1/chat/completions", {
+const resp = await fetch("https://llm-gateway.example.com/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

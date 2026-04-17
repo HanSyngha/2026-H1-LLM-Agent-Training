@@ -494,7 +494,7 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const isAdmin = user?.sub === 'syngha.han';
+  const isAdmin = user?.is_presenter;
 
   const handleReset = async () => {
     if (!confirm('정말 모든 과제 기록을 초기화하시겠습니까?')) return;

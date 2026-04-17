@@ -11,7 +11,7 @@ export default function Slide48_BrowserAnswer() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <CodeBlock lang="prompt">{`Python으로 브라우저 자동화하여 JS 렌더링 페이지에서 비밀 키를 추출해줘.
 
-대상 페이지: http://a2g.samsungds.net:47777/browser-target
+대상 페이지: http://challenge.example.com:47777/browser-target
 - 이 페이지는 JavaScript로 1초 후 비밀 키를 렌더링함
 - requests.get()으로는 "로딩 중..."만 보임
 - 브라우저를 실제로 열어서 JS 실행 후 텍스트를 읽어야 함
@@ -27,7 +27,7 @@ export default function Slide48_BrowserAnswer() {
   document.getElementById('secret-key').textContent 로 추출
 
 추출한 키를 아래로 제출:
-  POST http://a2g.samsungds.net:47777/challenges/browser/submit
+  POST http://challenge.example.com:47777/challenges/browser/submit
   {"user_id":"본인ID","answer":{"secret_key":"추출한키"}}
   (SSO 토큰 불필요 — 스크립트에서 바로 제출 가능)`}</CodeBlock>
         </motion.div>

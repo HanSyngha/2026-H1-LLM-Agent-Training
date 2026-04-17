@@ -14,7 +14,7 @@ streamlit run app.py --server.port 3000
 
 | 항목 | 값 |
 |------|---|
-| LLM Gateway | `http://a2g.samsungds.net:8090/v1/chat/completions` |
+| LLM Gateway | `https://llm-gateway.example.com/v1/chat/completions` |
 | Service ID | `test-service` (코드에 세팅됨) |
 | 인증 | SSO 자동 로그인 (user_id 자동 세팅) |
 
@@ -26,7 +26,7 @@ streamlit run app.py --server.port 3000
 
 ```python
 resp = requests.post(
-    "http://a2g.samsungds.net:8090/v1/chat/completions",
+    "https://llm-gateway.example.com/v1/chat/completions",
     headers={
         "Content-Type": "application/json",
         "x-service-id": SERVICE_ID,     # "test-service"

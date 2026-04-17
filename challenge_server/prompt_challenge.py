@@ -101,7 +101,7 @@ async def call_llm(prompt: str, input_text: str, expected_keys: list, llm_config
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {llm_config.get('api_key', '')}",
                 "x-service-id": "test-service",
-                "x-user-id": "syngha.han",
+                "x-user-id": os.getenv("PRESENTER_SUB", "admin"),
             },
             json={
                 "model": llm_config.get("model", ""),

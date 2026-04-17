@@ -27,9 +27,9 @@ st.set_page_config(page_title="Tool Use 실습", page_icon="🔧", layout="cente
 # ============================================
 # 서버 정보
 # ============================================
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
-AUTH_SERVER = "http://a2g.samsungds.net:8090"
-LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
+AUTH_SERVER = "https://auth.example.com"
+LLM_GATEWAY = "https://llm-gateway.example.com/v1"
 SERVICE_ID = "test-service"
 
 # OIDC 설정
@@ -142,12 +142,12 @@ tools = []  # ← 여기를 채우세요!
 # Tool 이름과 인자를 받아서 실제 API를 호출합니다.
 #
 # get_secret_key:
-#   GET http://a2g.samsungds.net:47777/challenges/tool_use/secret
+#   GET http://challenge.example.com:47777/challenges/tool_use/secret
 #   query params: token=<SSO access_token>  (위의 token 변수)
 #   응답 예시: {"secret_key": "KEY-A1B2C3...", "message": "..."}
 #
 # submit_secret_key:
-#   POST http://a2g.samsungds.net:47777/challenges/tool_use/submit
+#   POST http://challenge.example.com:47777/challenges/tool_use/submit
 #   body: {"token": "<SSO access_token>", "answer": {"secret_key": "발급받은키"}}
 #   응답 예시: {"status": "SUCCESS", "message": "🎉 통과!"}
 #

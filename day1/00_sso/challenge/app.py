@@ -23,7 +23,7 @@ if "access_token" not in st.session_state:
 if "method" not in st.session_state:
     st.session_state.method = None        # "oidc"
 
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
 
 st.title("🔐 SSO 로그인 실습")
 st.markdown("---")

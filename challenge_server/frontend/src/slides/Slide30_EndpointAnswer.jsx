@@ -12,7 +12,7 @@ export default function Slide30_EndpointAnswer() {
           <CodeBlock lang="prompt">{`app.py의 TODO를 채워줘. resp = None을 requests.post(...)로 바꿔야 해.
 
 사내 LLM Gateway 정보:
-- URL: http://a2g.samsungds.net:8090/v1/chat/completions
+- URL: https://llm-gateway.example.com/v1/chat/completions
 - 모델명: testmodel
 
 필수 헤더:

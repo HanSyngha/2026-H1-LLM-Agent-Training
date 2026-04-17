@@ -1,13 +1,13 @@
 """
 통합 Challenge 서버
 
-강사가 a2g.samsungds.net:47777에 띄워두면,
+강사가 challenge.example.com:47777에 띄워두면,
 수강생이 SSO 토큰 + 정답을 제출하여 과제를 통과합니다.
 
 실행: python server.py
 주소: http://0.0.0.0:47777
 
-인증: a2g.samsungds.net:8090 (OIDC 인증 서버)
+인증: auth.example.com (OIDC 인증 서버)
 """
 
 import json
@@ -56,20 +56,23 @@ app.add_middleware(
 # ============================================
 # 설정
 # ============================================
-AUTH_SERVER = os.getenv("AUTH_SERVER", "https://12.81.222.45:9050")
+AUTH_SERVER = os.getenv("AUTH_SERVER", "https://auth.example.com")
 DEV_MODE = os.getenv("DEV_MODE", "").lower() in ("1", "true", "yes")  # 로컬 테스트용 SSO 우회
-AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "http://a2g.samsungds.net:8090")  # 브라우저가 접근하는 주소
-CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://a2g.samsungds.net:47777")  # 콜백 URL용
+AUTH_PUBLIC = os.getenv("AUTH_PUBLIC", "https://auth.example.com")      # 브라우저가 접근하는 주소
+CHALLENGE_HOST = os.getenv("CHALLENGE_HOST", "http://localhost:47777")  # 콜백 URL용
 PORT = int(os.getenv("CHALLENGE_PORT", "47777"))
+
+# 강사 계정 sub (로그인한 유저의 sub가 이 값과 같으면 강사 권한)
+PRESENTER_SUB = os.getenv("PRESENTER_SUB", "admin")
 
 # LLM 설정 - 여러 개 등록 가능, 과제별로 선택
 llm_endpoints: dict[str, dict] = {}  # {id: {name, base_url, api_key, model}}
 
 # 채점용 LLM (기존 호환)
 llm_config = {
-    "base_url": os.getenv("LLM_GATEWAY_URL", "http://12.81.222.45:8090/v1"),
+    "base_url": os.getenv("LLM_GATEWAY_URL", "https://llm-gateway.example.com/v1"),
     "api_key": os.getenv("LLM_GATEWAY_API_KEY", ""),
-    "model": os.getenv("LLM_MODEL", "testmodel"),
+    "model": os.getenv("LLM_MODEL", "gpt-4o-mini"),
 }
 
 # 사내 LLM Gateway 헤더 (x-service-id, x-user-id 필수)
@@ -79,7 +82,7 @@ def llm_headers(llm=None):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {cfg.get('api_key', '')}",
         "x-service-id": "test-service",
-        "x-user-id": "syngha.han",
+        "x-user-id": PRESENTER_SUB,
     }
 
 # 과제별 LLM 매핑 {challenge_id: llm_endpoint_id}
@@ -92,7 +95,7 @@ async def _is_presenter_request(request: Request) -> bool:
     if not token and not DEV_MODE:
         return False
     user = await get_user_from_token(token) if token or DEV_MODE else None
-    return bool(user and user.get("sub") == "syngha.han")
+    return bool(user and user.get("sub") == PRESENTER_SUB)
 
 
 async def _ensure_download_access(request: Request):
@@ -125,7 +128,7 @@ python -m http.server 8000
 
 ## 오프라인 보관본 제한사항
 - 질문, 반응, 실시간 동기화, 실습 제출, 실습 코드 다운로드는 비활성화됩니다.
-- 최신 운영 환경과 동일한 기능은 사내망의 `a2g.samsungds.net` 원본에서만 제공됩니다.
+- 최신 운영 환경과 동일한 기능은 사내망의 `challenge.example.com` 원본에서만 제공됩니다.
 - 이 보관본은 강의 내용을 다시 읽고 복습하는 용도로 권장합니다.
 """
 
@@ -367,7 +370,7 @@ async def get_user_from_token(token: str) -> dict | None:
     DEV_MODE=true이면 토큰 검증 없이 더미 사용자 반환.
     """
     if DEV_MODE:
-        return {"sub": "syngha.han", "name": "한승하", "dept": "S/W혁신팀", "email": "syngha.han@samsung.com"}
+        return {"sub": PRESENTER_SUB, "name": "Admin", "dept": "Instructor", "email": "admin@example.com"}
     url = f"{AUTH_SERVER}/oidc/userinfo"
     try:
         resp = await async_get(
@@ -450,14 +453,20 @@ async def auth_callback(request: Request, code: str = "", state: str = ""):
 async def auth_me(request: Request):
     """현재 로그인한 사용자 정보를 반환합니다. DEV_MODE면 로그인 없이 더미 사용자."""
     if DEV_MODE:
-        return {"logged_in": True, "user": {"sub": "syngha.han", "name": "한승하", "dept": "S/W혁신팀", "email": "syngha.han@samsung.com"}, "token": "dev-token"}
+        user = {"sub": PRESENTER_SUB, "name": "Admin", "dept": "Instructor", "email": "admin@example.com"}
+        return {"logged_in": True, "user": user, "is_presenter": True, "token": "dev-token"}
     token = request.cookies.get("challenge_token", "")
     if not token:
         return JSONResponse({"logged_in": False}, status_code=401)
     user = await get_user_from_token(token)
     if not user:
         return JSONResponse({"logged_in": False, "error": "토큰 만료"}, status_code=401)
-    return {"logged_in": True, "user": user, "token": token}
+    return {
+        "logged_in": True,
+        "user": user,
+        "is_presenter": user.get("sub") == PRESENTER_SUB,
+        "token": token,
+    }
 
 
 @app.get("/auth/logout")
@@ -639,11 +648,11 @@ async def get_completions():
 
 @app.post("/completions/reset")
 async def reset_completions(request: Request):
-    """대시보드 초기화 - 강사(syngha.han)만 가능."""
+    """대시보드 초기화 - 강사만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     user = await get_user_from_token(token)
-    if not user or user.get("sub") != "syngha.han":
+    if not user or user.get("sub") != PRESENTER_SUB:
         return JSONResponse({"error": "강사만 초기화할 수 있습니다."}, status_code=403)
 
     challenge_id = body.get("challenge_id")  # 특정 과제만 초기화 (없으면 전체)
@@ -678,11 +687,11 @@ async def answers_status():
 
 @app.post("/answers/toggle")
 async def answers_toggle(request: Request):
-    """답안 공개/잠금 토글 - 강사(syngha.han)만 가능."""
+    """답안 공개/잠금 토글 - 강사만 가능."""
     body = await request.json()
     token = body.get("token", "") or request.cookies.get("challenge_token", "")
     user = await get_user_from_token(token)
-    if not user or user.get("sub") != "syngha.han":
+    if not user or user.get("sub") != PRESENTER_SUB:
         return JSONResponse({"error": "강사만 변경할 수 있습니다."}, status_code=403)
 
     answer_id = body.get("id", "")
@@ -1940,11 +1949,11 @@ async def get_current_slide():
 @app.post("/slides/current")
 async def set_current_slide(request: Request):
     body = await request.json()
-    # 강사만 변경 가능 (syngha.han)
+    # 강사만 변경 가능
     token = request.cookies.get("challenge_token", "")
     if not DEV_MODE:
         user = (await get_user_from_token(token)) if token else None
-        if not user or user.get("sub") != "syngha.han":
+        if not user or user.get("sub") != PRESENTER_SUB:
             return JSONResponse({"error": "강사만 슬라이드를 변경할 수 있습니다."}, status_code=403)
     current_slide["slide"] = body.get("slide", 1)
     return current_slide
@@ -1957,7 +1966,7 @@ async def set_slide_lock(request: Request):
     token = request.cookies.get("challenge_token", "")
     if not DEV_MODE:
         user = (await get_user_from_token(token)) if token else None
-        if not user or user.get("sub") != "syngha.han":
+        if not user or user.get("sub") != PRESENTER_SUB:
             return JSONResponse({"error": "강사만 잠금을 변경할 수 있습니다."}, status_code=403)
     current_slide["locked"] = bool(body.get("locked", True))
     return current_slide

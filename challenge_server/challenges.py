@@ -122,7 +122,7 @@ def validate_prompt(answer: dict) -> dict:
 # ============================================
 ENDPOINT_MISSION = {
     "description": "SSO 로그인 후 사내 LLM Gateway에 연결하여 챗봇을 완성하세요.",
-    "gateway_url": "http://a2g.samsungds.net:8090/v1",
+    "gateway_url": "https://llm-gateway.example.com/v1",
     "service_id": "test-service",
     "headers": {
         "x-service-id": "test-service (미리 세팅됨)",
@@ -252,10 +252,10 @@ def validate_mcp(answer: dict) -> dict:
 # ============================================
 # 과제 5: 브라우저 자동화 (CDP로 비밀 키 추출)
 # ============================================
-BROWSER_SECRET_KEY = "BROWSER-CDP-2026-SAMSUNG"
+BROWSER_SECRET_KEY = "BROWSER-CDP-2026-DEMO"
 
 BROWSER_MISSION = {
-    "target_url": "http://a2g.samsungds.net:47777/browser-target",
+    "target_url": "http://challenge.example.com:47777/browser-target",
     "description": "위 URL에 접속하면 비밀 키가 표시됩니다. 단, JavaScript로 렌더링되므로 curl/requests로는 보이지 않습니다. CDP 또는 Playwright로 브라우저를 제어하여 비밀 키를 추출하세요.",
     "hint": "requests.get()으로는 '로딩 중...'만 보입니다. 브라우저 자동화가 필요합니다.",
 }
@@ -267,7 +267,7 @@ def validate_browser(answer: dict) -> dict:
         return {"passed": True, "message": "브라우저 자동화 과제 통과! CDP로 비밀 키를 추출했습니다.",
                 "details": [{"passed": True, "message": f"키 일치: {secret}"}]}
     return {"passed": False, "message": f"비밀 키가 일치하지 않습니다.",
-            "details": [{"passed": False, "message": f"제출: '{secret[:20]}...' — http://a2g.samsungds.net:47777/browser-target 페이지를 브라우저로 열어 확인하세요."}]}
+            "details": [{"passed": False, "message": f"제출: '{secret[:20]}...' — http://challenge.example.com:47777/browser-target 페이지를 브라우저로 열어 확인하세요."}]}
 
 
 # ============================================

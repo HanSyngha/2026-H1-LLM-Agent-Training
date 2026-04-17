@@ -16,9 +16,9 @@ http://localhost:3000 에 접속하면 로그인 버튼만 있는 빈 앱이 뜹
 
 | 항목 | 값 |
 |------|---|
-| 인증 서버 | `http://a2g.samsungds.net:8090` |
-| Authorize | `GET http://a2g.samsungds.net:8090/oidc/authorize` |
-| Token | `POST http://a2g.samsungds.net:8090/oidc/token` |
+| 인증 서버 | `https://auth.example.com` |
+| Authorize | `GET https://auth.example.com/oidc/authorize` |
+| Token | `POST https://auth.example.com/oidc/token` |
 | Client ID | `cli-default` |
 | Client Secret | `""` (빈 문자열) |
 | 프로토콜 | HTTP |
@@ -39,7 +39,7 @@ app.py를 수정하여 OIDC 로그인을 연동하세요.
 
 ### 제출
 
-앱 내 제출 버튼 클릭 → `POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit`
+앱 내 제출 버튼 클릭 → `POST http://challenge.example.com:47777/challenges/sso_oidc/submit`
 
 ---
 
@@ -48,7 +48,7 @@ app.py를 수정하여 OIDC 로그인을 연동하세요.
 ```
 이 Streamlit 앱(app.py)에 OIDC 로그인을 연동해줘.
 
-인증 서버: http://a2g.samsungds.net:8090
+인증 서버: https://auth.example.com
 Authorize: GET /oidc/authorize
 Token: POST /oidc/token
 client_id: cli-default

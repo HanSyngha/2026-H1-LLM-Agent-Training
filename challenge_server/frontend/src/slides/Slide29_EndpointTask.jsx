@@ -45,7 +45,7 @@ export default function Slide29_EndpointTask({ slideRuntime }) {
             <table style={{ fontSize: '.9em', margin: '8px 0 0', width: '100%' }}>
               <tbody>
                 {[
-                  ['URL', 'POST http://a2g.samsungds.net:8090/v1/chat/completions'],
+                  ['URL', 'POST https://llm-gateway.example.com/v1/chat/completions'],
                   ['Header', 'Content-Type: application/json'],
                   ['Header', 'x-service-id: test-service (코드의 SERVICE_ID)'],
                   ['Header', 'x-user-id: (코드의 user_id 변수)'],

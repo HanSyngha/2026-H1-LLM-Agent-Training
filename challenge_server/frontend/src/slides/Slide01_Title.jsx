@@ -28,7 +28,7 @@ export default function Slide01_Title() {
           }}
         >
           <span style={{ fontSize: '.72em', color: '#b45309', letterSpacing: 2.4, fontWeight: 800, textTransform: 'uppercase' }}>
-            Samsung DS A2G
+            AI Agent Workshop
           </span>
           <span style={{ width: 1, height: 14, background: 'rgba(88,72,49,.14)' }} />
           <span style={{ fontSize: '.78em', color: '#55606f', fontWeight: 700 }}>

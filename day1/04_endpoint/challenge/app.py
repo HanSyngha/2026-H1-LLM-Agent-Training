@@ -22,9 +22,9 @@ st.set_page_config(page_title="LLM 챗봇 실습", page_icon="🤖", layout="cen
 # ============================================
 # 서버 정보
 # ============================================
-CHALLENGE_SERVER = "http://a2g.samsungds.net:47777"
-AUTH_SERVER = "http://a2g.samsungds.net:8090"
-LLM_GATEWAY = "http://a2g.samsungds.net:8090/v1"
+CHALLENGE_SERVER = "http://challenge.example.com:47777"
+AUTH_SERVER = "https://auth.example.com"
+LLM_GATEWAY = "https://llm-gateway.example.com/v1"
 SERVICE_ID = "test-service"
 
 # OIDC 설정
@@ -150,7 +150,7 @@ if prompt := st.chat_input("메시지를 입력하세요..."):
             # TODO: 여기를 채우세요!
             # requests.post()로 사내 LLM Gateway에 요청을 보내세요.
             #
-            # URL:  http://a2g.samsungds.net:8090/v1/chat/completions
+            # URL:  https://llm-gateway.example.com/v1/chat/completions
             # 헤더:
             #   Content-Type: application/json
             #   x-service-id: test-service  (위의 SERVICE_ID 변수)

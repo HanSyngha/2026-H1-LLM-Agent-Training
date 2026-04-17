@@ -152,7 +152,7 @@ while 루프로 다음을 반복:
 
 ### LLM Gateway 연결
 ```
-base_url: http://a2g.samsungds.net:8090/v1
+base_url: https://llm-gateway.example.com/v1
 model: testmodel
 headers:
   x-service-id: test-service

@@ -851,9 +851,9 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <div class="divider anim anim-d2"></div>
   <div class="box blue anim anim-d3" style="font-size:.92em;padding:18px 28px;text-align:left">
     <table style="font-size:.95em;margin:0;max-width:100%">
-      <tr><th style="width:22%;padding:6px 10px">Authorize</th><td style="padding:6px 10px"><code>GET http://a2g.samsungds.net:8090/oidc/authorize</code></td></tr>
-      <tr><th style="padding:6px 10px">Token</th><td style="padding:6px 10px"><code>POST http://a2g.samsungds.net:8090/oidc/token</code></td></tr>
-      <tr><th style="padding:6px 10px">UserInfo</th><td style="padding:6px 10px"><code>GET http://a2g.samsungds.net:8090/oidc/userinfo</code></td></tr>
+      <tr><th style="width:22%;padding:6px 10px">Authorize</th><td style="padding:6px 10px"><code>GET https://auth.example.com/oidc/authorize</code></td></tr>
+      <tr><th style="padding:6px 10px">Token</th><td style="padding:6px 10px"><code>POST https://auth.example.com/oidc/token</code></td></tr>
+      <tr><th style="padding:6px 10px">UserInfo</th><td style="padding:6px 10px"><code>GET https://auth.example.com/oidc/userinfo</code></td></tr>
     </table>
     <div style="margin-top:.5em">
     </div>
@@ -879,9 +879,9 @@ kbd{background:rgba(30,41,59,.08);border:1px solid rgba(100,116,139,.2);border-r
   <div class="divider anim anim-d2"></div>
   <pre class="anim anim-d3" style="font-size:.8em"><code>이 Streamlit 앱(app.py)에 OIDC 로그인을 연동해줘.
 
-인증 서버: http://a2g.samsungds.net:8090
-Authorize: GET http://a2g.samsungds.net:8090/oidc/authorize
-Token: POST http://a2g.samsungds.net:8090/oidc/token
+인증 서버: https://auth.example.com
+Authorize: GET https://auth.example.com/oidc/authorize
+Token: POST https://auth.example.com/oidc/token
 client_id: cli-default
 client_secret: 빈 문자열 (Basic Auth에서 password 비움)
 redirect_uri: http://localhost:3000
@@ -900,7 +900,7 @@ claims의 name이 한글 이름, dept가 한글 부서명.
 - st.session_state.method = "oidc"
 
 앱 내 "Challenge 서버에 제출" 버튼으로
-POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit
+POST http://challenge.example.com:47777/challenges/sso_oidc/submit
 에 {"token":"access_token","answer":{"name":"홍길동","dept":"개발팀","method":"oidc"}}
 형태로 제출되게 해줘.</code></pre>
 </div>
@@ -1049,7 +1049,7 @@ POST http://a2g.samsungds.net:47777/challenges/sso_oidc/submit
     &bull; <strong>타입을 정확히 지정하지 않으면 6~8개만 통과합니다</strong>
   </div>
   <div class="box green anim anim-d5" style="margin-top:.6em;font-size:1em;padding:16px 28px;text-align:center">
-    <strong>접속:</strong> <code>http://a2g.samsungds.net:47777/challenges/prompt</code> → 프롬프트 입력 → 테스트 → 제출<br>
+    <strong>접속:</strong> <code>http://challenge.example.com:47777/challenges/prompt</code> → 프롬프트 입력 → 테스트 → 제출<br>
     🎉 <strong>10/10 통과 시 대시보드에 이름 표시</strong>
   </div>
 </div>
@@ -1277,7 +1277,7 @@ STRICT RULES:
     <strong>성공 조건:</strong> 응답에 <code>"서울"</code>과 <code>"Seoul"</code>이 모두 포함되어야 합니다.
   </div>
   <div class="box green anim anim-d5" style="margin-top:.6em;font-size:.92em;padding:20px 28px">
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/endpoint/submit</code><br>
+    <strong>제출:</strong> <code>POST http://challenge.example.com:47777/challenges/endpoint/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"response":"LLM이 응답한 전체 텍스트"}}</code><br>
     <strong style="color:var(--green)">→ 🎉 홍길동님, LLM Endpoint 연결 통과!</strong>
   </div>
@@ -1455,7 +1455,7 @@ STRICT RULES:
     <div class="card" style="padding:14px"><h4 style="font-size:.9em;color:var(--cyan)">summary</h4><p style="font-size:.8em">2문장 요약</p></div>
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/structured/submit</code><br>
+    <strong>제출:</strong> <code>POST http://challenge.example.com:47777/challenges/structured/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"title":"...","category":"기술","sentiment":"긍정","keywords":[...],"summary":"..."}}</code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1636,7 +1636,7 @@ POST /challenges/structured/submit 에 제출
     <div class="card" style="border-top:3px solid var(--purple);padding:20px"><h4 style="color:var(--purple)">search_employee("김")</h4><p style="font-size:.9em">→ 김OO 정보</p></div>
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/mcp/submit</code><br>
+    <strong>제출:</strong> <code>POST http://challenge.example.com:47777/challenges/mcp/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"results":["446","맑음, 15°C","김OO..."]}}</code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1822,11 +1822,11 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
   </div>
   <div class="box blue anim anim-d4" style="margin-top:.6em;font-size:.95em;padding:18px 28px">
     <div class="box-title">문제</div>
-    <code>http://a2g.samsungds.net:47777/browser-target</code> 페이지에서<br>
+    <code>http://challenge.example.com:47777/browser-target</code> 페이지에서<br>
     상품 5개의 <strong>이름과 가격</strong>을 추출하세요.
   </div>
   <div class="box yellow anim anim-d5" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/browser/submit</code><br>
+    <strong>제출:</strong> <code>POST http://challenge.example.com:47777/challenges/browser/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"products":[{"name":"AI 가속기 Mach-1","price":1250000},...]}} </code>
   </div>
   <div class="box green anim anim-d6" style="margin-top:.4em;font-size:1em;text-align:center">
@@ -1845,7 +1845,7 @@ wb = excel.Workbooks.<span class="fn">Open</span>(path)</code></pre>
 1. Chrome을 --remote-debugging-port=9222로 실행
    (Windows: chrome.exe --remote-debugging-port=9222)
 2. CDP WebSocket으로 연결
-3. http://a2g.samsungds.net:47777/browser-target 로 이동
+3. http://challenge.example.com:47777/browser-target 로 이동
 4. JS 렌더링 대기 후 테이블에서 제품명/가격 추출
 5. POST /challenges/browser/submit 에 제출
    {"token":"SSO토큰","answer":{"products":[{"name":"...","price":123000}]}}
@@ -1884,9 +1884,9 @@ CDP: Page.navigate, Runtime.evaluate 사용
     <div class="box green" style="padding:24px 28px">
       <div class="box-title" style="color:var(--green)">서버 정보</div>
       <div style="font-size:.95em;line-height:2">
-        <div><strong>Challenge:</strong> <code style="color:var(--blue)">a2g.samsungds.net:47777</code></div>
-        <div><strong>인증(SSO):</strong> <code style="color:var(--blue)">a2g.samsungds.net:8090</code></div>
-        <div><strong>대시보드:</strong> <code style="color:var(--blue)">a2g.samsungds.net:47777</code></div>
+        <div><strong>Challenge:</strong> <code style="color:var(--blue)">challenge.example.com:47777</code></div>
+        <div><strong>인증(SSO):</strong> <code style="color:var(--blue)">challenge.example.com:8090</code></div>
+        <div><strong>대시보드:</strong> <code style="color:var(--blue)">challenge.example.com:47777</code></div>
         <div><strong>정답 제출:</strong> <code>POST /challenges/{id}/submit</code></div>
       </div>
     </div>
@@ -2240,7 +2240,7 @@ CDP: Page.navigate, Runtime.evaluate 사용
   </div>
   <div class="box yellow anim anim-d4" style="margin-top:.4em;font-size:.88em;padding:14px 24px">
     <strong>성공 조건:</strong> 응답에 <strong>섭씨 값(°C)</strong>과 <strong>화씨 값(°F)</strong>이 모두 포함되어야 합니다.<br>
-    <strong>제출:</strong> <code>POST http://a2g.samsungds.net:47777/challenges/agent_loop/submit</code><br>
+    <strong>제출:</strong> <code>POST http://challenge.example.com:47777/challenges/agent_loop/submit</code><br>
     <code>{"token":"SSO토큰", "answer":{"response":"섭씨: 22°C, 화씨: 71.6°F"}}</code>
   </div>
   <div class="box green anim anim-d5" style="margin-top:.4em;font-size:1em;text-align:center">

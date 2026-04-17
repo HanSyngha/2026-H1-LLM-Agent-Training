@@ -40,7 +40,10 @@ export default function App() {
 
   useEffect(() => {
     getMe().then(data => {
-      if (data?.logged_in) setUser(data.user);
+      if (data?.logged_in) {
+        // 서버가 돌려주는 is_presenter(강사 권한 여부)를 user 객체에 합쳐서 하위로 전달
+        setUser({ ...data.user, is_presenter: !!data.is_presenter });
+      }
       setLoading(false);
     });
   }, []);

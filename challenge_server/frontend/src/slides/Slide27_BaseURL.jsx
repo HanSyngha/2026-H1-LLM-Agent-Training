@@ -19,7 +19,7 @@ client_openai = OpenAI(
 
 # 사내 Gateway — 커스텀 헤더 인증 방식!
 client_gateway = OpenAI(
-    base_url="http://a2g.samsungds.net:8090/v1",
+    base_url="https://llm-gateway.example.com/v1",
     api_key="not-needed",
     default_headers={
         "x-service-id": "test-service",

@@ -59,11 +59,11 @@ export default function Slide76c_ReactDashboardTask() {
           <Box color="blue" style={{ fontSize: '.85em', padding: '14px 20px' }}>
             <BoxTitle>제공 API (5개 모두 활용하세요!)</BoxTitle>
             <code style={{ display: 'block', lineHeight: 1.8, marginTop: 6 }}>
-              http://a2g.samsungds.net:47777/dashboard-challenge/api/usage  — 일별 호출수, 토큰량<br />
-              http://a2g.samsungds.net:47777/dashboard-challenge/api/users  — 주간 사용자 추이<br />
-              http://a2g.samsungds.net:47777/dashboard-challenge/api/tools  — Tool별 호출, 성공률<br />
-              http://a2g.samsungds.net:47777/dashboard-challenge/api/models — 모델별 요청, 지연, 비용<br />
-              http://a2g.samsungds.net:47777/dashboard-challenge/api/costs  — 월별 비용 vs 예산
+              http://challenge.example.com:47777/dashboard-challenge/api/usage  — 일별 호출수, 토큰량<br />
+              http://challenge.example.com:47777/dashboard-challenge/api/users  — 주간 사용자 추이<br />
+              http://challenge.example.com:47777/dashboard-challenge/api/tools  — Tool별 호출, 성공률<br />
+              http://challenge.example.com:47777/dashboard-challenge/api/models — 모델별 요청, 지연, 비용<br />
+              http://challenge.example.com:47777/dashboard-challenge/api/costs  — 월별 비용 vs 예산
             </code>
           </Box>
         </motion.div>

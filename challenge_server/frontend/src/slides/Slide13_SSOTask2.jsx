@@ -15,15 +15,15 @@ export default function Slide13_SSOTask2() {
               <tbody>
                 <tr>
                   <th style={{ width: '22%', padding: '6px 10px' }}>Authorize</th>
-                  <td style={{ padding: '6px 10px' }}><code>GET http://a2g.samsungds.net:8090/oidc/authorize</code></td>
+                  <td style={{ padding: '6px 10px' }}><code>GET https://auth.example.com/oidc/authorize</code></td>
                 </tr>
                 <tr>
                   <th style={{ padding: '6px 10px' }}>Token</th>
-                  <td style={{ padding: '6px 10px' }}><code>POST http://a2g.samsungds.net:8090/oidc/token</code></td>
+                  <td style={{ padding: '6px 10px' }}><code>POST https://auth.example.com/oidc/token</code></td>
                 </tr>
                 <tr>
                   <th style={{ padding: '6px 10px' }}>UserInfo</th>
-                  <td style={{ padding: '6px 10px' }}><code>GET http://a2g.samsungds.net:8090/oidc/userinfo</code></td>
+                  <td style={{ padding: '6px 10px' }}><code>GET https://auth.example.com/oidc/userinfo</code></td>
                 </tr>
               </tbody>
             </table>
