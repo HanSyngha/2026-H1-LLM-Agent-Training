@@ -122,6 +122,16 @@ pre code{font-family:var(--mono);color:#e2e8f0}
 .kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#6e7681;font-style:italic}.nb{color:#79c0ff}.op{color:#ff7b72}.nu{color:#f2cc60}.ty{color:#7ee787}.dc{color:#ffa657}
 pre .lang-tag{position:absolute;top:10px;right:16px;font-size:.7em;color:var(--text3);font-family:var(--mono);opacity:.5;padding:2px 8px;background:rgba(255,255,255,.04);border-radius:4px}
 pre::before{content:'';position:absolute;top:10px;left:16px;width:8px;height:8px;border-radius:50%;background:#ff5f57;box-shadow:16px 0 0 #ffbd2e,32px 0 0 #28ca41}
+.copy-btn{position:absolute;top:8px;right:10px;font-size:.72em;font-family:var(--font);color:#cbd5e1;background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.25);padding:4px 10px;border-radius:6px;cursor:pointer;opacity:0;transition:opacity .2s ease,background .2s ease,color .2s ease,border-color .2s ease;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:5;letter-spacing:.3px;line-height:1.2;user-select:none}
+pre:hover .copy-btn,.copy-btn:focus,.copy-btn.copied{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(148,163,184,.5)}
+.copy-btn.copied{background:rgba(16,185,129,.2);color:#6ee7b7;border-color:rgba(16,185,129,.5)}
+.copy-btn.error{background:rgba(239,68,68,.2);color:#fca5a5;border-color:rgba(239,68,68,.5)}
+pre:has(.lang-tag) .copy-btn{right:64px}
+.copy-inline{display:inline-flex;align-items:center;justify-content:center;font-size:.72em;font-family:var(--font);color:var(--text3);background:transparent;border:1px solid var(--glass-border);padding:0 6px;height:1.5em;border-radius:5px;cursor:pointer;margin-left:4px;vertical-align:middle;line-height:1;transition:background .15s ease,color .15s ease,border-color .15s ease;user-select:none}
+.copy-inline:hover{background:rgba(59,130,246,.1);color:var(--blue3);border-color:rgba(59,130,246,.4)}
+.copy-inline.copied{background:rgba(16,185,129,.15);color:var(--green);border-color:rgba(16,185,129,.5)}
+.copy-inline.error{background:rgba(239,68,68,.15);color:var(--red);border-color:rgba(239,68,68,.5)}
 
 /* ===== GLASS CARDS ===== */
 .glass{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;transition:transform .3s ease,box-shadow .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.06)}
@@ -2864,6 +2874,116 @@ CDP로 검색 → 결과 대기 → DOM에서 추출</code></pre>
   let current = 0;
   let overviewOpen = false;
   let notesOpen = false;
+
+  // ===== COPY BUTTONS for all <pre> code blocks =====
+  function getCopyText(pre) {
+    var clone = pre.cloneNode(true);
+    // Remove line-number spans, lang-tag, and the copy button itself from the clone
+    clone.querySelectorAll('.ln, .lang-tag, .copy-btn').forEach(function(el){ el.remove(); });
+    // Use innerText to preserve newlines from <br>/block elements; fall back to textContent
+    var text = clone.innerText || clone.textContent || '';
+    return text.replace(/ /g, ' ').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function attachCopyButtons() {
+    var pres = document.querySelectorAll('pre');
+    pres.forEach(function(pre, idx) {
+      if (pre.querySelector(':scope > .copy-btn')) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = '복사';
+      btn.setAttribute('aria-label', '코드 복사');
+      btn.setAttribute('data-copy-index', String(idx));
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var text = getCopyText(pre);
+        var done = function(ok){
+          btn.classList.remove('copied','error');
+          btn.classList.add(ok ? 'copied' : 'error');
+          btn.textContent = ok ? '복사됨 ✓' : '실패';
+          setTimeout(function(){
+            btn.classList.remove('copied','error');
+            btn.textContent = '복사';
+          }, 1500);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(fallbackCopy(text)); });
+        } else {
+          done(fallbackCopy(text));
+        }
+      });
+      // Ensure pre is positioned (it already has position:relative via CSS)
+      pre.appendChild(btn);
+    });
+  }
+  attachCopyButtons();
+
+  // ===== INLINE COPY BUTTONS (in 실습 slides) =====
+  function isCopyWorthyInlineCode(text) {
+    if (!text) return false;
+    var t = text.trim();
+    return t.length >= 1; // attach to every non-empty inline code in 실습 slides
+  }
+
+  function attachInlineCopyButtons() {
+    var exerciseSlides = document.querySelectorAll('.slide');
+    exerciseSlides.forEach(function(slide) {
+      var badges = slide.querySelectorAll('.badge');
+      var isExercise = false;
+      badges.forEach(function(b){ if (/실습/.test(b.textContent || '')) isExercise = true; });
+      if (!isExercise) return;
+      var inlineCodes = slide.querySelectorAll('code');
+      inlineCodes.forEach(function(code) {
+        if (code.closest('pre')) return; // pre handled separately
+        if (code.dataset.copyAttached === '1') return;
+        var text = (code.textContent || '').trim();
+        if (!isCopyWorthyInlineCode(text)) return;
+        // Skip codes inside table headers / nav structures shorter than threshold
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'copy-inline';
+        btn.textContent = '복사';
+        btn.setAttribute('aria-label', '복사: ' + text.slice(0, 40));
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var t = (code.textContent || '').trim();
+          var done = function(ok){
+            btn.classList.remove('copied','error');
+            btn.classList.add(ok ? 'copied' : 'error');
+            btn.textContent = ok ? '✓' : '✕';
+            setTimeout(function(){
+              btn.classList.remove('copied','error');
+              btn.textContent = '복사';
+            }, 1500);
+          };
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ done(fallbackCopy(t)); });
+          } else {
+            done(fallbackCopy(t));
+          }
+        });
+        code.dataset.copyAttached = '1';
+        if (code.parentNode) code.parentNode.insertBefore(btn, code.nextSibling);
+      });
+    });
+  }
+  attachInlineCopyButtons();
 
   const progress = document.getElementById('progress');
   const counter = document.getElementById('counter');
